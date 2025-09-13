@@ -1,0 +1,297 @@
+@startuml
+skinparam backgroundColor #f8fafc
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam packageStyle rectangle
+
+skinparam entity {
+    BackgroundColor #ffffff
+    BorderColor #334155
+    FontSize 12
+    FontName "Inter"
+    FontColor #1e293b
+    FontStyle normal
+}
+
+skinparam enum {
+    BackgroundColor #f1f5f9
+    BorderColor #64748b
+    FontSize 11
+    FontColor #475569
+}
+
+
+skinparam arrow {
+    Color #3b82f6
+    FontSize 10
+    FontColor #64748b
+}
+
+
+skinparam package {
+    BackgroundColor #fefeff
+    BorderColor #cbd5e1
+    FontColor #1e293b
+    FontSize 14
+    FontStyle bold
+    BorderThickness 2
+}
+
+package "Users & Authentication" as users_package {
+    entity "user" as user{
+        *id: Long <<PK>>
+        --
+        firstName: String
+        lastName: String
+        email: String <<UK>>
+        dateOfBirth: DateTime
+        city: City
+        phoneNumber: String
+        role: Role
+        balance: float
+        loyaltyPoints: float
+        statusOfUser: StatusOfUser
+        passwordHash: String
+    }
+}
+
+package "Real Estate Core" as property_package {
+    entity "residential_complex" as residential_complex {
+        *id: Long <<PK>>
+        --
+        name: String
+        description: String
+        BlockCount: int
+        playgroundArea: Decimal
+        apartmentsArea: Decimal
+        commercialArea: Decimal
+        parkingArea: Decimal
+        landingArea: Decimal
+        material: Material
+        city: City
+        address: String
+        longitude: float
+        latitude: float
+        hasSecurity: boolean
+        buildingClass: BuildingClass
+    }
+
+    entity "building" as building{
+        *id: Long <<PK>>
+        --
+        residentialComplexId: Long <<FK>>
+        block: int
+        description: String
+        FloorCount: int
+        ApartmentsCount: int
+        CommercialsCount: int
+        grossArea: Decimal
+        parkingSpots: int
+        elevatorCount: int
+        status: BuildingClass
+        constructionStart: DateTime
+        constructionEnd: DateTime
+    }
+
+    entity "apartment" as apartment {
+        *id: Long <<PK>>
+        --
+        buildingId: Long <<FK>>
+        number: int
+        floor: int
+        apartmentArea: Decimal
+        apartmentType: ApartmentType
+        hasBalcony: boolean
+        layoutImage: String
+        bathroomCount: int
+        kitchenArea: Decimal
+        ceilingHeight: Decimal
+        finishingType: FinishingType
+        pricePerSqm: Decimal
+        totalPrice: Decimal
+        status: PropertyStatus
+        orientation: Direction
+        isCorn: boolean
+    }
+
+    entity "commercialUnit" as commercialUnit {
+        *id: Long <<PK>>
+        --
+        buildingId: Long <<FK>>
+        number: int
+        floor: int
+        spaceArea: Decimal
+        layoutImage: String
+        ceilingHeight: Decimal
+        finishingType: FinishingType
+        pricePerSqm: Decimal
+        status: PropertyStatus
+        orientation: Direction
+        isCorn: boolean
+    }
+}
+
+package "Business Operations" as operations_package {
+    entity "orders" as orders {
+        *id: Long <<PK>>
+        --
+        orderType: OrderType
+        userId: Long <<FK>>
+        objectId: Long <<FK>>
+        objectType: ObjectType
+        totalPrice: Decimal
+        orderDate: DateTime
+        paymentType: PaymentType
+        bookingDeposit: Decimal
+        bookingExpiresAt: DateTime
+        status: OrderStatus
+    }
+
+    entity "favorites" as favorites {
+        *id: Long <<PK>>
+        --
+        userId: Long <<FK>>
+        objectId: Long <<FK>>
+        objectType: ObjectType
+        createdAt: DateTime
+    }
+}
+
+package "Content Management" as content_package {
+    entity "image" as image {
+        *id: Long <<PK>>
+        --
+        objectId: Long <<FK>>
+        objectType: ObjectType
+        imgUrl: String
+        uploadAt: DateTime
+    }
+
+    entity "review" as review {
+        *id: Long <<PK>>
+        --
+        userId: Long <<FK>>
+        residentialComplexId: Long <<FK>>
+        rating: int
+        comment: String
+        createdAt: DateTime
+    }
+}
+
+package "System Enumerations" as enums_package {
+    enum OrderType {
+        BOOKING
+        PURCHASE
+    }
+
+    enum OrderStatus {
+        PENDING
+        CONFIRMED
+        CANCELLED
+        COMPLETED
+    }
+
+    enum PaymentType {
+        CASH
+        CARD
+        MORTGAGE
+        INSTALLMENT
+        BANK_TRANSFER
+    }
+
+    enum FinishingType {
+        BLACK_BOX
+        WHITE_BOX
+        FINISHED
+        TURNKEY
+    }
+
+    enum ObjectType {
+        COMMERCIAL
+        APARTMENT
+        RESIDENTIAL_COMPLEX
+        BUILDING
+    }
+
+    enum PropertyStatus {
+        FREE
+        BOOKED
+        SOLD
+    }
+
+    enum Direction {
+        NORTH
+        EAST
+        SOUTH
+        WEST
+        NORTH-SOUTH
+        WEST-EAST
+        NORTH-EAST
+        NORTH-WEST
+        SOUTH-EAST
+        SOUTH-WEST
+    }
+
+    enum ApartmentType {
+        STUDIO
+        ONE_BEDROOM
+        TWO_BEDROOM
+        THREE_BEDROOM
+        PENTHOUSE
+    }
+
+    enum Material {
+        BRICK
+        MONOLITH
+        PANEL
+        BLOCK
+        MIXED
+    }
+
+    enum BuildingClass {
+        PROJECT
+        UNDER_CONSTRUCTION
+        COMPLETED
+    }
+
+    enum StatusOfUser {
+        BRONZE
+        SILVER
+        GOLD
+        NONE
+    }
+
+    enum Role {
+        ADMIN
+        MANAGER
+        CONSUMER
+    }
+
+    enum City {
+        ALMATY
+        ASTANA
+        SHYMKENT
+        KARAGANDA
+        AKTOBE
+        TARAZ
+        PAVLODAR
+        OSKEMEN
+        SEMEY
+        KOSTANAY
+        KYZYLORDA
+        ATYRAU
+        ORAL
+        PETROPAVL
+        TURKISTAN
+    }
+}
+
+residential_complex ||--o{ building : "contains"
+building ||--o{ apartment : "has"
+building ||--o{ commercialUnit : "has"
+user ||--o{ orders : "makes"
+user ||--o{ favorites : "has"
+user ||--o{ review : "writes"
+residential_complex ||--o{ review : "receives"
+
+@enduml
