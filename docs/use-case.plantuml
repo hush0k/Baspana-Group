@@ -1,0 +1,107 @@
+@startuml
+!theme plain
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+}
+skinparam actor {
+    BackgroundColor LightGreen
+    BorderColor DarkGreen
+}
+
+title Use Case Диаграмма - Сайт Строительной Компании
+
+' Актеры
+actor "Покупатель\n(CONSUMER)" as Consumer
+actor "Менеджер\n(MANAGER)" as Manager
+actor "Администратор\n(ADMIN)" as Admin
+actor "Гость" as Guest
+
+' Система
+rectangle "Система управления недвижимостью" {
+
+    ' Публичные use cases
+    usecase "Просмотр ЖК" as UC1
+    usecase "Просмотр квартир" as UC2
+    usecase "Поиск и фильтрация" as UC3
+    usecase "Просмотр детальной информации" as UC4
+
+    ' Авторизация
+    usecase "Регистрация" as UC5
+    usecase "Авторизация" as UC6
+    usecase "Выход из системы" as UC7
+
+    ' Функции покупателя
+    usecase "Добавить в избранное" as UC8
+    usecase "Просмотр избранного" as UC9
+    usecase "Бронирование квартиры" as UC10
+    usecase "Покупка квартиры" as UC11
+    usecase "Выбор способа оплаты" as UC12
+    usecase "Просмотр истории заказов" as UC13
+
+    ' Функции менеджера
+    usecase "Управление квартирами" as UC14
+    usecase "Просмотр заказов" as UC15
+    usecase "Обновление статуса заказа" as UC16
+    usecase "Управление зданиями" as UC17
+
+    ' Функции администратора
+    usecase "Управление пользователями" as UC18
+    usecase "Управление ЖК" as UC19
+    usecase "Просмотр аналитики" as UC20
+    usecase "Управление ролями" as UC21
+    usecase "Управление системой" as UC22
+}
+
+' Связи гостя
+Guest --> UC1
+Guest --> UC2
+Guest --> UC3
+Guest --> UC4
+Guest --> UC5
+Guest --> UC6
+
+' Связи покупателя
+Consumer --> UC1
+Consumer --> UC2
+Consumer --> UC3
+Consumer --> UC4
+Consumer --> UC7
+Consumer --> UC8
+Consumer --> UC9
+Consumer --> UC10
+Consumer --> UC11
+Consumer --> UC12
+Consumer --> UC13
+
+' Связи менеджера
+Manager --> UC1
+Manager --> UC2
+Manager --> UC3
+Manager --> UC4
+Manager --> UC7
+Manager --> UC14
+Manager --> UC15
+Manager --> UC16
+Manager --> UC17
+
+' Связи администратора
+Admin --> UC7
+Admin --> UC18
+Admin --> UC19
+Admin --> UC20
+Admin --> UC21
+Admin --> UC22
+Admin --> UC14
+Admin --> UC15
+Admin --> UC16
+Admin --> UC17
+
+' Relationships между use cases
+UC11 ..> UC12 : <<include>>
+UC10 ..> UC12 : <<include>>
+UC5 ..> UC6 : <<extend>>
+
+note right of UC12 : Наличные, карта,\nипотека, рассрочка
+
+@enduml
