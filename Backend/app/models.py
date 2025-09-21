@@ -1,10 +1,9 @@
 from enum import Enum
 
-from PIL.Image import Image
 from sqlalchemy import Boolean, Column, DECIMAL, DateTime, ForeignKey, Integer, String, Enum as SqlEnum
 from sqlalchemy.orm import Relationship, Session, relationship
 
-from Backend.app.database import Base
+from database import Base
 
 class City(str, Enum):
     almaty = "Almaty"

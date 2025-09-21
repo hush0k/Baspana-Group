@@ -178,7 +178,48 @@ package "Content Management" as content_package {
     }
 }
 
+package "Transactions" as transactions_packege {
+    entity "user_wallet" as user_wallet {
+        *id: Long <<PK>>
+        --
+        userId: Long <<FK>>
+        balance: Decimal
+        loyaltyPoints: Decimal
+        isActive: boolean
+        createdAt: DateTime
+        updatedAt: DateTime
+    }
+    entity "wallet_transaction" as wallet_transaction {
+        *id: Long <<PK>>
+        --
+        walletId: Long <<FK>>
+        transactionType: TransactionType
+        amount: Decimal
+        balanceBefore: Decimal
+        balanceAfter: Decimal
+        description: String
+        orderId: Long <<FK>> <<nullable>>
+        referenceId: String <<nullable>>
+        createdAt: DateTime
+    }
+}
+
+
+
 package "System Enumerations" as enums_package {
+    enum TransactionType {
+        DEPOSIT
+        WITHDRAWAL
+        PURCHASE
+        REFUND
+        LOYALTY_EARNED
+        LOYALTY_SPENT
+        BONUS
+        PENALTY
+        TRANSFER_IN
+        TRANSFER_OUT
+    }
+
     enum OrderType {
         BOOKING
         PURCHASE
@@ -293,5 +334,8 @@ user ||--o{ orders : "makes"
 user ||--o{ favorites : "has"
 user ||--o{ review : "writes"
 residential_complex ||--o{ review : "receives"
+user ||--|| user_wallet : "has"
+user_wallet ||--o{ wallet_transaction : "contains"
+orders ||--o{ wallet_transaction : "may have"
 
 @enduml
