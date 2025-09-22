@@ -1,7 +1,7 @@
 from enum import Enum
 
-from sqlalchemy import Boolean, Column, DECIMAL, DateTime, ForeignKey, Integer, String, Enum as SqlEnum
-from sqlalchemy.orm import Relationship, Session, relationship
+from sqlalchemy import Boolean, Column, DECIMAL, Date, DateTime, ForeignKey, Integer, String, Enum as SqlEnum
+from sqlalchemy.orm import Session, relationship
 
 from app.database import Base
 
@@ -125,12 +125,12 @@ class User(Base):
     first_name = Column(String)
     last_name = Column(String)
     email = Column(String)
-    date_of_birth = Column(DateTime)
+    date_of_birth = Column(Date)
     city = Column(SqlEnum(City, name="city"))
     phone_number = Column(String)
     role = Column(SqlEnum(Role, name="role"))
-    updated_at = Column(DateTime)
-    created_at = Column(DateTime)
+    updated_at = Column(Date)
+    created_at = Column(Date)
     status_of_user = Column(SqlEnum(StatusOfUser, name="status_of_user"))
     password = Column(String)
     avatar_url=Column(String)
@@ -193,8 +193,8 @@ class Building(Base):
     gross_area=Column(DECIMAL)
     elevators_count=Column(Integer)
     status=Column(SqlEnum(BuildingStatus, name="status"))
-    construction_start=Column(DateTime)
-    construction_end=Column(DateTime)
+    construction_start=Column(Date)
+    construction_end=Column(Date)
 
     #Relations
     residential_complex=relationship("ResidentialComplex", back_populates= "building")
@@ -292,7 +292,7 @@ class Image(Base):
     object_id = Column(Integer)
     object_type = Column(SqlEnum(ObjectType, name="object_type"))
     img_url = Column(String)
-    upload_date = Column(DateTime)
+    upload_date = Column(Date)
 
     @property
     def related_object (self):
@@ -320,10 +320,10 @@ class Order(Base):
     order_type = Column(SqlEnum(OrderType, name="order_type"))
     object_type = Column(SqlEnum(ObjectType, name="object_type"))
     total_price = Column(DECIMAL)
-    order_date = Column(DateTime)
+    order_date = Column(Date)
     payment_type = Column(SqlEnum(PaymentType, name="payment_type"))
     booking_deposit = Column(DECIMAL)
-    booking_expiration_date = Column(DateTime)
+    booking_expiration_date = Column(Date)
     status = Column(SqlEnum(OrderStatus, name="status"))
 
     user = relationship ("User", back_populates = "orders")
@@ -337,7 +337,7 @@ class Favorites(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     object_id = Column(Integer)
     object_type = Column(SqlEnum(ObjectType, name="object_type"))
-    created_at = Column(DateTime)
+    created_at = Column(Date)
 
     user = relationship ("User", back_populates = "favorites")
 
