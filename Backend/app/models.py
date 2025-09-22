@@ -3,7 +3,7 @@ from enum import Enum
 from sqlalchemy import Boolean, Column, DECIMAL, DateTime, ForeignKey, Integer, String, Enum as SqlEnum
 from sqlalchemy.orm import Relationship, Session, relationship
 
-from database import Base
+from app.database import Base
 
 class City(str, Enum):
     almaty = "Almaty"
@@ -129,8 +129,10 @@ class User(Base):
     city = Column(SqlEnum(City, name="city"))
     phone_number = Column(String)
     role = Column(SqlEnum(Role, name="role"))
+    updated_at = Column(DateTime)
+    created_at = Column(DateTime)
     status_of_user = Column(SqlEnum(StatusOfUser, name="status_of_user"))
-    password_hash = Column(String)
+    password = Column(String)
     avatar_url=Column(String)
 
     #Relations

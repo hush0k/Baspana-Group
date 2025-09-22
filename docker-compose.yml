@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:15
-    container_name: construction_db
+    container_name: baspana_group_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -34,6 +34,7 @@ services:
       - construction_network
     env_file:
       - .env
+
 
   # Frontend Angular (потом добавишь)
   # frontend:
