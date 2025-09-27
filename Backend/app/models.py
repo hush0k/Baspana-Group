@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
 
-from sqlalchemy import Boolean, Column, DECIMAL, Date, DateTime, ForeignKey, Integer, String, Enum as SqlEnum
+from sqlalchemy import Boolean, Column, DECIMAL, Date, DateTime, ForeignKey, Integer, String, Enum as SqlEnum, func
 from sqlalchemy.orm import Session, relationship
 
 from .database import Base
@@ -144,7 +144,7 @@ class User(Base):
     phone_number = Column(String)
     role = Column(SqlEnum(Role, name="role"))
     updated_at = Column(Date)
-    created_at = Column(Date)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     status_of_user = Column(SqlEnum(StatusOfUser, name="status_of_user"))
     password = Column(String)
     is_active = Column(Boolean, default=True)

@@ -37,9 +37,10 @@ class UserBase(BaseModel):
     phone_number: PhoneNumber
     city: City
     avatar_url: str
+    is_active: bool = True
+
 
 class UserCreate(UserBase):
-    is_active: bool = True
     password: str
 
 class UserUpdate(BaseModel):
@@ -49,14 +50,23 @@ class UserUpdate(BaseModel):
     phone_number: Optional[PhoneNumber] = None
     city: Optional[City] = None
     avatar_url: Optional[str] = None
-    password: Optional[str] = None
+
+class UserUpdatePassword(BaseModel):
+    old_password: str
+    new_password: str
+    confirm_password: str
+
+class UserUpdateStatus(BaseModel):
+    status: StatusOfUser
+
+class UserUpdateRole(BaseModel):
+    role: Role
 
 class UserResponse(UserBase):
     id: int
-    created_at: date
+    created_at: datetime
     status_of_user: StatusOfUser
     role: Role
-    is_active: bool
 
     class Config:
         orm_mode = True
