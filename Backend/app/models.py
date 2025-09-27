@@ -1,9 +1,10 @@
+from datetime import datetime
 from enum import Enum
 
 from sqlalchemy import Boolean, Column, DECIMAL, Date, DateTime, ForeignKey, Integer, String, Enum as SqlEnum
 from sqlalchemy.orm import Session, relationship
 
-from app.database import Base
+from .database import Base
 
 class City(str, Enum):
     almaty = "Almaty"
@@ -117,6 +118,19 @@ class TransactionType(str, Enum):
     transfer_in = "Transfer In"
     transfer_out = "Transfer Out"
 
+class RefreshToken(Base):
+    __tablename__ = 'refresh_tokens'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    token = Column(String, unique=True, nullable=False, index=True)
+    expires_at = Column(DateTime, nullable=False)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.now)
+
+    revoked_at = Column(DateTime, nullable=True)
+
+    user = relationship ("User", back_populates = "refresh_tokens")
 
 class User(Base):
     __tablename__ = 'users'
@@ -133,6 +147,7 @@ class User(Base):
     created_at = Column(Date)
     status_of_user = Column(SqlEnum(StatusOfUser, name="status_of_user"))
     password = Column(String)
+    is_active = Column(Boolean, default=True)
     avatar_url=Column(String)
 
     #Relations
@@ -140,6 +155,7 @@ class User(Base):
     favorites = relationship("Favorites", back_populates="user")
     reviews = relationship("Review", back_populates="user")
     wallet = relationship("UserWallet", back_populates="user", uselist=False)
+    refresh_tokens = relationship("RefreshToken", back_populates="user")
 
 
 
@@ -259,7 +275,7 @@ class CommercialUnit(Base):
     isCorner=Column(Boolean)
 
     # Relations
-    building = relationship ("Building", back_populates = "apartments")
+    building = relationship("Building", back_populates="commercial_units")
 
     @property
     def images (self):
@@ -275,6 +291,7 @@ class Review(Base):
 
     id = Column(Integer, primary_key=True)
     residential_complex_id = Column(Integer, ForeignKey('residential_complex.id'))
+    user_id = Column (Integer, ForeignKey ('users.id'))
     rating = Column(Integer)
     comment = Column(String)
     created_at = Column(DateTime)
@@ -362,6 +379,7 @@ class WalletTransaction(Base):
 
     id = Column(Integer, primary_key=True)
     transaction_type = Column(SqlEnum(TransactionType, name="transaction_type"))
+    wallet_id = Column (Integer, ForeignKey ('user_wallet.id'))
     amount = Column(DECIMAL)
     balance_before = Column(DECIMAL)
     balance_after = Column(DECIMAL)
@@ -371,6 +389,11 @@ class WalletTransaction(Base):
 
     wallet = relationship ("UserWallet", back_populates = "transactions")
     order = relationship ("Order", back_populates = "wallet_transactions")
+
+
+
+
+
 
 
 

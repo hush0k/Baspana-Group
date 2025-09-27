@@ -2,10 +2,31 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import List, Optional
 
-from Backend.app.models import ApartmentType, BuildingClass, BuildingStatus, City, Direction, FinishingType, \
+from .models import ApartmentType, BuildingClass, BuildingStatus, City, Direction, FinishingType, \
     MaterialType, ObjectType, OrderStatus, OrderType, PaymentType, PropertyStatus, Role, StatusOfUser, TransactionType
 from pydantic import BaseModel, EmailStr
 from pydantic_extra_types.phone_numbers import PhoneNumber
+
+
+#Refresh Tokens
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str
+
+class TokenRefresh(BaseModel):
+    refresh_token: str
+
+class RefreshTokenResponse(BaseModel):
+    id: int
+    token: str
+    expires_in: datetime
+    is_active: bool
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
 
 #User Schemas
 class UserBase(BaseModel):
@@ -18,6 +39,7 @@ class UserBase(BaseModel):
     avatar_url: str
 
 class UserCreate(UserBase):
+    is_active: bool = True
     password: str
 
 class UserUpdate(BaseModel):
@@ -34,6 +56,7 @@ class UserResponse(UserBase):
     created_at: date
     status_of_user: StatusOfUser
     role: Role
+    is_active: bool
 
     class Config:
         orm_mode = True
