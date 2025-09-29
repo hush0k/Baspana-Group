@@ -118,19 +118,6 @@ class TransactionType(str, Enum):
     transfer_in = "Transfer In"
     transfer_out = "Transfer Out"
 
-class RefreshToken(Base):
-    __tablename__ = 'refresh_tokens'
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    token = Column(String, unique=True, nullable=False, index=True)
-    expires_at = Column(DateTime, nullable=False)
-    is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.now)
-
-    revoked_at = Column(DateTime, nullable=True)
-
-    user = relationship ("User", back_populates = "refresh_tokens")
 
 class User(Base):
     __tablename__ = 'users'
@@ -155,7 +142,6 @@ class User(Base):
     favorites = relationship("Favorites", back_populates="user")
     reviews = relationship("Review", back_populates="user")
     wallet = relationship("UserWallet", back_populates="user", uselist=False)
-    refresh_tokens = relationship("RefreshToken", back_populates="user")
 
 
 

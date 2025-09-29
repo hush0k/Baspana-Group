@@ -9,24 +9,13 @@ from pydantic_extra_types.phone_numbers import PhoneNumber
 
 
 #Refresh Tokens
-class Token(BaseModel):
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class TokenResponse(BaseModel):
     access_token: str
-    refresh_token: str
-    token_type: str
-
-class TokenRefresh(BaseModel):
-    refresh_token: str
-
-class RefreshTokenResponse(BaseModel):
-    id: int
-    token: str
-    expires_in: datetime
-    is_active: bool
-    created_at: datetime
-
-    class Config:
-        orm_mode = True
-
+    token_type: str = 'Bearer'
 
 #User Schemas
 class UserBase(BaseModel):
