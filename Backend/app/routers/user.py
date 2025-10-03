@@ -25,21 +25,25 @@ def get_my_profile(current_user = Depends(get_current_user)):
 
 
 @router.get("/{user_id}", response_model=UserResponse)
-def get_user_endpoint(user_id: int, db: Session = Depends(get_db)):
+def get_user_endpoint(user_id: int,
+                      db: Session = Depends(get_db),
+                      _: User = Depends(require_role([Role.admin, Role.manager]))):
     user = get_user_by_id(db, user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
 @router.get("/{user_email}", response_model=UserResponse)
-def get_user_by_email_endpoint(email: str, db: Session = Depends(get_db)):
+def get_user_by_email_endpoint(email: str, db: Session = Depends(get_db),
+                               _: User = Depends(require_role([Role.admin, Role.manager]))):
     user = get_user_by_email(db, email)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
 @router.get("/{user_phone}", response_model=UserResponse)
-def get_user_by_phone_endpoint(phone: str, db: Session = Depends(get_db)):
+def get_user_by_phone_endpoint(phone: str, db: Session = Depends(get_db),
+                               _: User = Depends(require_role([Role.admin, Role.manager]))):
     user = get_user_by_phone_number(db, phone)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -65,7 +69,8 @@ def create_user_endpoint(user: UserCreate, db: Session = Depends(get_db)):
 
 #PUT Routers
 @router.put("/{user_id}", response_model=UserResponse)
-def update_user_endpoint(user_id: int, user: UserUpdate, db: Session = Depends(get_db)):
+def update_user_endpoint(user_id: int, user: UserUpdate, db: Session = Depends(get_db),
+                         _: User = Depends(get_current_user)):
     existing_user = get_user_by_id(db, user_id)
     if existing_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -85,7 +90,9 @@ def update_user_status_endpoint(user_id: int, status: UserUpdateStatus, db: Sess
     return updated_user
 
 @router.patch("/{user_id}/role", response_model=UserResponse)
-def update_user_role_endpoint(user_id: int, role: UserUpdateRole, db: Session = Depends(get_db)):
+def update_user_role_endpoint(user_id: int, role: UserUpdateRole, db: Session = Depends(get_db),
+                              _: User = Depends(require_role([Role.admin]))
+                              ):
     existing_user = get_user_by_id(db, user_id)
     if existing_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -93,7 +100,8 @@ def update_user_role_endpoint(user_id: int, role: UserUpdateRole, db: Session = 
     return updated_user
 
 @router.patch("/{user_id}/password", response_model=UserResponse)
-def update_user_password_endpoint(user_id: int, password: UserUpdatePassword, db: Session = Depends(get_db)):
+def update_user_password_endpoint(user_id: int, password: UserUpdatePassword, db: Session = Depends(get_db),
+                                  _: User = Depends(get_current_user)):
     existing_user = get_user_by_id(db, user_id)
     if existing_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -111,7 +119,8 @@ def update_user_password_endpoint(user_id: int, password: UserUpdatePassword, db
 
 #DELETE Routers
 @router.delete("/{user_id}", response_model=UserResponse)
-def delete_user_endpoint(user_id: int, db: Session = Depends(get_db)):
+def delete_user_endpoint(user_id: int, db: Session = Depends(get_db),
+                         _: User = Depends(require_role([Role.admin]))):
     existing_user = get_user_by_id(db, user_id)
     if existing_user is None:
         raise HTTPException(status_code=404, detail="User not found")

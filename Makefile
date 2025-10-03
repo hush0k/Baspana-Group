@@ -41,3 +41,5 @@ create:
 logs:
 	docker logs -f baspana_group_backend
 
+db:
+	docker exec -it baspana_group_db psql -U baspana_admin -d baspana_group_dbcr
