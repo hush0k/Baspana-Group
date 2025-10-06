@@ -192,15 +192,15 @@ class ApartmentBase(BaseModel):
     building_id: int
     number: int
     floor: int
-    apartment_area: float
+    apartment_area: Decimal
     apartment_type: ApartmentType
     has_balcony: bool
     bathroom_count: int
-    kitchen_area: float
-    ceiling_height: float
+    kitchen_area: Decimal
+    ceiling_height: Decimal
     finishing_type: FinishingType
     price_per_sqr: Decimal
-    total_price: Decimal
+    total_price: Optional[Decimal] = None
     status: PropertyStatus
     orientation: Direction
     isCorner: bool
@@ -212,12 +212,12 @@ class ApartmentUpdate(BaseModel):
     building_id: Optional[int] = None
     number: Optional[int] = None
     floor: Optional[int] = None
-    apartment_area: Optional[float] = None
+    apartment_area: Optional[Decimal] = None
     apartment_type: Optional[ApartmentType] = None
     has_balcony: Optional[bool] = None
     bathroom_count: Optional[int] = None
-    kitchen_area: Optional[float] = None
-    ceiling_height: Optional[float] = None
+    kitchen_area: Optional[Decimal] = None
+    ceiling_height: Optional[Decimal] = None
     finishing_type: Optional[FinishingType] = None
     price_per_sqr: Optional[Decimal] = None
     total_price: Optional[Decimal] = None
@@ -231,6 +231,14 @@ class ApartmentResponse(ApartmentBase):
     class Config:
         orm_mode = True
 
+class PaginatedApartmentResponse(BaseModel):
+    total: int
+    results: List[ApartmentResponse]
+    limit: int
+    offset: int
+
+    class Config:
+        orm_mode = True
 
 
 #Commercial Unit
@@ -238,8 +246,8 @@ class CommercialUnitBase(BaseModel):
     building_id: int
     number: int
     floor: int
-    space_area: float
-    ceiling_height: float
+    space_area: Decimal
+    ceiling_height: Decimal
     finishing_type: FinishingType
     price_per_sqr: Decimal
     total_price: Decimal
@@ -254,8 +262,8 @@ class CommercialUnitUpdate(BaseModel):
     building_id: Optional[int] = None
     number: Optional[int] = None
     floor: Optional[int] = None
-    space_area: Optional[float] = None
-    ceiling_height: Optional[float] = None
+    space_area: Optional[Decimal] = None
+    ceiling_height: Optional[Decimal] = None
     finishing_type: Optional[FinishingType] = None
     price_per_sqr: Optional[Decimal] = None
     total_price: Optional[Decimal] = None

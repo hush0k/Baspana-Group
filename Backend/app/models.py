@@ -194,7 +194,7 @@ class Building(Base):
     parking_count=Column(Integer)
     gross_area=Column(DECIMAL)
     elevators_count=Column(Integer)
-    status=Column(SqlEnum(BuildingStatus, name="status"))
+    status=Column(SqlEnum(BuildingStatus, name="building_status"))
     construction_start=Column(Date)
     construction_end=Column(Date)
 
@@ -228,7 +228,7 @@ class Apartment(Base):
     finishing_type=Column(SqlEnum(FinishingType, name="finishing_type"))
     price_per_sqr=Column(DECIMAL)
     total_price=Column(DECIMAL)
-    status=Column(SqlEnum(PropertyStatus, name="status"))
+    status=Column(SqlEnum(PropertyStatus, name="property_status"))
     orientation=Column(SqlEnum(Direction, name="direction"))
     isCorner=Column(Boolean)
 
@@ -256,7 +256,7 @@ class CommercialUnit(Base):
     finishing_type=Column(SqlEnum(FinishingType, name="finishing_type"))
     price_per_sqr=Column(DECIMAL)
     total_price=Column(DECIMAL)
-    status=Column(SqlEnum(PropertyStatus, name="status"))
+    status=Column(SqlEnum(PropertyStatus, name="property_status"))
     orientation=Column(SqlEnum(Direction, name="direction"))
     isCorner=Column(Boolean)
 
@@ -327,7 +327,7 @@ class Order(Base):
     payment_type = Column(SqlEnum(PaymentType, name="payment_type"))
     booking_deposit = Column(DECIMAL)
     booking_expiration_date = Column(Date)
-    status = Column(SqlEnum(OrderStatus, name="status"))
+    status = Column(SqlEnum(OrderStatus, name="order_status"))
 
     user = relationship ("User", back_populates = "orders")
     wallet_transactions = relationship ("WalletTransaction", back_populates = "order")
