@@ -168,7 +168,7 @@ class ResidentialComplex(Base):
 
 
     #Relations
-    building=relationship("Building", back_populates="residential_complex")
+    buildings=relationship("Building", back_populates="residential_complex")
     reviews=relationship("Review", back_populates="residential_complex")
 
     @property
@@ -199,7 +199,7 @@ class Building(Base):
     construction_end=Column(Date)
 
     #Relations
-    residential_complex=relationship("ResidentialComplex", back_populates= "building")
+    residential_complex=relationship("ResidentialComplex", back_populates= "buildings")
     apartments=relationship("Apartment", back_populates= "building")
     commercial_units=relationship("CommercialUnit", back_populates= "building")
 

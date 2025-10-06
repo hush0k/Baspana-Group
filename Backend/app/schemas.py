@@ -130,6 +130,15 @@ class ResidentialComplexResponse(ResidentialComplexBase):
     class Config:
         orm_mode = True
 
+class PaginatedResidentialComplexResponse(BaseModel):
+    total: int
+    results: List[ResidentialComplexResponse]
+    limit: int
+    offset: int
+
+    class Config:
+        orm_mode = True
+
 
 #Building
 class BuildingBase(BaseModel):
@@ -150,7 +159,6 @@ class BuildingCreate(BuildingBase):
     pass
 
 class BuildingUpdate(BaseModel):
-    residential_complex_id: Optional[int] = None
     block: Optional[int] = None
     description: Optional[str] = None
     floor_count: Optional[int] = None
@@ -165,6 +173,15 @@ class BuildingUpdate(BaseModel):
 
 class BuildingResponse(BuildingBase):
     id: int
+
+    class Config:
+        orm_mode = True
+
+class PaginatedBuildingResponse(BaseModel):
+    total: int
+    results: List[BuildingResponse]
+    limit: int
+    offset: int
 
     class Config:
         orm_mode = True
