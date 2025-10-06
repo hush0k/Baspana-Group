@@ -68,7 +68,7 @@ def create_user_endpoint(user: UserCreate, db: Session = Depends(get_db)):
 #------------------------------------------------------------------------------
 
 #PUT Routers
-@router.put("/{user_id}", response_model=UserResponse)
+@router.patch("/{user_id}", response_model=UserResponse)
 def update_user_endpoint(user_id: int, user: UserUpdate, db: Session = Depends(get_db),
                          _: User = Depends(get_current_user)):
     existing_user = get_user_by_id(db, user_id)
