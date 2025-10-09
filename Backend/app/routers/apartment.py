@@ -9,7 +9,7 @@ from app.cruds.apartment import create_apartment, delete_apartment, get_apartmen
 	get_apartments_filtered, \
 	update_apartment
 from app.database import get_db
-from app.models import Apartment, ApartmentType, Direction, FinishingType, PropertyStatus, Role, User
+from app.models import ApartmentType, Direction, FinishingType, PropertyStatus, Role, User
 from app.schemas import ApartmentCreate, ApartmentResponse, ApartmentUpdate, PaginatedApartmentResponse
 
 router = APIRouter()

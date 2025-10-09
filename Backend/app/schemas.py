@@ -250,7 +250,7 @@ class CommercialUnitBase(BaseModel):
     ceiling_height: Decimal
     finishing_type: FinishingType
     price_per_sqr: Decimal
-    total_price: Decimal
+    total_price: Optional[Decimal] = None
     status: PropertyStatus
     orientation: Direction
     isCorner: bool
@@ -276,6 +276,16 @@ class CommercialUnitResponse(CommercialUnitBase):
 
     class Config:
         orm_mode = True
+
+class PaginatedCommercialUnitResponse(BaseModel):
+    total: int
+    results: List[CommercialUnitResponse]
+    limit: int
+    offset: int
+
+    class Config:
+        orm_mode = True
+
 
 
 #Review

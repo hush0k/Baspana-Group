@@ -101,7 +101,7 @@ def create_apartment(db: Session, apartment: ApartmentCreate):
 		min_price = calculated_price * Decimal(0.6)
 		max_price = calculated_price * Decimal(2)
 
-		if apartment.total_price >= min_price or apartment.total_price <= max_price:
+		if apartment.total_price <= min_price or apartment.total_price >= max_price:
 			raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Apartment price must in range {min_price} to {max_price}")
 
 		total_price = apartment.total_price
