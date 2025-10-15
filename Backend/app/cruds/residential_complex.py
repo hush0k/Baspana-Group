@@ -98,7 +98,6 @@ def update_residential_complex(db: Session, residential_id: int,  complex_update
 
 	if not db_complex:
 		return None
-
 	update_data = complex_update.model_dump(exclude_unset = True)
 
 	for field, value in update_data.items():
