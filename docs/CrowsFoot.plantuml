@@ -1,0 +1,238 @@
+@startuml
+!define ENTITY entity
+!define PK <color:#3b82f6><b>PK</b></color>
+!define FK <color:#8b5cf6><b>FK</b></color>
+
+skinparam backgroundColor #f8fafc
+skinparam shadowing false
+skinparam roundcorner 20
+skinparam linetype ortho
+
+skinparam class {
+    BackgroundColor #FFE8F6
+    BorderColor #9A2069
+    BorderThickness 2
+    FontSize 10
+    FontName "Inter"
+    FontColor #000000
+    AttributeFontSize 12
+    AttributeFontColor #000000
+}
+
+skinparam arrow {
+    Color #004C99
+    Thickness 2
+}
+
+
+
+' ============================================
+' USERS & AUTHENTICATION
+' ============================================
+class User {
+    PK id: BIGINT
+    --
+    first_name: VARCHAR
+    last_name: VARCHAR
+    email: VARCHAR UNIQUE
+    date_of_birth: DATE
+    city: ENUM(City)
+    phone_number: VARCHAR
+    role: ENUM(Role)
+    status_of_user: ENUM(StatusOfUser)
+    password_hash: VARCHAR
+    is_active: BOOLEAN
+    avatar_url: VARCHAR
+    created_at: TIMESTAMP
+    updated_at: TIMESTAMP
+}
+
+' ============================================
+' REAL ESTATE CORE
+' ============================================
+class ResidentialComplex {
+    PK id: BIGINT
+    --
+    name: VARCHAR
+    description: TEXT
+    block_counts: INTEGER
+    playground_area: DECIMAL
+    apartment_area: DECIMAL
+    commercial_area: DECIMAL
+    parking_area: DECIMAL
+    landing_area: DECIMAL
+    material: ENUM(MaterialType)
+    city: ENUM(City)
+    address: VARCHAR
+    longitude: DECIMAL
+    latitude: DECIMAL
+    has_security: BOOLEAN
+    building_class: ENUM(BuildingClass)
+    building_status: ENUM(BuildingStatus)
+}
+
+class Building {
+    PK id: BIGINT
+    FK residential_complex_id: BIGINT
+    --
+    block: INTEGER
+    description: TEXT
+    floor_count: INTEGER
+    apartments_count: INTEGER
+    commercials_count: INTEGER
+    parking_count: INTEGER
+    gross_area: DECIMAL
+    elevators_count: INTEGER
+    status: ENUM(BuildingStatus)
+    construction_start: DATE
+    construction_end: DATE
+}
+
+class Apartment {
+    PK id: BIGINT
+    FK building_id: BIGINT
+    --
+    number: INTEGER
+    floor: INTEGER
+    apartment_area: DECIMAL
+    apartment_type: ENUM(ApartmentType)
+    has_balcony: BOOLEAN
+    bathroom_count: INTEGER
+    kitchen_area: DECIMAL
+    ceiling_height: DECIMAL
+    finishing_type: ENUM(FinishingType)
+    price_per_sqr: DECIMAL
+    total_price: DECIMAL
+    status: ENUM(PropertyStatus)
+    orientation: ENUM(Direction)
+    is_corner: BOOLEAN
+}
+
+class CommercialUnit {
+    PK id: BIGINT
+    FK building_id: BIGINT
+    --
+    number: INTEGER
+    floor: INTEGER
+    space_area: DECIMAL
+    ceiling_height: DECIMAL
+    finishing_type: ENUM(FinishingType)
+    price_per_sqr: DECIMAL
+    total_price: DECIMAL
+    status: ENUM(PropertyStatus)
+    orientation: ENUM(Direction)
+    is_corner: BOOLEAN
+}
+
+' ============================================
+' BUSINESS OPERATIONS
+' ============================================
+class Order {
+    PK id: BIGINT
+    FK user_id: BIGINT
+    --
+    object_id: BIGINT
+    order_type: ENUM(OrderType)
+    object_type: ENUM(ObjectType)
+    total_price: DECIMAL
+    order_date: TIMESTAMP
+    payment_type: ENUM(PaymentType)
+    booking_deposit: DECIMAL
+    booking_expiration_date: DATE
+    status: ENUM(OrderStatus)
+}
+
+class Favorite {
+    PK id: BIGINT
+    FK user_id: BIGINT
+    --
+    object_id: BIGINT
+    object_type: ENUM(ObjectType)
+    created_at: TIMESTAMP
+}
+
+' ============================================
+' CONTENT MANAGEMENT
+' ============================================
+class Image {
+    PK id: BIGINT
+    --
+    object_id: BIGINT
+    object_type: ENUM(ObjectType)
+    img_url: VARCHAR
+    upload_date: DATE
+}
+
+class Review {
+    PK id: BIGINT
+    FK user_id: BIGINT
+    FK residential_complex_id: BIGINT
+    --
+    rating: INTEGER
+    comment: TEXT
+    created_at: TIMESTAMP
+}
+
+' ============================================
+' FINANCIAL TRANSACTIONS
+' ============================================
+class UserWallet {
+    PK id: BIGINT
+    FK user_id: BIGINT
+    --
+    balance: DECIMAL
+    loyalty_points: DECIMAL
+    is_active: BOOLEAN
+    created_at: TIMESTAMP
+    updated_at: TIMESTAMP
+}
+
+class WalletTransaction {
+    PK id: BIGINT
+    FK wallet_id: BIGINT
+    FK order_id: BIGINT (nullable)
+    --
+    transaction_type: ENUM(TransactionType)
+    amount: DECIMAL
+    balance_before: DECIMAL
+    balance_after: DECIMAL
+    description: VARCHAR
+    created_at: TIMESTAMP
+}
+
+' ============================================
+' RELATIONSHIPS (Crow's Foot Notation)
+' ============================================
+
+' One ResidentialComplex has many Buildings
+ResidentialComplex ||--o{ Building : "contains"
+
+' One Building has many Apartments
+Building ||--o{ Apartment : "has"
+
+' One Building has many CommercialUnits
+Building ||--o{ CommercialUnit : "has"
+
+' One User makes many Orders
+User ||--o{ Order : "makes"
+
+' One User has many Favorites
+User ||--o{ Favorite : "has"
+
+' One User writes many Reviews
+User ||--o{ Review : "writes"
+
+' One ResidentialComplex receives many Reviews
+ResidentialComplex ||--o{ Review : "receives"
+
+' One User has one UserWallet
+User ||--|| UserWallet : "has"
+
+' One UserWallet contains many WalletTransactions
+UserWallet ||--o{ WalletTransaction : "contains"
+
+' One Order may have many WalletTransactions
+Order ||--o{ WalletTransaction : "references"
+
+
+@enduml

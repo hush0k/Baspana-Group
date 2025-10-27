@@ -1,0 +1,131 @@
+@startuml
+!theme plain
+skinparam activity {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    FontSize 11
+}
+skinparam decision {
+    BackgroundColor LightYellow
+    BorderColor Orange
+}
+
+title Activity Diagram - Apartment Booking & Purchase Process
+
+start
+
+:User enters website;
+
+if (Authenticated?) then (No)
+    :Registration/Login;
+else (Yes)
+endif
+
+:Browse Residential Complexes;
+:Search and Filter;
+:View RC Details;
+:Select Building;
+:View Apartment/Commercial Unit;
+
+repeat
+    if (Property Status?) then (Sold)
+        :View Another Property;
+    elseif (Booked) then
+        :View Another Property;
+    else (Free)
+        if (User Action?) then (Add to Favorites)
+            :Save to Favorites;
+            if (Continue?) then (No)
+                stop
+            else (Yes)
+            endif
+        elseif (Book) then
+            :Booking Process;
+            :Select Payment Method;
+            :Pay Deposit;
+            :Create BOOKING Order;
+            :Update Status to BOOKED;
+            :Wallet Transaction (DEPOSIT);
+            :Order Status: PENDING;
+            
+            if (Manager Reviews) then (Approves)
+                :Status: CONFIRMED;
+                if (Booking Expired?) then (Yes)
+                    :Auto-cancel Booking;
+                    :Refund Deposit;
+                    :Apartment Status: FREE;
+                    :REFUND Transaction;
+                    :Notify User;
+                    stop
+                else (No, Full Amount Paid)
+                    :Status: COMPLETED;
+                    :Award Loyalty Points;
+                    if (Update User Status?) then (Bronze → Silver)
+                        :Status: SILVER;
+                    elseif (Silver → Gold) then
+                        :Status: GOLD;
+                    else (No Change)
+                        :Status Unchanged;
+                    endif
+                    :Notify User;
+                    :View Order History;
+                    stop
+                endif
+            else (Rejects)
+                :Status: CANCELLED;
+                :Refund Deposit;
+                :Apartment Status: FREE;
+                :REFUND Transaction;
+                :Notify User;
+                stop
+            endif
+            
+        else (Purchase)
+            :Purchase Process;
+            :Select Payment Method;
+            
+            if (Payment Type?) then (Cash/Card)
+                :Pay Full Amount;
+            elseif (Mortgage) then
+                :Mortgage Calculator;
+                :Pay Full Amount;
+            else (Installment)
+                :Installment Plan;
+                :Pay Full Amount;
+            endif
+            
+            :Create PURCHASE Order;
+            :Update Status to SOLD;
+            :PURCHASE Transaction;
+            :Order Status: PENDING;
+            
+            if (Manager Reviews) then (Approves)
+                :Status: COMPLETED;
+                :Award Loyalty Points;
+                
+                if (Update User Status?) then (Bronze → Silver)
+                    :Status: SILVER;
+                elseif (Silver → Gold) then
+                    :Status: GOLD;
+                else (No Change)
+                    :Status Unchanged;
+                endif
+                
+                :Notify User;
+                :View Order History;
+                stop
+            else (Rejects)
+                :Status: CANCELLED;
+                :Refund Full Amount;
+                :Apartment Status: FREE;
+                :REFUND Transaction;
+                :Notify User;
+                stop
+            endif
+        endif
+    endif
+repeat while (View Another Property?) is (Yes)
+
+stop
+
+@enduml

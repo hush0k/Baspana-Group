@@ -1,11 +1,22 @@
+import re
 from datetime import date, datetime
 from decimal import Decimal
 from typing import List, Optional
 
-from Backend.app.models import ApartmentType, BuildingClass, BuildingStatus, City, Direction, FinishingType, \
+from .models import ApartmentType, BuildingClass, BuildingStatus, City, Direction, FinishingType, \
     MaterialType, ObjectType, OrderStatus, OrderType, PaymentType, PropertyStatus, Role, StatusOfUser, TransactionType
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from pydantic_extra_types.phone_numbers import PhoneNumber
+
+
+#Refresh Tokens
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = 'Bearer'
 
 #User Schemas
 class UserBase(BaseModel):
@@ -16,9 +27,33 @@ class UserBase(BaseModel):
     phone_number: PhoneNumber
     city: City
     avatar_url: str
+    is_active: bool = True
+
 
 class UserCreate(UserBase):
     password: str
+
+    # noinspection PyNestedDecorators
+    @field_validator('password', mode = "after")
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        if len(value) < 8:
+            raise ValueError('Password must be at least 8 characters')
+
+        if not re.search(r'[A-Z]', value):
+            raise ValueError('Password must contain at least one uppercase letter')
+
+        if not re.search(r'[a-z]', value):
+            raise ValueError('Password must contain at least one lowercase letter')
+
+        if not re.search(r'\d', value):
+            raise ValueError('Password must contain at least one digit')
+
+        if not re.search (r'[!@#$%^&*(),.?":{}|<>]', value):
+            raise ValueError ('Password must contain at least one special character')
+
+        return value
+
 
 class UserUpdate(BaseModel):
     first_name: Optional[str] = None
@@ -27,11 +62,21 @@ class UserUpdate(BaseModel):
     phone_number: Optional[PhoneNumber] = None
     city: Optional[City] = None
     avatar_url: Optional[str] = None
-    password: Optional[str] = None
+
+class UserUpdatePassword(BaseModel):
+    old_password: str
+    new_password: str
+    confirm_password: str
+
+class UserUpdateStatus(BaseModel):
+    status: StatusOfUser
+
+class UserUpdateRole(BaseModel):
+    role: Role
 
 class UserResponse(UserBase):
     id: int
-    created_at: date
+    created_at: datetime
     status_of_user: StatusOfUser
     role: Role
 
@@ -85,6 +130,15 @@ class ResidentialComplexResponse(ResidentialComplexBase):
     class Config:
         orm_mode = True
 
+class PaginatedResidentialComplexResponse(BaseModel):
+    total: int
+    results: List[ResidentialComplexResponse]
+    limit: int
+    offset: int
+
+    class Config:
+        orm_mode = True
+
 
 #Building
 class BuildingBase(BaseModel):
@@ -105,7 +159,6 @@ class BuildingCreate(BuildingBase):
     pass
 
 class BuildingUpdate(BaseModel):
-    residential_complex_id: Optional[int] = None
     block: Optional[int] = None
     description: Optional[str] = None
     floor_count: Optional[int] = None
@@ -124,21 +177,30 @@ class BuildingResponse(BuildingBase):
     class Config:
         orm_mode = True
 
+class PaginatedBuildingResponse(BaseModel):
+    total: int
+    results: List[BuildingResponse]
+    limit: int
+    offset: int
+
+    class Config:
+        orm_mode = True
+
 
 #Apartment
 class ApartmentBase(BaseModel):
     building_id: int
     number: int
     floor: int
-    apartment_area: float
+    apartment_area: Decimal
     apartment_type: ApartmentType
     has_balcony: bool
     bathroom_count: int
-    kitchen_area: float
-    ceiling_height: float
+    kitchen_area: Decimal
+    ceiling_height: Decimal
     finishing_type: FinishingType
     price_per_sqr: Decimal
-    total_price: Decimal
+    total_price: Optional[Decimal] = None
     status: PropertyStatus
     orientation: Direction
     isCorner: bool
@@ -150,12 +212,12 @@ class ApartmentUpdate(BaseModel):
     building_id: Optional[int] = None
     number: Optional[int] = None
     floor: Optional[int] = None
-    apartment_area: Optional[float] = None
+    apartment_area: Optional[Decimal] = None
     apartment_type: Optional[ApartmentType] = None
     has_balcony: Optional[bool] = None
     bathroom_count: Optional[int] = None
-    kitchen_area: Optional[float] = None
-    ceiling_height: Optional[float] = None
+    kitchen_area: Optional[Decimal] = None
+    ceiling_height: Optional[Decimal] = None
     finishing_type: Optional[FinishingType] = None
     price_per_sqr: Optional[Decimal] = None
     total_price: Optional[Decimal] = None
@@ -169,6 +231,14 @@ class ApartmentResponse(ApartmentBase):
     class Config:
         orm_mode = True
 
+class PaginatedApartmentResponse(BaseModel):
+    total: int
+    results: List[ApartmentResponse]
+    limit: int
+    offset: int
+
+    class Config:
+        orm_mode = True
 
 
 #Commercial Unit
@@ -176,11 +246,11 @@ class CommercialUnitBase(BaseModel):
     building_id: int
     number: int
     floor: int
-    space_area: float
-    ceiling_height: float
+    space_area: Decimal
+    ceiling_height: Decimal
     finishing_type: FinishingType
     price_per_sqr: Decimal
-    total_price: Decimal
+    total_price: Optional[Decimal] = None
     status: PropertyStatus
     orientation: Direction
     isCorner: bool
@@ -192,8 +262,8 @@ class CommercialUnitUpdate(BaseModel):
     building_id: Optional[int] = None
     number: Optional[int] = None
     floor: Optional[int] = None
-    space_area: Optional[float] = None
-    ceiling_height: Optional[float] = None
+    space_area: Optional[Decimal] = None
+    ceiling_height: Optional[Decimal] = None
     finishing_type: Optional[FinishingType] = None
     price_per_sqr: Optional[Decimal] = None
     total_price: Optional[Decimal] = None
@@ -206,6 +276,16 @@ class CommercialUnitResponse(CommercialUnitBase):
 
     class Config:
         orm_mode = True
+
+class PaginatedCommercialUnitResponse(BaseModel):
+    total: int
+    results: List[CommercialUnitResponse]
+    limit: int
+    offset: int
+
+    class Config:
+        orm_mode = True
+
 
 
 #Review

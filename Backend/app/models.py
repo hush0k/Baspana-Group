@@ -1,9 +1,10 @@
+from datetime import datetime
 from enum import Enum
 
-from sqlalchemy import Boolean, Column, DECIMAL, Date, DateTime, ForeignKey, Integer, String, Enum as SqlEnum
+from sqlalchemy import Boolean, Column, DECIMAL, Date, DateTime, ForeignKey, Integer, String, Enum as SqlEnum, func
 from sqlalchemy.orm import Session, relationship
 
-from app.database import Base
+from .database import Base
 
 class City(str, Enum):
     almaty = "Almaty"
@@ -130,9 +131,10 @@ class User(Base):
     phone_number = Column(String)
     role = Column(SqlEnum(Role, name="role"))
     updated_at = Column(Date)
-    created_at = Column(Date)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     status_of_user = Column(SqlEnum(StatusOfUser, name="status_of_user"))
     password = Column(String)
+    is_active = Column(Boolean, default=True)
     avatar_url=Column(String)
 
     #Relations
@@ -151,8 +153,8 @@ class ResidentialComplex(Base):
     description = Column(String)
     block_counts = Column(Integer)
     playground_area = Column(DECIMAL)
-    apartments_area = Column(DECIMAL)
-    commercials_area = Column(DECIMAL)
+    apartment_area = Column(DECIMAL)
+    commercial_area = Column(DECIMAL)
     parking_area = Column(DECIMAL)
     landing_area = Column(DECIMAL)
     material=Column(SqlEnum(MaterialType, name="material"))
@@ -166,7 +168,7 @@ class ResidentialComplex(Base):
 
 
     #Relations
-    building=relationship("Building", back_populates="residential_complex")
+    buildings=relationship("Building", back_populates="residential_complex")
     reviews=relationship("Review", back_populates="residential_complex")
 
     @property
@@ -192,12 +194,12 @@ class Building(Base):
     parking_count=Column(Integer)
     gross_area=Column(DECIMAL)
     elevators_count=Column(Integer)
-    status=Column(SqlEnum(BuildingStatus, name="status"))
+    status=Column(SqlEnum(BuildingStatus, name="building_status"))
     construction_start=Column(Date)
     construction_end=Column(Date)
 
     #Relations
-    residential_complex=relationship("ResidentialComplex", back_populates= "building")
+    residential_complex=relationship("ResidentialComplex", back_populates= "buildings")
     apartments=relationship("Apartment", back_populates= "building")
     commercial_units=relationship("CommercialUnit", back_populates= "building")
 
@@ -226,7 +228,7 @@ class Apartment(Base):
     finishing_type=Column(SqlEnum(FinishingType, name="finishing_type"))
     price_per_sqr=Column(DECIMAL)
     total_price=Column(DECIMAL)
-    status=Column(SqlEnum(PropertyStatus, name="status"))
+    status=Column(SqlEnum(PropertyStatus, name="property_status"))
     orientation=Column(SqlEnum(Direction, name="direction"))
     isCorner=Column(Boolean)
 
@@ -254,12 +256,12 @@ class CommercialUnit(Base):
     finishing_type=Column(SqlEnum(FinishingType, name="finishing_type"))
     price_per_sqr=Column(DECIMAL)
     total_price=Column(DECIMAL)
-    status=Column(SqlEnum(PropertyStatus, name="status"))
+    status=Column(SqlEnum(PropertyStatus, name="property_status"))
     orientation=Column(SqlEnum(Direction, name="direction"))
     isCorner=Column(Boolean)
 
     # Relations
-    building = relationship ("Building", back_populates = "apartments")
+    building = relationship("Building", back_populates="commercial_units")
 
     @property
     def images (self):
@@ -275,6 +277,7 @@ class Review(Base):
 
     id = Column(Integer, primary_key=True)
     residential_complex_id = Column(Integer, ForeignKey('residential_complex.id'))
+    user_id = Column (Integer, ForeignKey ('users.id'))
     rating = Column(Integer)
     comment = Column(String)
     created_at = Column(DateTime)
@@ -324,7 +327,7 @@ class Order(Base):
     payment_type = Column(SqlEnum(PaymentType, name="payment_type"))
     booking_deposit = Column(DECIMAL)
     booking_expiration_date = Column(Date)
-    status = Column(SqlEnum(OrderStatus, name="status"))
+    status = Column(SqlEnum(OrderStatus, name="order_status"))
 
     user = relationship ("User", back_populates = "orders")
     wallet_transactions = relationship ("WalletTransaction", back_populates = "order")
@@ -362,6 +365,7 @@ class WalletTransaction(Base):
 
     id = Column(Integer, primary_key=True)
     transaction_type = Column(SqlEnum(TransactionType, name="transaction_type"))
+    wallet_id = Column (Integer, ForeignKey ('user_wallet.id'))
     amount = Column(DECIMAL)
     balance_before = Column(DECIMAL)
     balance_after = Column(DECIMAL)
@@ -371,6 +375,11 @@ class WalletTransaction(Base):
 
     wallet = relationship ("UserWallet", back_populates = "transactions")
     order = relationship ("Order", back_populates = "wallet_transactions")
+
+
+
+
+
 
 
 

@@ -9,51 +9,51 @@ skinparam actor {
     BorderColor DarkGreen
 }
 
-title Use Case Диаграмма - Сайт Строительной Компании
+title Use Case Diagram - Construction Company Website
 
-' Актеры
-actor "Покупатель\n(CONSUMER)" as Consumer
-actor "Менеджер\n(MANAGER)" as Manager
-actor "Администратор\n(ADMIN)" as Admin
-actor "Гость" as Guest
+' Actors
+actor "Customer\n(CONSUMER)" as Consumer
+actor "Manager\n(MANAGER)" as Manager
+actor "Administrator\n(ADMIN)" as Admin
+actor "Guest" as Guest
 
-' Система
-rectangle "Система управления недвижимостью" {
+' System
+rectangle "Real Estate Management System" {
 
-    ' Публичные use cases
-    usecase "Просмотр ЖК" as UC1
-    usecase "Просмотр квартир" as UC2
-    usecase "Поиск и фильтрация" as UC3
-    usecase "Просмотр детальной информации" as UC4
+    ' Public use cases
+    usecase "Browse Residential Complexes" as UC1
+    usecase "Browse Apartments" as UC2
+    usecase "Search and Filter" as UC3
+    usecase "View Detailed Information" as UC4
 
-    ' Авторизация
-    usecase "Регистрация" as UC5
-    usecase "Авторизация" as UC6
-    usecase "Выход из системы" as UC7
+    ' Authentication
+    usecase "Register" as UC5
+    usecase "Login" as UC6
+    usecase "Logout" as UC7
 
-    ' Функции покупателя
-    usecase "Добавить в избранное" as UC8
-    usecase "Просмотр избранного" as UC9
-    usecase "Бронирование квартиры" as UC10
-    usecase "Покупка квартиры" as UC11
-    usecase "Выбор способа оплаты" as UC12
-    usecase "Просмотр истории заказов" as UC13
+    ' Customer functions
+    usecase "Add to Favorites" as UC8
+    usecase "View Favorites" as UC9
+    usecase "Book Apartment" as UC10
+    usecase "Purchase Apartment" as UC11
+    usecase "Select Payment Method" as UC12
+    usecase "View Order History" as UC13
 
-    ' Функции менеджера
-    usecase "Управление квартирами" as UC14
-    usecase "Просмотр заказов" as UC15
-    usecase "Обновление статуса заказа" as UC16
-    usecase "Управление зданиями" as UC17
+    ' Manager functions
+    usecase "Manage Apartments" as UC14
+    usecase "View Orders" as UC15
+    usecase "Update Order Status" as UC16
+    usecase "Manage Buildings" as UC17
 
-    ' Функции администратора
-    usecase "Управление пользователями" as UC18
-    usecase "Управление ЖК" as UC19
-    usecase "Просмотр аналитики" as UC20
-    usecase "Управление ролями" as UC21
-    usecase "Управление системой" as UC22
+    ' Administrator functions
+    usecase "Manage Users" as UC18
+    usecase "Manage Residential Complexes" as UC19
+    usecase "View Analytics" as UC20
+    usecase "Manage Roles" as UC21
+    usecase "Manage System" as UC22
 }
 
-' Связи гостя
+' Guest connections
 Guest --> UC1
 Guest --> UC2
 Guest --> UC3
@@ -61,7 +61,7 @@ Guest --> UC4
 Guest --> UC5
 Guest --> UC6
 
-' Связи покупателя
+' Consumer connections
 Consumer --> UC1
 Consumer --> UC2
 Consumer --> UC3
@@ -74,7 +74,7 @@ Consumer --> UC11
 Consumer --> UC12
 Consumer --> UC13
 
-' Связи менеджера
+' Manager connections
 Manager --> UC1
 Manager --> UC2
 Manager --> UC3
@@ -85,7 +85,7 @@ Manager --> UC15
 Manager --> UC16
 Manager --> UC17
 
-' Связи администратора
+' Admin connections
 Admin --> UC7
 Admin --> UC18
 Admin --> UC19
@@ -97,11 +97,11 @@ Admin --> UC15
 Admin --> UC16
 Admin --> UC17
 
-' Relationships между use cases
+' Relationships between use cases
 UC11 ..> UC12 : <<include>>
 UC10 ..> UC12 : <<include>>
 UC5 ..> UC6 : <<extend>>
 
-note right of UC12 : Наличные, карта,\nипотека, рассрочка
+note right of UC12 : Cash, Card,\nMortgage, Installment
 
 @enduml
