@@ -43,3 +43,11 @@ logs:
 
 db:
 	docker exec -it baspana_group_db psql -U baspana_admin -d baspana_group_db
+
+# Логи фронтенда
+logs-front:
+	docker logs -f baspana_group_frontend
+
+# Все логи
+logs-all:
+	docker-compose logs -f
