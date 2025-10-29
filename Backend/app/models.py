@@ -136,6 +136,7 @@ class User(Base):
     password = Column(String)
     is_active = Column(Boolean, default=True)
     avatar_url=Column(String)
+    loyalty_point = Column(Integer, default=0)
 
     #Relations
     orders = relationship("Order", back_populates="user")

@@ -339,6 +339,7 @@ class OrderBase(BaseModel):
     payment_type: PaymentType
     booking_deposit: Decimal
     booking_expiration_date: date
+    status: OrderStatus
 
 class OrderCreate(OrderBase):
     pass
@@ -351,6 +352,15 @@ class OrderUpdate(BaseModel):
 
 class OrderResponse(OrderBase):
     id: int
+
+    class Config:
+        orm_mode = True
+
+class PaginatedOrderResponse(BaseModel):
+    total: int
+    results: List[OrderResponse]
+    limit: int
+    offset: int
 
     class Config:
         orm_mode = True
