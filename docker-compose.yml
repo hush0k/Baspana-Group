@@ -36,14 +36,25 @@ services:
       - .env
 
 
-  # Frontend Angular (потом добавишь)
-  # frontend:
-  #   build: ./frontend
-  #   container_name: construction_frontend
-  #   ports:
-  #     - "4200:4200"
-  #   networks:
-  #     - construction_network
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: baspana_group_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8081
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - construction_network
+    stdin_open: true
+    tty: true
 
 
 networks:

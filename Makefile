@@ -1,5 +1,6 @@
 DC = docker-compose
 BACKEND = backend
+FRONTEND = frontend
 DB = db
 DB_USER = $(POSTGRES_USER)
 DB_NAME = $(POSTGRES_DB)
@@ -7,6 +8,10 @@ DB_NAME = $(POSTGRES_DB)
 # Запуск всех контейнеров
 up:
 	$(DC) up -d
+
+# Запуск с выводом логов
+up-logs:
+	$(DC) up
 
 start:
 	$(DC) start
@@ -17,6 +22,18 @@ down:
 
 stop:
 	$(DC) stop
+
+# Пересборка контейнеров
+rebuild:
+	$(DC) up -d --build
+
+# Пересборка только фронтенда
+rebuild-front:
+	$(DC) up -d --build $(FRONTEND)
+
+# Пересборка только бэкенда
+rebuild-back:
+	$(DC) up -d --build $(BACKEND)
 
 # Применить все миграции
 migrate:
@@ -37,14 +54,32 @@ db-version:
 # Создать новую миграцию
 create:
 	$(DC) exec $(BACKEND) alembic revision --autogenerate -m "$(MSG)"
+
+# Логи бэкенда
 logs:
 	docker logs -f baspana_group_backend
 
+# Подключение к БД
 db:
 	docker exec -it baspana_group_db psql -U baspana_admin -d baspana_group_db
 
+# Логи фронтенда
 logs-front:
 	docker logs -f baspana_group_frontend
 
+# Логи всех сервисов
 logs-all:
-	docker-compose logs -f
+	$(DC) logs -f
+
+# Очистка
+clean:
+	$(DC) down -v
+	docker system prune -f
+
+# Установка зависимостей фронтенда
+npm-install:
+	$(DC) exec $(FRONTEND) npm install
+
+# Статус контейнеров
+ps:
+	$(DC) ps

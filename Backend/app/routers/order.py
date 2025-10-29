@@ -75,7 +75,6 @@ def create_order_endpoint(order: OrderCreate,
     if existing_order:
         raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN, detail="Order already exists")
 
-    if order.status ==
 
     return create_order(db, existing_order)
 
