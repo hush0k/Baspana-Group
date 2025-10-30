@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosError } from 'axios';
 
-const api = axios.create({
+const api: AxiosInstance = axios.create({
     baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8081/api',
     headers: {
         'Content-Type': 'application/json'
@@ -8,14 +8,16 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-    config => {
+    (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
         const token = localStorage.getItem('access_token');
-        if (token) {
+        if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
-    error => Promise.reject(error)
+    (error: AxiosError): Promise<AxiosError> => {
+        return Promise.reject(error);
+    }
 );
 
 export default api;
