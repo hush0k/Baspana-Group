@@ -1,7 +1,7 @@
 import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/AuthService';
-import './Register.scss';
+import './Register.css';
 
 const Register: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -50,115 +50,73 @@ const Register: React.FC = () => {
     };
 
     return (
-        <div className="register-container">
-            <div className="register-box">
-                <h2>Регистрация</h2>
-                <form onSubmit={handleSubmit}>
-                    {error && <div className="error-message">{error}</div>}
+        <div className="container">
+            <div className="auth-container">
+                <h2>Зарегистрируйтесь</h2>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <input
-                                type="text"
-                                name="first_name"
-                                placeholder="Имя"
-                                value={formData.first_name}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <input
-                                type="text"
-                                name="last_name"
-                                placeholder="Фамилия"
-                                value={formData.last_name}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
+                <form className="auth-form">
+                    <div className="form-group">
+                        <label htmlFor="firstName">Имя:</label>
+                        <input type="text" id="firstName" placeholder="Введите ваше имя" required/>
                     </div>
 
                     <div className="form-group">
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
+                        <label htmlFor="lastName">Фамилия:</label>
+                        <input type="text" id="lastName" placeholder="Введите вашу фамилию" required/>
                     </div>
 
                     <div className="form-group">
-                        <input
-                            type="tel"
-                            name="phone_number"
-                            placeholder="Телефон (+77001234567)"
-                            value={formData.phone_number}
-                            onChange={handleChange}
-                            required
-                        />
+                        <label htmlFor="email">Email:</label>
+                        <input type="email" id="email" placeholder="Введите ваш email" required/>
                     </div>
 
                     <div className="form-group">
-                        <input
-                            type="date"
-                            name="date_of_birth"
-                            placeholder="Дата рождения"
-                            value={formData.date_of_birth}
-                            onChange={handleChange}
-                            required
-                        />
+                        <label htmlFor="dateOfBirth">Дата рождения:</label>
+                        <input type="date" id="dateOfBirth" required/>
                     </div>
 
                     <div className="form-group">
-                        <select
-                            name="city"
-                            value={formData.city}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="Almaty">Алматы</option>
-                            <option value="Astana">Астана</option>
-                            <option value="Shymkent">Шымкент</option>
-                            <option value="Karaganda">Караганда</option>
+                        <label htmlFor="phoneNumber">Телефон:</label>
+                        <input type="tel" id="phoneNumber" placeholder="+7 (___) ___-__-__" required/>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="city">Город:</label>
+                        <select id="city" required>
+                            <option value="">Выберите город</option>
+                            <option value="almaty">Алматы</option>
+                            <option value="astana">Астана</option>
+                            <option value="shymkent">Шымкент</option>
+                            <option value="karaganda">Караганда</option>
+                            <option value="aktobe">Актобе</option>
+                            <option value="taraz">Тараз</option>
+                            <option value="pavlodar">Павлодар</option>
+                            <option value="oskemen">Усть-Каменогорск</option>
+                            <option value="semey">Семей</option>
+                            <option value="kostanay">Костанай</option>
+                            <option value="kyzylorda">Кызылорда</option>
+                            <option value="atyrau">Атырау</option>
+                            <option value="oral">Уральск</option>
+                            <option value="petropavl">Петропавловск</option>
+                            <option value="turkistan">Туркестан</option>
                         </select>
                     </div>
 
                     <div className="form-group">
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="Пароль"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                        />
+                        <label htmlFor="password">Пароль:</label>
+                        <input type="password" id="password" placeholder="Введите пароль" required/>
                     </div>
 
-                    <div className="form-group">
-                        <input
-                            type="password"
-                            name="confirmPassword"
-                            placeholder="Подтвердите пароль"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <button type="submit" disabled={loading}>
-                        {loading ? 'Регистрация...' : 'Зарегистрироваться'}
+                    <button type="submit" className="auth-btn">
+                        <div>
+                            <span className="button-text">Зарегистрироваться</span>
+                        </div>
                     </button>
-                </form>
 
-                <div className="login-link">
-                    <p>
-                        Уже есть аккаунт? <a href="/login">Войти</a>
+                    <p className="auth-link">
+                        Уже есть аккаунт? <a href="/login"> Войти</a>
                     </p>
-                </div>
+                </form>
             </div>
         </div>
     );
