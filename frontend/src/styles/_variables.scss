@@ -1,0 +1,24 @@
+// Spacing
+$spacing-xs: 0.5rem;   // 8px
+$spacing-sm: 1rem;      // 16px
+$spacing-md: 1.5rem;    // 24px
+$spacing-lg: 2rem;      // 32px
+$spacing-xl: 3rem;      // 48px
+
+$container-max-width: 1200px;
+
+// Breakpoints
+$mobile: 320px;
+$tablet: 768px;
+$desktop: 1024px;
+$wide: 1440px;
+
+// Colors
+$main-color: #3d2417;
+$hover-main-color: #271912;
+$error-color: #d32f2f;
+$error-bg: #ffebee;
+$border-color: #8c8c8c;
+$input-placeholder: #888888;
+$text-color: #303030;
+$bg-light: #f0f0f0;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/AuthService';
-import '../../styles/Login.module.scss';
+import styles from '../../styles/Login.module.scss';
 import main from '../../assets/image/auth_main_logo.jpg';
 import logo from '../../assets/image/Baspana_Logo_black.png';
 
@@ -29,21 +29,21 @@ const Login = () => {
     };
 
     return (
-        <div className="container">
-            <div className="main-img">
+        <div className={styles.container}>
+            <div className={styles.mainImg}>
                 <img src={main} alt="Background"/>
             </div>
-            <div className="auth-container">
-                <div className="auth-logo">
+            <div className={styles.authContainer}>
+                <div className={styles.authLogo}>
                     <img src={logo} alt="Logo"/>
                 </div>
 
-                <h2>Добро пожаловать!</h2>
+                <h2 className={styles.title}>Добро пожаловать!</h2>
 
-                {error && <div className="error-message">{error}</div>}
+                {error && <div className={styles.errorMessage}>{error}</div>}
 
-                <form className="auth-form" onSubmit={handleSubmit}>
-                    <div className="form-group">
+                <form className={styles.authForm} onSubmit={handleSubmit}>
+                    <div className={styles.formGroup}>
                         <label htmlFor="email">Email:</label>
                         <input
                             type="email"
@@ -55,7 +55,7 @@ const Login = () => {
                         />
                     </div>
 
-                    <div className="form-group">
+                    <div className={styles.formGroup}>
                         <label htmlFor="password">Пароль:</label>
                         <input
                             type="password"
@@ -67,16 +67,14 @@ const Login = () => {
                         />
                     </div>
 
-                    <button type="submit" className="auth-btn" disabled={loading}>
-                        <div>
-                            <span className="button-text">
-                                {loading ? 'Загрузка...' : 'Войти'}
-                            </span>
-                        </div>
+                    <button type="submit" className={styles.authBtn} disabled={loading}>
+                        <span className={styles.buttonText}>
+                            {loading ? 'Загрузка...' : 'Войти'}
+                        </span>
                     </button>
 
-                    <p className="auth-link">
-                        Нет аккаунта? <a href="/Register">Зарегистрироваться</a>
+                    <p className={styles.authLink}>
+                        Нет аккаунта? <a href="/register">Зарегистрироваться</a>
                     </p>
                 </form>
             </div>

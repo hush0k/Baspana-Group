@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/AuthService';
-import '../../styles/Register.scss';
+import styles from '../../styles/Register.module.scss';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -50,143 +50,148 @@ const Register = () => {
     };
 
     return (
-        <div className="container">
-            <div className="auth-container">
-                <h2>Зарегистрируйтесь</h2>
+        <div className={styles.container}>
+            <div className={styles.authContainer}>
+                <div className={styles.title}>
+                    <h2>Зарегистрируйтесь</h2>
+                </div>
 
-                {error && <div className="error-message">{error}</div>}
 
-                <form className="auth-form" onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="first_name">Имя:</label>
-                        <input
-                            type="text"
-                            id="first_name"
-                            name="first_name"
-                            placeholder="Введите ваше имя"
-                            value={formData.first_name}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+                {error && <div className={styles.errorMessage}>{error}</div>}
 
-                    <div className="form-group">
-                        <label htmlFor="last_name">Фамилия:</label>
-                        <input
-                            type="text"
-                            id="last_name"
-                            name="last_name"
-                            placeholder="Введите вашу фамилию"
-                            value={formData.last_name}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="email">Email:</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Введите ваш email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="date_of_birth">Дата рождения:</label>
-                        <input
-                            type="date"
-                            id="date_of_birth"
-                            name="date_of_birth"
-                            value={formData.date_of_birth}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="phone_number">Телефон:</label>
-                        <input
-                            type="tel"
-                            id="phone_number"
-                            name="phone_number"
-                            placeholder="+7 (___) ___-__-__"
-                            value={formData.phone_number}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="city">Город:</label>
-                        <select
-                            id="city"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Выберите город</option>
-                            <option value="Almaty">Алматы</option>
-                            <option value="Astana">Астана</option>
-                            <option value="Shymkent">Шымкент</option>
-                            <option value="Karaganda">Караганда</option>
-                            <option value="Aktobe">Актобе</option>
-                            <option value="Taraz">Тараз</option>
-                            <option value="Pavlodar">Павлодар</option>
-                            <option value="Oskemen">Усть-Каменогорск</option>
-                            <option value="Semey">Семей</option>
-                            <option value="Kostanay">Костанай</option>
-                            <option value="Kyzylorda">Кызылорда</option>
-                            <option value="Atyrau">Атырау</option>
-                            <option value="Oral">Уральск</option>
-                            <option value="Petropavl">Петропавловск</option>
-                            <option value="Turkistan">Туркестан</option>
-                        </select>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="password">Пароль:</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Введите пароль"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="confirmPassword">Подтвердите пароль:</label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            placeholder="Повторите пароль"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <button type="submit" className="auth-btn" disabled={loading}>
-                        <div>
-                            <span className="button-text">
-                                {loading ? 'Загрузка...' : 'Зарегистрироваться'}
-                            </span>
+                <form className={styles.authForm} onSubmit={handleSubmit}>
+                    <div className={styles.formInput}>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="first_name">Имя:</label>
+                            <input
+                                type="text"
+                                id="first_name"
+                                name="first_name"
+                                placeholder="Введите ваше имя"
+                                value={formData.first_name}
+                                onChange={handleChange}
+                                required
+                            />
                         </div>
-                    </button>
 
-                    <p className="auth-link">
-                        Уже есть аккаунт? <a href="/login">Войти</a>
-                    </p>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="last_name">Фамилия:</label>
+                            <input
+                                type="text"
+                                id="last_name"
+                                name="last_name"
+                                placeholder="Введите вашу фамилию"
+                                value={formData.last_name}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label htmlFor="email">Email:</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="Введите ваш email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label htmlFor="date_of_birth">Дата рождения:</label>
+                            <input
+                                type="date"
+                                id="date_of_birth"
+                                name="date_of_birth"
+                                value={formData.date_of_birth}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label htmlFor="phone_number">Телефон:</label>
+                            <input
+                                type="tel"
+                                id="phone_number"
+                                name="phone_number"
+                                placeholder="+7 (___) ___-__-__"
+                                value={formData.phone_number}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label htmlFor="city">Город:</label>
+                            <select
+                                id="city"
+                                name="city"
+                                value={formData.city}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="Almaty">Алматы</option>
+                                <option value="Astana">Астана</option>
+                                <option value="Shymkent">Шымкент</option>
+                                <option value="Karaganda">Караганда</option>
+                                <option value="Aktobe">Актобе</option>
+                                <option value="Taraz">Тараз</option>
+                                <option value="Pavlodar">Павлодар</option>
+                                <option value="Oskemen">Усть-Каменогорск</option>
+                                <option value="Semey">Семей</option>
+                                <option value="Kostanay">Костанай</option>
+                                <option value="Kyzylorda">Кызылорда</option>
+                                <option value="Atyrau">Атырау</option>
+                                <option value="Oral">Уральск</option>
+                                <option value="Petropavl">Петропавловск</option>
+                                <option value="Turkistan">Туркестан</option>
+                            </select>
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label htmlFor="password">Пароль:</label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Введите пароль"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label htmlFor="confirmPassword">Подтвердите пароль:</label>
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                placeholder="Повторите пароль"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className={styles.formAction}>
+                        <button type="submit" className={styles.authBtn} disabled={loading}>
+                        <span className={styles.buttonText}>
+                            {loading ? 'Загрузка...' : 'Зарегистрироваться'}
+                        </span>
+                        </button>
+
+                        <p className={styles.authLink}>
+                            Уже есть аккаунт? <a href="/login">Войти</a>
+                        </p>
+                    </div>
                 </form>
+
             </div>
         </div>
     );
