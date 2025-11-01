@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/AuthService';
-import './Login.scss';
+import '../../styles/Login.module.scss';
 import main from '../../assets/image/auth_main_logo.jpg';
 import logo from '../../assets/image/Baspana_Logo_black.png';
 
