@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 
-const App: React.FC = () => {
+const App = () => {
     return (
         <Routes>
             <Route path="/login" element={<Login />} />

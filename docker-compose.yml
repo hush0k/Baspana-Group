@@ -46,6 +46,8 @@ services:
     environment:
       - REACT_APP_API_URL=http://localhost:8081
       - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      - WDS_SOCKET_PORT=0
     depends_on:
       - backend
     volumes:

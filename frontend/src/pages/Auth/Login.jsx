@@ -1,19 +1,18 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/AuthService';
-import './Login.css';
+import './Login.scss';
 import main from '../../assets/image/auth_main_logo.jpg';
 import logo from '../../assets/image/Baspana_Logo_black.png';
 
-
-const Login: React.FC = () => {
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [error, setError] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
+const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
@@ -22,7 +21,7 @@ const Login: React.FC = () => {
             const response = await authService.login(email, password);
             localStorage.setItem('access_token', response.access_token);
             navigate('/');
-        } catch (err: any) {
+        } catch (err) {
             setError(err.response?.data?.detail || 'Ошибка входа. Проверьте данные.');
         } finally {
             setLoading(false);
@@ -35,7 +34,6 @@ const Login: React.FC = () => {
                 <img src={main} alt="Background"/>
             </div>
             <div className="auth-container">
-
                 <div className="auth-logo">
                     <img src={logo} alt="Logo"/>
                 </div>
@@ -78,7 +76,7 @@ const Login: React.FC = () => {
                     </button>
 
                     <p className="auth-link">
-                        Нет аккаунта? <a href="/register">Зарегистрироваться</a>
+                        Нет аккаунта? <a href="/Register">Зарегистрироваться</a>
                     </p>
                 </form>
             </div>
