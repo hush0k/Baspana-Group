@@ -12,6 +12,28 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
+    const formatError = (err) => {
+        // Если это объект ошибки от Pydantic (валидация)
+        if (err.response?.data?.detail) {
+            const detail = err.response.data.detail;
+
+            // Если detail - массив ошибок валидации
+            if (Array.isArray(detail)) {
+                return detail.map(e => `${e.loc[e.loc.length - 1]}: ${e.msg}`).join(', ');
+            }
+
+            // Если detail - строка
+            if (typeof detail === 'string') {
+                return detail;
+            }
+
+            // Если detail - объект
+            return JSON.stringify(detail);
+        }
+
+        return 'Ошибка входа. Проверьте данные.';
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -22,7 +44,8 @@ const Login = () => {
             localStorage.setItem('access_token', response.access_token);
             navigate('/');
         } catch (err) {
-            setError(err.response?.data?.detail || 'Ошибка входа. Проверьте данные.');
+            console.error('Login error:', err);
+            setError(formatError(err));
         } finally {
             setLoading(false);
         }

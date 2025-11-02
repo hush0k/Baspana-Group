@@ -1,0 +1,411 @@
+@import "variables";
+
+.pageWrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f0 100%);
+    padding: $spacing-md;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+}
+
+// Loading & Error States
+.loadingSpinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: $spacing-md;
+
+    .spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba($main-color, 0.1);
+        border-top-color: $main-color;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    p {
+        color: $main-color;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: $spacing-md;
+
+    .errorIcon {
+        font-size: 4rem;
+    }
+
+    h2 {
+        color: $error-color;
+        margin: 0;
+    }
+
+    .backBtn {
+        margin-top: $spacing-md;
+        padding: $spacing-sm $spacing-lg;
+        background-color: $main-color;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background-color: $hover-main-color;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba($main-color, 0.3);
+        }
+    }
+}
+
+// Header
+.header {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    padding: $spacing-lg;
+
+    .headerContent {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: $spacing-md;
+        flex-wrap: wrap;
+    }
+
+    .logo {
+        h1 {
+            color: $main-color;
+            margin: 0 0 4px 0;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .tagline {
+            color: #6b7280;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+    }
+
+    .headerActions {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+    }
+
+    .userBadge {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        padding: $spacing-xs $spacing-md;
+        background: $bg-light;
+        border-radius: 50px;
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, $main-color, $hover-main-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .userName {
+            font-weight: 500;
+            color: $text-color;
+        }
+    }
+
+    .logoutBtn {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+        padding: $spacing-sm $spacing-md;
+        background-color: $main-color;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background-color: $hover-main-color;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba($main-color, 0.3);
+        }
+
+        svg {
+            transition: transform 0.3s ease;
+        }
+
+        &:hover svg {
+            transform: translateX(3px);
+        }
+    }
+}
+
+// Main Content
+.mainContent {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+}
+
+// Welcome Section
+.welcomeSection {
+    .welcomeCard {
+        background: linear-gradient(135deg, $main-color 0%, $hover-main-color 100%);
+        color: white;
+        padding: $spacing-xl;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba($main-color, 0.3);
+
+        h2 {
+            margin: 0 0 $spacing-sm 0;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        p {
+            margin: 0 0 $spacing-lg 0;
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .statusBadge {
+            display: inline-flex;
+            align-items: center;
+            gap: $spacing-sm;
+            padding: $spacing-sm $spacing-md;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+
+            .statusLabel {
+                font-size: 0.9rem;
+                opacity: 0.9;
+            }
+
+            .statusValue {
+                font-weight: 600;
+                font-size: 1rem;
+            }
+        }
+    }
+}
+
+// User Info Section
+.userInfoSection {
+    .sectionTitle {
+        color: $main-color;
+        margin: 0 0 $spacing-md 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .infoGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: $spacing-md;
+    }
+
+    .infoCard {
+        background: white;
+        padding: $spacing-md;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        transition: all 0.3s ease;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .cardIcon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba($main-color, 0.1), rgba($main-color, 0.05));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .cardContent {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+
+            .cardLabel {
+                color: #6b7280;
+                font-size: 0.85rem;
+                font-weight: 500;
+            }
+
+            .cardValue {
+                color: $text-color;
+                font-size: 1rem;
+                font-weight: 600;
+                word-break: break-word;
+            }
+        }
+    }
+}
+
+// Actions Section
+.actionsSection {
+    .sectionTitle {
+        color: $main-color;
+        margin: 0 0 $spacing-md 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .actionsGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: $spacing-md;
+    }
+
+    .actionCard {
+        background: white;
+        padding: $spacing-lg;
+        border-radius: 12px;
+        border: 2px solid transparent;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $spacing-sm;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        .actionIcon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba($main-color, 0.1), rgba($main-color, 0.05));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        span {
+            color: $text-color;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        &:hover {
+            border-color: $main-color;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba($main-color, 0.2);
+
+            .actionIcon {
+                transform: scale(1.1);
+            }
+        }
+    }
+}
+
+// Footer
+.footer {
+    margin-top: auto;
+    padding: $spacing-lg 0;
+    text-align: center;
+
+    p {
+        color: #6b7280;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+}
+
+// Responsive Design
+@media (max-width: $tablet) {
+    .pageWrapper {
+        padding: $spacing-sm;
+    }
+
+    .header {
+        .headerContent {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .headerActions {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .userBadge,
+        .logoutBtn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    .welcomeSection .welcomeCard {
+        padding: $spacing-lg;
+
+        h2 {
+            font-size: 1.8rem;
+        }
+    }
+
+    .infoGrid,
+    .actionsGrid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: $mobile) {
+    .header .logo h1 {
+        font-size: 1.5rem;
+    }
+
+    .welcomeSection .welcomeCard h2 {
+        font-size: 1.5rem;
+    }
+
+    .sectionTitle {
+        font-size: 1.2rem !important;
+    }
+}

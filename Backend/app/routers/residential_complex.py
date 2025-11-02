@@ -7,7 +7,6 @@ from app.auth import require_role
 from app.cruds.residential_complex import create_residential_complex, delete_residential_complex, \
 	get_residential_complex_by_id, get_residential_complex_by_name,get_residential_complexes_filtered, \
 	update_residential_complex
-from app.cruds.user import get_user_by_id
 from app.database import get_db
 from app.models import BuildingClass, BuildingStatus, City, MaterialType, Role, User
 from app.schemas import PaginatedResidentialComplexResponse, ResidentialComplexCreate, ResidentialComplexResponse, \
@@ -49,8 +48,8 @@ def get_residential_complexes_endpoint(
 	)
 
 @router.get("/by-id/{id}", response_model=ResidentialComplexResponse)
-def get_residential_complex(complex_id: int, db: Session = Depends(get_db)):
-	residential_complex = get_residential_complex_by_id(db, complex_id)
+def get_residential_complex(id: int, db: Session = Depends(get_db)):
+	residential_complex = get_residential_complex_by_id(db, id)
 	if residential_complex is None:
 		raise HTTPException(status_code=404, detail="Residential Complex not found")
 
