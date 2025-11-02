@@ -77,8 +77,8 @@ def create_order(db: Session, order: OrderCreate):
 		order_type=order.order_type,
 		object_type=order.object_type,
 		total_price=order.total_price,
-		order_date=order.order_date,
 		payment_type=order.payment_type,
+		order_date = date.today (),
 		booking_deposit=order.booking_deposit,
 		booking_expiration_date=order.booking_expiration_date,
 		status=order.status

@@ -71,12 +71,8 @@ def create_order_endpoint(order: OrderCreate,
                           db: Session = Depends(get_db),
                           _: User = Depends(require_role([Role.admin, Role.manager])),
                           ):
-    existing_order = get_order_by_id(db, order.id)
-    if existing_order:
-        raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN, detail="Order already exists")
 
-
-    return create_order(db, existing_order)
+    return create_order(db, order)
 
 
 #PUT Order
