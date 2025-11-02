@@ -1,39 +1,32 @@
 from datetime import date
 
 from sqlalchemy import asc, desc
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Query, Session
 
 from app.models import Building, BuildingStatus
 from app.schemas import BuildingCreate, BuildingUpdate
 
 
-#GET Buildings
-def get_buildings_filtered(db: Session,
-                           complex_id: int = None,
-                           min_floor: int = None,
-                           max_floor: int = None,
-                           floor: int = None,
-                           min_apartments_count: int = None,
-                           max_apartments_count: int = None,
-                           min_commercials_count: int = None,
-                           max_commercials_count: int = None,
-                           min_parking_count: int = None,
-                           max_parking_count: int = None,
-                           min_gross_area: int = None,
-                           max_gross_area: int = None,
-                           min_elevators_count: int = None,
-                           max_elevators_count: int = None,
-                           building_status: BuildingStatus = None,
-                           construction_start: date = None,
-                           construction_end: date = None,
-                           order_by: str = "asc",
-                           sort_by: str = "construction_end",
-                           limit: int = 100,
-                           offset: int = 0,
-                           ):
-
-	query = db.query(Building)
-
+def _apply_building_filters(
+		query: Query,
+		complex_id: int = None,
+		min_floor: int = None,
+		max_floor: int = None,
+		floor: int = None,
+		min_apartments_count: int = None,
+		max_apartments_count: int = None,
+		min_commercials_count: int = None,
+		max_commercials_count: int = None,
+		min_parking_count: int = None,
+		max_parking_count: int = None,
+		min_gross_area: int = None,
+		max_gross_area: int = None,
+		min_elevators_count: int = None,
+		max_elevators_count: int = None,
+		building_status: BuildingStatus = None,
+		construction_start: date = None,
+		construction_end: date = None,
+) -> Query:
 	if complex_id:
 		query = query.filter(Building.residential_complex_id == complex_id)
 	if min_floor:
@@ -69,16 +62,86 @@ def get_buildings_filtered(db: Session,
 	if construction_end:
 		query = query.filter(Building.construction_end <= construction_end)
 
+	return query
+
+
+def _apply_building_sorting(
+		query: Query,
+		order_by: str = "asc",
+        sort_by: str = "construction_end",
+) -> Query:
 	if hasattr(Building, sort_by):
 		if order_by == "desc":
 			query = query.order_by(desc(getattr(Building, sort_by)))
 		else:
 			query = query.order_by(asc(getattr(Building, sort_by)))
 
-	total = query.count()
-	results = query.offset(offset).limit(limit).all()
+	return query
 
-	return {"total": total, "results": results, "limit": limit, "offset": offset}
+
+
+#GET Buildings
+def get_buildings_filtered (
+		db: Session,
+		complex_id: int = None,
+		min_floor: int = None,
+		max_floor: int = None,
+		floor: int = None,
+		min_apartments_count: int = None,
+		max_apartments_count: int = None,
+		min_commercials_count: int = None,
+		max_commercials_count: int = None,
+		min_parking_count: int = None,
+		max_parking_count: int = None,
+		min_gross_area: int = None,
+		max_gross_area: int = None,
+		min_elevators_count: int = None,
+		max_elevators_count: int = None,
+		building_status: BuildingStatus = None,
+		construction_start: date = None,
+		construction_end: date = None,
+		order_by: str = "asc",
+		sort_by: str = "construction_end",
+		limit: int = 100,
+		offset: int = 0,
+):
+
+	query = db.query (Building)
+
+	query = _apply_building_filters (
+		query = query,
+		complex_id = complex_id,
+		min_floor = min_floor,
+		max_floor = max_floor,
+		floor = floor,
+		min_apartments_count = min_apartments_count,
+		max_apartments_count = max_apartments_count,
+		min_commercials_count = min_commercials_count,
+		max_commercials_count = max_commercials_count,
+		min_parking_count = min_parking_count,
+		max_parking_count = max_parking_count,
+		min_gross_area = min_gross_area,
+		max_gross_area = max_gross_area,
+		min_elevators_count = min_elevators_count,
+		max_elevators_count = max_elevators_count,
+		building_status = building_status,
+		construction_start = construction_start,
+		construction_end = construction_end,
+	)
+
+	query = _apply_building_sorting (query, sort_by, order_by)
+
+	total = query.count ()
+	results = query.offset (offset).limit (limit).all ()
+
+	return {
+		"total": total,
+		"results": results,
+		"limit": limit,
+		"offset": offset
+	}
+
+
 
 def get_building_by_id(db: Session, building_id: int):
 	return db.query(Building).filter(Building.id == building_id).first()

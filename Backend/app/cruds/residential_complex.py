@@ -1,9 +1,59 @@
-from sqlalchemy import asc, desc
-from sqlalchemy.orm import Session
+from sqlalchemy import asc, desc, or_
+from sqlalchemy.orm import Query, Session
 
 from app.models import Building, BuildingClass, BuildingStatus, City, MaterialType, ResidentialComplex
 from app.schemas import ResidentialComplexCreate, ResidentialComplexUpdate
 
+
+def _apply_residential_complex_filters(
+		query: Query,
+		city: City = None,
+		building_class: BuildingClass = None,
+		building_status: BuildingStatus = None,
+		material: MaterialType = None,
+		has_security: bool = None,
+		min_apartment_area: float = None,
+		max_apartment_area: float = None,
+		search: str = None,
+) -> Query:
+	if city:
+		query = query.filter(ResidentialComplex.city == city)
+	if building_class:
+		query = query.filter(ResidentialComplex.building_class == building_class)
+	if building_status:
+		query = query.filter(ResidentialComplex.building_status == building_status)
+	if material:
+		query = query.filter(ResidentialComplex.material == material)
+	if has_security is not None:
+		query = query.filter(ResidentialComplex.has_security == has_security)
+	if min_apartment_area:
+		query = query.filter(ResidentialComplex.apartment_area >= min_apartment_area)
+	if max_apartment_area:
+		query = query.filter(ResidentialComplex.apartment_area <= max_apartment_area)
+
+	if search:
+		query = query.filter (
+			or_ (
+				ResidentialComplex.name.ilike (f"%{search}%"),
+				ResidentialComplex.description.ilike (f"%{search}%")
+			)
+		)
+
+	return query
+
+
+def _apply_residential_complex_sorting(
+		query: Query,
+		sort_by: str = "name",
+		order: str = "asc",
+) -> Query:
+	if hasattr(ResidentialComplex, sort_by):
+		if order == "desc":
+			query = query.order_by(desc(getattr(ResidentialComplex, sort_by)))
+		else:
+			query = query.order_by(asc(getattr(ResidentialComplex, sort_by)))
+
+	return query
 
 #GET Residential Complex
 def get_residential_complexes_filtered(
@@ -23,37 +73,29 @@ def get_residential_complexes_filtered(
 ):
 	query = db.query(ResidentialComplex)
 
-	if city:
-		query = query.filter(ResidentialComplex.city == city)
-	if building_class:
-		query = query.filter(ResidentialComplex.building_class == building_class)
-	if building_status:
-		query = query.filter(ResidentialComplex.building_status == building_status)
-	if material:
-		query = query.filter(ResidentialComplex.material == material)
-	if has_security is not None:
-		query = query.filter(ResidentialComplex.has_security == has_security)
-	if min_apartment_area:
-		query = query.filter(ResidentialComplex.apartment_area >= min_apartment_area)
-	if max_apartment_area:
-		query = query.filter(ResidentialComplex.apartment_area <= max_apartment_area)
+	query = _apply_residential_complex_filters(
+		query,
+		city=city,
+		building_class=building_class,
+		building_status=building_status,
+		material=material,
+		has_security=has_security,
+		min_apartment_area=min_apartment_area,
+		max_apartment_area=max_apartment_area,
+		search=search,
+	)
 
-	if search:
-		query = query.filter(
-			(ResidentialComplex.name.ilike(f"%{search}%")) |
-			(ResidentialComplex.description.ilike(f"%{search}%"))
-		)
-
-	if hasattr(ResidentialComplex, sort_by):
-		if order == "desc":
-			query = query.order_by(desc(getattr(ResidentialComplex, sort_by)))
-		else:
-			query = query.order_by(asc(getattr(ResidentialComplex, sort_by)))
+	query = _apply_residential_complex_sorting(query, sort_by=sort_by, order=order)
 
 	total = query.count()
 	results = query.offset(offset).limit(limit).all()
 
-	return {"total": total, "results": results, "limit": limit, "offset": offset}
+	return {
+		"total": total,
+        "results": results,
+        "limit": limit,
+        "offset": offset
+    }
 
 
 

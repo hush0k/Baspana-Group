@@ -2,35 +2,28 @@ from decimal import Decimal
 from http import HTTPStatus
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Query, Session
 
 from app.models import CommercialUnit, Direction, FinishingType, PropertyStatus
 from app.schemas import CommercialUnitCreate, CommercialUnitUpdate
 
-
-#GET Commercials
-def get_commercials_filtered(db: Session,
-                            min_floor: int = None,
-                            max_floor: int = None,
-                            min_space_area: Decimal = None,
-                            max_space_area: Decimal = None,
-                            min_ceiling_height: Decimal = None,
-                            max_ceiling_height: Decimal = None,
-                            finishing_type: FinishingType = None,
-                            min_per_sqr: Decimal = None,
-                            max_per_sqr: Decimal = None,
-                            min_total_price: Decimal = None,
-                            max_total_price: Decimal = None,
-                            status: PropertyStatus = None,
-                            orientation: Direction = None,
-                            isCorner: bool = None,
-                            order_by: str = "asc",
-                            sort_by: str = "floor",
-                            limit: int = 100,
-                            offset: int = 0
-):
-	query = db.query(CommercialUnit)
-
+def _apply_commercial_filters(
+		query: Query,
+		min_floor: int = None,
+        max_floor: int = None,
+        min_space_area: Decimal = None,
+        max_space_area: Decimal = None,
+        min_ceiling_height: Decimal = None,
+        max_ceiling_height: Decimal = None,
+        finishing_type: FinishingType = None,
+        min_per_sqr: Decimal = None,
+        max_per_sqr: Decimal = None,
+        min_total_price: Decimal = None,
+        max_total_price: Decimal = None,
+        status: PropertyStatus = None,
+        orientation: Direction = None,
+		isCorner: bool = None,
+) -> Query:
 	if min_floor is not None:
 		query = query.filter (CommercialUnit.floor >= min_floor)
 	if max_floor is not None:
@@ -60,14 +53,71 @@ def get_commercials_filtered(db: Session,
 	if isCorner is not None:
 		query = query.filter (CommercialUnit.isCorner == isCorner)
 
+	return query
+
+def _apply_commercial_sorting(
+		query: Query,
+		order_by: str = "asc",
+        sort_by: str = "floor",
+) -> Query:
 	if hasattr (CommercialUnit, sort_by):
 		sort_column = getattr (CommercialUnit, sort_by)
 		query = query.order_by (sort_column.desc () if order_by == "desc" else sort_column.asc ())
 
+	return query
+
+#GET Commercials
+def get_commercials_filtered(db: Session,
+                            min_floor: int = None,
+                            max_floor: int = None,
+                            min_space_area: Decimal = None,
+                            max_space_area: Decimal = None,
+                            min_ceiling_height: Decimal = None,
+                            max_ceiling_height: Decimal = None,
+                            finishing_type: FinishingType = None,
+                            min_per_sqr: Decimal = None,
+                            max_per_sqr: Decimal = None,
+                            min_total_price: Decimal = None,
+                            max_total_price: Decimal = None,
+                            status: PropertyStatus = None,
+                            orientation: Direction = None,
+                            isCorner: bool = None,
+                            order_by: str = "asc",
+                            sort_by: str = "floor",
+                            limit: int = 100,
+                            offset: int = 0
+):
+	query = db.query(CommercialUnit)
+
+	query = _apply_commercial_filters(
+		query,
+		min_floor=min_floor,
+		max_floor=max_floor,
+		min_space_area=min_space_area,
+		max_space_area=max_space_area,
+		min_ceiling_height=min_ceiling_height,
+		max_ceiling_height=max_ceiling_height,
+		finishing_type=finishing_type,
+		min_per_sqr=min_per_sqr,
+		max_per_sqr=max_per_sqr,
+		min_total_price=min_total_price,
+		max_total_price=max_total_price,
+		status=status,
+		orientation=orientation,
+		isCorner=isCorner,
+	)
+
+	query = _apply_commercial_sorting(query, order_by=order_by, sort_by=sort_by)
+
 	total = query.count()
 	results = query.offset(offset).limit(limit).all()
 
-	return {"total": total, "results": results, "limit": limit, "offset": offset}
+	return {
+		"total": total,
+		"results": results,
+		"limit": limit,
+		"offset": offset
+	}
 
 def get_commercial_by_id(db: Session, commercial_id: int):
 	return db.query(CommercialUnit).filter(CommercialUnit.id == commercial_id).first()

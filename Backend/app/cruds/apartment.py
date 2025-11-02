@@ -2,40 +2,33 @@ from decimal import Decimal
 from http import HTTPStatus
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Query, Session
 
 from app.models import Apartment, ApartmentType, Direction, FinishingType, PropertyStatus
 from app.schemas import ApartmentCreate, ApartmentUpdate
 
-
-#GET Apartment
-def get_apartments_filtered(db: Session,
-                            min_floor: int = None,
-                            max_floor: int = None,
-                            min_apartment_area: Decimal = None,
-                            max_apartment_area: Decimal = None,
-                            apartment_type: ApartmentType = None,
-                            has_balcony: bool = None,
-                            bathroom_count: int = None,
-                            min_kitchen_area: Decimal = None,
-                            max_kitchen_area: Decimal = None,
-                            min_ceiling_height: Decimal = None,
-                            max_ceiling_height: Decimal = None,
-                            finishing_type: FinishingType = None,
-                            min_per_sqr: Decimal = None,
-                            max_per_sqr: Decimal = None,
-                            min_total_price: Decimal = None,
-                            max_total_price: Decimal = None,
-                            status: PropertyStatus = None,
-                            orientation: Direction = None,
-                            isCorner: bool = None,
-                            order_by: str = "asc",
-                            sort_by: str = "floor",
-                            limit: int = 100,
-                            offset: int = 0
-):
-	query = db.query(Apartment)
-
+def _apply_apartment_filters(
+		query: Query,
+		min_floor: int = None,
+		max_floor: int = None,
+		min_apartment_area: Decimal = None,
+		max_apartment_area: Decimal = None,
+		apartment_type: ApartmentType = None,
+		has_balcony: bool = None,
+		bathroom_count: int = None,
+		min_kitchen_area: Decimal = None,
+		max_kitchen_area: Decimal = None,
+		min_ceiling_height: Decimal = None,
+		max_ceiling_height: Decimal = None,
+		finishing_type: FinishingType = None,
+		min_per_sqr: Decimal = None,
+		max_per_sqr: Decimal = None,
+		min_total_price: Decimal = None,
+		max_total_price: Decimal = None,
+		status: PropertyStatus = None,
+		orientation: Direction = None,
+		isCorner: bool = None,
+) -> Query:
 	if min_floor is not None:
 		query = query.filter (Apartment.floor >= min_floor)
 	if max_floor is not None:
@@ -75,14 +68,83 @@ def get_apartments_filtered(db: Session,
 	if isCorner is not None:
 		query = query.filter (Apartment.isCorner == isCorner)
 
+	return query
+
+
+def _apply_apartment_sorting(
+		query: Query,
+		order_by: str = "asc",
+        sort_by: str = "floor",
+) -> Query:
 	if hasattr (Apartment, sort_by):
 		sort_column = getattr (Apartment, sort_by)
 		query = query.order_by (sort_column.desc () if order_by == "desc" else sort_column.asc ())
+	return query
+
+
+
+#GET Apartment
+def get_apartments_filtered(db: Session,
+                            min_floor: int = None,
+                            max_floor: int = None,
+                            min_apartment_area: Decimal = None,
+                            max_apartment_area: Decimal = None,
+                            apartment_type: ApartmentType = None,
+                            has_balcony: bool = None,
+                            bathroom_count: int = None,
+                            min_kitchen_area: Decimal = None,
+                            max_kitchen_area: Decimal = None,
+                            min_ceiling_height: Decimal = None,
+                            max_ceiling_height: Decimal = None,
+                            finishing_type: FinishingType = None,
+                            min_per_sqr: Decimal = None,
+                            max_per_sqr: Decimal = None,
+                            min_total_price: Decimal = None,
+                            max_total_price: Decimal = None,
+                            status: PropertyStatus = None,
+                            orientation: Direction = None,
+                            isCorner: bool = None,
+                            order_by: str = "asc",
+                            sort_by: str = "floor",
+                            limit: int = 100,
+                            offset: int = 0
+):
+	query = db.query(Apartment)
+
+	query = _apply_apartment_filters(
+		query,
+		min_floor=min_floor,
+		max_floor=max_floor,
+		min_apartment_area=min_apartment_area,
+		max_apartment_area=max_apartment_area,
+		apartment_type=apartment_type,
+		has_balcony=has_balcony,
+		bathroom_count=bathroom_count,
+		min_kitchen_area=min_kitchen_area,
+		max_kitchen_area=max_kitchen_area,
+		min_ceiling_height=min_ceiling_height,
+		max_ceiling_height=max_ceiling_height,
+		finishing_type=finishing_type,
+		min_per_sqr=min_per_sqr,
+		max_per_sqr=max_per_sqr,
+		min_total_price=min_total_price,
+		max_total_price=max_total_price,
+		status=status,
+		orientation=orientation,
+		isCorner=isCorner,
+	)
+
+	query = _apply_apartment_sorting(query, order_by=order_by, sort_by=sort_by)
 
 	total = query.count()
 	results = query.offset(offset).limit(limit).all()
 
-	return {"total": total, "results": results, "limit": limit, "offset": offset}
+	return {
+		"total": total,
+		"results": results,
+		"limit": limit,
+		"offset": offset
+	}
 
 def get_apartment_by_id(db: Session, apartment_id: int):
 	return db.query(Apartment).filter(Apartment.id == apartment_id).first()
