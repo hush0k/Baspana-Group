@@ -1,7 +1,7 @@
 import re
 from datetime import date, datetime
 from decimal import Decimal
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from .models import ApartmentType, BuildingClass, BuildingStatus, City, Direction, FinishingType, \
     MaterialType, ObjectType, OrderStatus, OrderType, PaymentType, PropertyStatus, Role, StatusOfUser, TransactionType
@@ -366,27 +366,38 @@ class PaginatedOrderResponse(BaseModel):
         orm_mode = True
 
 
-#Favorites
 class FavoriteBase(BaseModel):
-    user_id: int
     object_id: int
     object_type: ObjectType
 
 class FavoriteCreate(FavoriteBase):
     pass
 
-class FavoriteUpdate(BaseModel):
-    user_id: Optional[int] = None
-    object_id: Optional[int] = None
-    object_type: Optional[ObjectType] = None
-
 class FavoriteResponse(FavoriteBase):
     id: int
+    user_id: int
     created_at: date
 
     class Config:
         orm_mode = True
 
+class FavoriteWithObjectResponse(BaseModel):
+    favorite_id: int
+    object_type: ObjectType
+    created_at: date
+    object_data: Union[ApartmentResponse, CommercialUnitResponse]
+
+    class Config:
+        orm_mode = True
+
+class PaginatedFavoriteResponse(BaseModel):
+    total: int
+    results: List[FavoriteWithObjectResponse]
+    limit: int
+    offset: int
+
+    class Config:
+        orm_mode = True
 
 #Wallet Transaction
 class WalletTransactionBase(BaseModel):
