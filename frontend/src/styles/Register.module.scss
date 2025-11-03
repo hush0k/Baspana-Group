@@ -1,7 +1,7 @@
 @import "variables";
 
 .container {
-    height: 60vh;
+    height: 65vh;
     padding: 30px;
     box-sizing: content-box;
     border-radius: 10px;
@@ -10,6 +10,8 @@
     align-items: center;
     justify-content: flex-start;
     background-color: #fff;
+    overflow: scroll;
+
 
 }
 
