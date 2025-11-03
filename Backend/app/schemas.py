@@ -308,6 +308,17 @@ class ReviewResponse(ReviewBase):
     class Config:
         orm_mode = True
 
+class PaginatedReviewResponse(BaseModel):
+    total: int
+    results: List[ReviewResponse]
+    limit: int
+    offset: int
+
+    class Config:
+        orm_mode = True
+
+
+
 
 #Image
 class ImageBase(BaseModel):
