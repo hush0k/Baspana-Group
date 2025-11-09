@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from . import config
-from .routers import apartment, auth, commercial_unit, favorites, image, order, residential_complex, user, building
+from .routers import apartment, auth, commercial_unit, favorites, image, order, residential_complex, review, user, \
+	building
 
 app = FastAPI(title = "Baspana Group Backend API")
 
@@ -31,6 +32,7 @@ app.include_router(commercial_unit.router, prefix="/api/commercial_units", tags=
 app.include_router(image.router, prefix="/api/images", tags=["Images"])
 app.include_router(order.router, prefix="/api/orders", tags=["Orders"])
 app.include_router(favorites.router, prefix="/api/favorites", tags=["Favorites"])
+app.include_router(review.router, prefix="/api/reviews", tags=["Reviews"])
 
 @app.get("/")
 async def root():

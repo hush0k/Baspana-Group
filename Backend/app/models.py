@@ -281,7 +281,7 @@ class Review(Base):
     user_id = Column (Integer, ForeignKey ('users.id'))
     rating = Column(Integer)
     comment = Column(String)
-    created_at = Column(DateTime)
+    created_at = Column(DateTime, default = datetime.now)
 
     # Relations
     user = relationship("User", back_populates="reviews")
