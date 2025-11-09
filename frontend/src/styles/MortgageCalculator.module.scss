@@ -1,0 +1,211 @@
+@import "variables";
+
+.calculatorSection {
+  width: 100%;
+  padding: $spacing-xl 0;
+  background-color: white;
+}
+
+.container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+
+  @media (max-width: $tablet) {
+    padding: 0 $spacing-md;
+  }
+}
+
+.calculatorContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xl;
+  background: $bg-light;
+  border-radius: $spacing-md;
+  padding: $spacing-xl;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  @media (max-width: $desktop) {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+
+  @media (max-width: $tablet) {
+    padding: $spacing-lg;
+  }
+}
+
+.leftSide {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $main-color;
+  margin: 0;
+
+  @media (max-width: $tablet) {
+    font-size: 1.75rem;
+  }
+
+  @media (max-width: $mobile) {
+    font-size: 1.5rem;
+  }
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+
+  @media (max-width: $mobile) {
+    font-size: 0.9375rem;
+  }
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $text-color;
+}
+
+.input {
+  width: 100%;
+  padding: $spacing-md;
+  border: 1px solid #ddd;
+  border-radius: $spacing-sm;
+  font-size: 1rem;
+  color: $text-color;
+  background-color: white;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $main-color;
+  }
+}
+
+.slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, #ddd 0%, #ddd 100%);
+  outline: none;
+  -webkit-appearance: none;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $main-color;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.2);
+      background: $hover-main-color;
+    }
+  }
+
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $main-color;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.2);
+      background: $hover-main-color;
+    }
+  }
+}
+
+.rightSide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resultCard {
+  width: 100%;
+  background: white;
+  border-radius: $spacing-md;
+  padding: $spacing-xl;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+
+  @media (max-width: $tablet) {
+    padding: $spacing-lg;
+  }
+}
+
+.resultLabel {
+  font-size: 1rem;
+  color: #666;
+  margin: 0 0 $spacing-sm 0;
+}
+
+.resultAmount {
+  font-size: 3rem;
+  font-weight: 800;
+  color: $main-color;
+  margin: 0 0 $spacing-md 0;
+
+  @media (max-width: $tablet) {
+    font-size: 2.5rem;
+  }
+
+  @media (max-width: $mobile) {
+    font-size: 2rem;
+  }
+}
+
+.resultNote {
+  font-size: 0.875rem;
+  color: #888;
+  line-height: 1.5;
+  margin: 0 0 $spacing-lg 0;
+}
+
+.consultButton {
+  width: 100%;
+  padding: $spacing-md $spacing-lg;
+  background-color: $main-color;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: $hover-main-color;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($main-color, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: $mobile) {
+    font-size: 0.9375rem;
+    padding: $spacing-sm $spacing-md;
+  }
+}
