@@ -8,7 +8,8 @@ import HeaderBlack from "./components/Header/HeaderBlack";
 import HeaderWhite from "./components/Header/HeaderWhite";
 import FooterBlack from "./components/Footer/FooterBlack";
 import FooterWhite from "./components/Footer/FooterWhite";
-import Card1 from "./components/Cards/Card1";
+import ComplexCard from "./components/Cards/ComplexCard";
+import MainHome from "./pages/Main/MainHome";
 
 
 
@@ -20,7 +21,9 @@ const PrivateRoute = ({ children }) => {
 const App = () => {
     return (
         <Routes>
-            <Route path="/card1" component={Card1} />
+
+            <Route path="/mainHome" component={MainHome} />
+            <Route path="/complexCard" component={ComplexCard} />
             <Route path = "/footerWhite" element={<FooterWhite />} />
             <Route path = "/footerBlack" element={<FooterBlack />} />
             <Route path="/headerBlack" element={<HeaderBlack />} />
@@ -28,13 +31,14 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route
-                path="/"
+                path="/profile"
                 element={
                     <PrivateRoute>
                         <Home />
                     </PrivateRoute>
                 }
             />
+            <Route path="/projects" element={<MainHome />} />
         </Routes>
     );
 };
