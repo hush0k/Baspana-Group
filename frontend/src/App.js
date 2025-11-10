@@ -8,7 +8,10 @@ import HeaderBlack from "./components/Header/HeaderBlack";
 import HeaderWhite from "./components/Header/HeaderWhite";
 import FooterBlack from "./components/Footer/FooterBlack";
 import FooterWhite from "./components/Footer/FooterWhite";
-import Card1 from "./components/Cards/Card1";
+import ComplexCard from "./components/Cards/ComplexCard";
+import MortgageCalculator from "./components/Calculator/MortgageCalculator";
+import HeroSection from "./components/Hero/HeroSection";
+import MainHome from "./pages/Main/MainHome";
 
 
 
@@ -20,7 +23,11 @@ const PrivateRoute = ({ children }) => {
 const App = () => {
     return (
         <Routes>
-            <Route path="/card1" component={Card1} />
+
+            <Route path="/" element={<MainHome />} />
+            <Route path="/heroSection" element={<HeroSection />} />
+            <Route path="/mortgageCalculator" element={<MortgageCalculator />} />
+            <Route path="/complexCard" component={<ComplexCard />} />
             <Route path = "/footerWhite" element={<FooterWhite />} />
             <Route path = "/footerBlack" element={<FooterBlack />} />
             <Route path="/headerBlack" element={<HeaderBlack />} />
@@ -35,6 +42,7 @@ const App = () => {
                     </PrivateRoute>
                 }
             />
+            <Route path="/projects" element={<MainHome />} />
         </Routes>
     );
 };

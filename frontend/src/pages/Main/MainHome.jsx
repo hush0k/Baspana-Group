@@ -11,6 +11,7 @@ const MainHome = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+
     const mockComplexes = [
         {
             id: 1,
@@ -70,6 +71,11 @@ const MainHome = () => {
         const loadComplexes = async () => {
             try {
                 setLoading(true);
+                // TODO: Заменить на реальный API запрос
+                // const response = await api.get('/complexes');
+                // setComplexes(response.data.results);
+
+                // Временно используем моковые данные
                 setTimeout(() => {
                     setComplexes(mockComplexes);
                     setLoading(false);
@@ -89,6 +95,20 @@ const MainHome = () => {
             <HeaderBlack />
 
             <main className={styles.mainContent}>
+                {/* Hero секция */}
+                <section className={styles.heroSection}>
+                    <div className={styles.heroContent}>
+                        <h1 className={styles.heroTitle}>
+                            Наши жилые комплексы
+                        </h1>
+                        <p className={styles.heroDescription}>
+                            Откройте для себя наши проекты: от современных городских квартир
+                            до уютных семейных домов. Найдите свой идеальный дом с Baspana Group.
+                        </p>
+                    </div>
+                </section>
+
+                {/* Список проектов */}
                 <section className={styles.projectsSection}>
                     {loading ? (
                         <div className={styles.loadingContainer}>
@@ -98,15 +118,38 @@ const MainHome = () => {
                     ) : error ? (
                         <div className={styles.errorContainer}>
                             <p className={styles.errorText}>{error}</p>
+                            <button
+                                onClick={() => window.location.reload()}
+                                className={styles.retryButton}
+                            >
                                 Попробовать снова
                             </button>
                         </div>
                     ) : (
                         <div className={styles.projectsList}>
                             {complexes.map((complex) => (
+                                <ComplexCard
+                                    key={complex.id}
+                                    complex={complex}
+                                />
                             ))}
                         </div>
                     )}
+                </section>
+
+                {/* CTA секция */}
+                <section className={styles.ctaSection}>
+                    <div className={styles.ctaContent}>
+                        <h2 className={styles.ctaTitle}>
+                            Не нашли подходящий проект?
+                        </h2>
+                        <p className={styles.ctaDescription}>
+                            Свяжитесь с нами, и мы поможем подобрать идеальный вариант специально для вас
+                        </p>
+                        <button className={styles.ctaButton}>
+                            Получить консультацию
+                        </button>
+                    </div>
                 </section>
             </main>
 
