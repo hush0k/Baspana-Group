@@ -71,11 +71,8 @@ const MainHome = () => {
         const loadComplexes = async () => {
             try {
                 setLoading(true);
-                // TODO: Заменить на реальный API запрос
-                // const response = await api.get('/complexes');
-                // setComplexes(response.data.results);
 
-                // Временно используем моковые данные
+
                 setTimeout(() => {
                     setComplexes(mockComplexes);
                     setLoading(false);
@@ -95,7 +92,6 @@ const MainHome = () => {
             <HeaderBlack />
 
             <main className={styles.mainContent}>
-                {/* Hero секция */}
                 <section className={styles.heroSection}>
                     <div className={styles.heroContent}>
                         <h1 className={styles.heroTitle}>
@@ -108,7 +104,6 @@ const MainHome = () => {
                     </div>
                 </section>
 
-                {/* Список проектов */}
                 <section className={styles.projectsSection}>
                     {loading ? (
                         <div className={styles.loadingContainer}>
