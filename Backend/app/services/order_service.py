@@ -38,12 +38,12 @@ class OrderService:
 		db.refresh(property_obj)
 
 	@staticmethod
-	def create_order_with_logic(db:Session, order_data:OrderCreate) -> Order:
+	def create_order_with_logic(db:Session, order_data:OrderCreate, user_id: int) -> Order:
 		property_obj = OrderService._get_property_object(db, order_data.object_id, order_data.object_type)
 
 		OrderService._validate_property_availability(property_obj)
 
-		new_order = create_order(db, order_data)
+		new_order = create_order(db, order_data, user_id)
 
 		if new_order.status == OrderStatus.offering:
 			OrderService._update_property_status(property_obj, PropertyStatus.booked, db)
@@ -53,7 +53,7 @@ class OrderService:
 		return new_order
 
 	@staticmethod
-	def update_order_with_logic(db:Session, order_update:OrderUpdate, order_id: int) -> Order:
+	def update_order_with_logic(db:Session, order_id: int, order_update:OrderUpdate) -> Order:
 		existing_order = get_order_by_id(db, order_id)
 		if not existing_order:
 			raise HTTPException(
@@ -99,3 +99,5 @@ class OrderService:
 		db.commit()
 
 		return len(expired_bookings)
+
+

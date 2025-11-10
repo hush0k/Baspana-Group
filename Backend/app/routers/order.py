@@ -5,11 +5,12 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status as http_status
 from sqlalchemy.orm import Session
 
-from app.auth import require_role
-from app.cruds.order import create_order, delete_order, get_order_by_id, get_orders_filtered, update_order
+from app.auth import get_current_user, require_role
+from app.cruds.order import delete_order, get_order_by_id, get_orders_filtered, update_order
 from app.database import get_db
 from app.models import ObjectType, OrderStatus, OrderType, PaymentType, Role, User
 from app.schemas import OrderCreate, OrderResponse, OrderUpdate, PaginatedOrderResponse
+from app.services.order_service import OrderService
 
 router = APIRouter()
 
@@ -35,6 +36,8 @@ def get_orders_endpoint(
     offset: int = 0,
     db: Session = Depends(get_db)
 ):
+    OrderService.check_expired_bookings(db)
+
     return get_orders_filtered(
         db=db,
         object_id=object_id,
@@ -57,6 +60,7 @@ def get_orders_endpoint(
 
 @router.get("/{id}", response_model=OrderResponse)
 def get_order_by_id_endpoint(order_id: int, db: Session = Depends(get_db)):
+    OrderService.check_expired_bookings(db)
     existing_order = get_order_by_id(db, order_id)
 
     if existing_order is None:
@@ -69,10 +73,12 @@ def get_order_by_id_endpoint(order_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=OrderResponse)
 def create_order_endpoint(order: OrderCreate,
                           db: Session = Depends(get_db),
-                          _: User = Depends(require_role([Role.admin, Role.manager])),
+                          _: User = Depends(require_role([Role.consumer])),
+                          current_user: User = Depends(get_current_user),
                           ):
+    OrderService.check_expired_bookings (db)
 
-    return create_order(db, order)
+    return OrderService.create_order_with_logic(db, order, current_user.id)
 
 
 #PUT Order
@@ -82,11 +88,12 @@ def update_order_endpoint(order: OrderUpdate,
                           db: Session = Depends(get_db),
                           _: User = Depends(require_role([Role.admin, Role.manager]))
                           ):
+    OrderService.check_expired_bookings (db)
     existing_order = get_order_by_id(db, order_id)
     if existing_order is None:
         raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail="Order not found")
 
-    updated_order = update_order(db, order_id, order)
+    updated_order = OrderService.update_order_with_logic(db, order_id, order)
     return updated_order
 
 
@@ -96,6 +103,7 @@ def delete_order_endpoint(order_id: int,
                           db: Session = Depends(get_db),
                           _: User = Depends(require_role([Role.admin, Role.manager]))
                           ):
+    OrderService.check_expired_bookings (db)
     existing_order = get_order_by_id(db, order_id)
     if existing_order is None:
         raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail="Order not found")

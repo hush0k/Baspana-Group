@@ -3,7 +3,8 @@ from decimal import Decimal
 
 from sqlalchemy.orm import Session
 
-from app.models import ObjectType, Order, OrderStatus, OrderType, PaymentType
+from app.auth import get_current_user
+from app.models import Apartment, CommercialUnit, ObjectType, Order, OrderStatus, OrderType, PaymentType
 from app.schemas import OrderCreate, OrderUpdate
 
 
@@ -70,13 +71,24 @@ def get_orders_filtered(db: Session,
 
 
 #POST Order
-def create_order(db: Session, order: OrderCreate):
+def create_order(db: Session, order: OrderCreate, user_id: int):
+
+	total_price = order.total_price
+	if order.total_price is None:
+		if order.object_type == ObjectType.apartment:
+			obj = db.query(Apartment).filter(Apartment.id == order.object_id).first()
+			total_price = obj.total_price
+		elif order.object_type == ObjectType.commercial:
+			obj = db.query(CommercialUnit).filter(CommercialUnit.id == order.object_id).first()
+			total_price = obj.total_price
+
+
 	new_order = Order(
 		user_id=order.user_id,
 		object_id=order.object_id,
 		order_type=order.order_type,
 		object_type=order.object_type,
-		total_price=order.total_price,
+		total_price=total_price,
 		payment_type=order.payment_type,
 		order_date = date.today (),
 		booking_deposit=order.booking_deposit,
