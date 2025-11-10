@@ -4,8 +4,6 @@ import HeaderBlack from '../../components/Header/HeaderBlack';
 import FooterBlack from '../../components/Footer/FooterBlack';
 import ComplexCard from '../../components/Cards/ComplexCard';
 import styles from '../../styles/MainHome.module.scss';
-import HeroSection from '../../components/Hero/HeroSection';
-import MortgageCalculator from '../../components/Calculator/MortgageCalculator';
 
 const MainHome = () => {
     const navigate = useNavigate();
@@ -90,14 +88,8 @@ const MainHome = () => {
         <div className={styles.pageWrapper}>
             <HeaderBlack />
 
-            {/* 1. Hero Section */}
-            <HeroSection />
-
             <main className={styles.mainContent}>
-                {/* 2. Секция проектов */}
                 <section className={styles.projectsSection}>
-                    <h2 className={styles.sectionTitle}>Наши жилые комплексы</h2>
-
                     {loading ? (
                         <div className={styles.loadingContainer}>
                             <div className={styles.spinner}></div>
@@ -106,24 +98,18 @@ const MainHome = () => {
                     ) : error ? (
                         <div className={styles.errorContainer}>
                             <p className={styles.errorText}>{error}</p>
-                            <button onClick={() => window.location.reload()} className={styles.retryButton}>
                                 Попробовать снова
                             </button>
                         </div>
                     ) : (
                         <div className={styles.projectsList}>
                             {complexes.map((complex) => (
-                                <ComplexCard key={complex.id} complex={complex} />
                             ))}
                         </div>
                     )}
                 </section>
             </main>
 
-            {/* 3. Калькулятор */}
-            <MortgageCalculator />
-
-            {/* 4. Footer */}
             <FooterBlack />
         </div>
     );

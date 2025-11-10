@@ -346,7 +346,7 @@ class OrderBase(BaseModel):
     object_id: int
     order_type: OrderType
     object_type: ObjectType
-    total_price: Decimal
+    total_price: Optional[Decimal] = None
     payment_type: PaymentType
     booking_deposit: Decimal
     booking_expiration_date: date
