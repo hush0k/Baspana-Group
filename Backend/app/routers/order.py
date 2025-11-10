@@ -76,7 +76,7 @@ def create_order_endpoint(order: OrderCreate,
 
 
 #PUT Order
-@router.patch("/{id}", response_model=OrderUpdate)
+@router.patch("/{id}", response_model=OrderResponse)
 def update_order_endpoint(order: OrderUpdate,
                           order_id: int,
                           db: Session = Depends(get_db),
