@@ -11,6 +11,7 @@ const MainHome = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+
     const mockComplexes = [
         {
             id: 1,
@@ -70,6 +71,8 @@ const MainHome = () => {
         const loadComplexes = async () => {
             try {
                 setLoading(true);
+
+
                 setTimeout(() => {
                     setComplexes(mockComplexes);
                     setLoading(false);
@@ -129,6 +132,7 @@ const MainHome = () => {
                     )}
                 </section>
 
+                {/* CTA секция */}
                 <section className={styles.ctaSection}>
                     <div className={styles.ctaContent}>
                         <h2 className={styles.ctaTitle}>

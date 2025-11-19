@@ -12,7 +12,6 @@
   width: 100%;
 }
 
-// Hero секция
 .heroSection {
   width: 100%;
   padding: $spacing-xl $spacing-md;
@@ -61,11 +60,9 @@
   }
 }
 
-// Секция проектов
 .projectsSection {
   max-width: $container-max-width;
   margin: 0 auto;
-  padding: $spacing-xl $spacing-md;
 
   @media (max-width: $tablet) {
     padding: $spacing-lg $spacing-md;
@@ -78,7 +75,6 @@
   gap: $spacing-lg;
 }
 
-// Загрузка
 .loadingContainer {
   display: flex;
   flex-direction: column;
@@ -109,7 +105,6 @@
   }
 }
 
-// Ошибка
 .errorContainer {
   display: flex;
   flex-direction: column;
@@ -142,8 +137,6 @@
     }
   }
 }
-
-// CTA секция
 .ctaSection {
   width: 100%;
   padding: $spacing-xl $spacing-md;
