@@ -6,7 +6,12 @@ from fastapi import APIRouter, Depends, HTTPException, status as http_status
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user, require_role
-from app.cruds.order import delete_order, get_order_by_id, get_orders_filtered, update_order
+from app.cruds.order import (
+    delete_order,
+    get_order_by_id,
+    get_orders_filtered,
+    update_order,
+)
 from app.database import get_db
 from app.models import ObjectType, OrderStatus, OrderType, PaymentType, Role, User
 from app.schemas import OrderCreate, OrderResponse, OrderUpdate, PaginatedOrderResponse
@@ -15,7 +20,7 @@ from app.services.order_service import OrderService
 router = APIRouter()
 
 
-#GET Order
+# GET Order
 @router.get("/", response_model=PaginatedOrderResponse)
 def get_orders_endpoint(
     object_id: Optional[int] = None,
@@ -34,7 +39,7 @@ def get_orders_endpoint(
     sort_by: str = "status",
     limit: int = 100,
     offset: int = 0,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     OrderService.check_expired_bookings(db)
 
@@ -55,8 +60,9 @@ def get_orders_endpoint(
         order_by=order_by,
         sort_by=sort_by,
         limit=limit,
-        offset=offset
+        offset=offset,
     )
+
 
 @router.get("/{id}", response_model=OrderResponse)
 def get_order_by_id_endpoint(order_id: int, db: Session = Depends(get_db)):
@@ -64,51 +70,58 @@ def get_order_by_id_endpoint(order_id: int, db: Session = Depends(get_db)):
     existing_order = get_order_by_id(db, order_id)
 
     if existing_order is None:
-        raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail="Order not found")
+        raise HTTPException(
+            status_code=http_status.HTTP_404_NOT_FOUND, detail="Order not found"
+        )
 
     return existing_order
 
 
-#POST Order
+# POST Order
 @router.post("/", response_model=OrderResponse)
-def create_order_endpoint(order: OrderCreate,
-                          db: Session = Depends(get_db),
-                          _: User = Depends(require_role([Role.consumer])),
-                          current_user: User = Depends(get_current_user),
-                          ):
-    OrderService.check_expired_bookings (db)
+def create_order_endpoint(
+    order: OrderCreate,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role([Role.consumer])),
+    current_user: User = Depends(get_current_user),
+):
+    OrderService.check_expired_bookings(db)
 
     return OrderService.create_order_with_logic(db, order, current_user.id)
 
 
-#PUT Order
+# PUT Order
 @router.patch("/{id}", response_model=OrderResponse)
-def update_order_endpoint(order: OrderUpdate,
-                          order_id: int,
-                          db: Session = Depends(get_db),
-                          _: User = Depends(require_role([Role.admin, Role.manager]))
-                          ):
-    OrderService.check_expired_bookings (db)
+def update_order_endpoint(
+    order: OrderUpdate,
+    order_id: int,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role([Role.admin, Role.manager])),
+):
+    OrderService.check_expired_bookings(db)
     existing_order = get_order_by_id(db, order_id)
     if existing_order is None:
-        raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail="Order not found")
+        raise HTTPException(
+            status_code=http_status.HTTP_404_NOT_FOUND, detail="Order not found"
+        )
 
     updated_order = OrderService.update_order_with_logic(db, order_id, order)
     return updated_order
 
 
-#DELETE Order
+# DELETE Order
 @router.delete("/{id}", response_model=OrderResponse)
-def delete_order_endpoint(order_id: int,
-                          db: Session = Depends(get_db),
-                          _: User = Depends(require_role([Role.admin, Role.manager]))
-                          ):
-    OrderService.check_expired_bookings (db)
+def delete_order_endpoint(
+    order_id: int,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role([Role.admin, Role.manager])),
+):
+    OrderService.check_expired_bookings(db)
     existing_order = get_order_by_id(db, order_id)
     if existing_order is None:
-        raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail="Order not found")
+        raise HTTPException(
+            status_code=http_status.HTTP_404_NOT_FOUND, detail="Order not found"
+        )
 
     delete_order(db, order_id)
     return existing_order
-
-

@@ -3,22 +3,39 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import List, Optional, Union
 
-from .models import ApartmentType, BuildingClass, BuildingStatus, City, Direction, FinishingType, \
-    MaterialType, ObjectType, OrderStatus, OrderType, PaymentType, PropertyStatus, Role, StatusOfUser, TransactionType
+from .models import (
+    ApartmentType,
+    BuildingClass,
+    BuildingStatus,
+    City,
+    Direction,
+    FinishingType,
+    MaterialType,
+    ObjectType,
+    OrderStatus,
+    OrderType,
+    PaymentType,
+    PropertyStatus,
+    Role,
+    StatusOfUser,
+    TransactionType,
+)
 from pydantic import BaseModel, EmailStr, field_validator
 from pydantic_extra_types.phone_numbers import PhoneNumber
 
 
-#Refresh Tokens
+# Refresh Tokens
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+
 class TokenResponse(BaseModel):
     access_token: str
-    token_type: str = 'Bearer'
+    token_type: str = "Bearer"
 
-#User Schemas
+
+# User Schemas
 class UserBase(BaseModel):
     first_name: str
     last_name: str
@@ -34,23 +51,23 @@ class UserCreate(UserBase):
     password: str
 
     # noinspection PyNestedDecorators
-    @field_validator('password', mode = "after")
+    @field_validator("password", mode="after")
     @classmethod
     def validate_password(cls, value: str) -> str:
         if len(value) < 8:
-            raise ValueError('Password must be at least 8 characters')
+            raise ValueError("Password must be at least 8 characters")
 
-        if not re.search(r'[A-Z]', value):
-            raise ValueError('Password must contain at least one uppercase letter')
+        if not re.search(r"[A-Z]", value):
+            raise ValueError("Password must contain at least one uppercase letter")
 
-        if not re.search(r'[a-z]', value):
-            raise ValueError('Password must contain at least one lowercase letter')
+        if not re.search(r"[a-z]", value):
+            raise ValueError("Password must contain at least one lowercase letter")
 
-        if not re.search(r'\d', value):
-            raise ValueError('Password must contain at least one digit')
+        if not re.search(r"\d", value):
+            raise ValueError("Password must contain at least one digit")
 
-        if not re.search (r'[!@#$%^&*(),.?":{}|<>]', value):
-            raise ValueError ('Password must contain at least one special character')
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', value):
+            raise ValueError("Password must contain at least one special character")
 
         return value
 
@@ -63,16 +80,20 @@ class UserUpdate(BaseModel):
     city: Optional[City] = None
     avatar_url: Optional[str] = None
 
+
 class UserUpdatePassword(BaseModel):
     old_password: str
     new_password: str
     confirm_password: str
 
+
 class UserUpdateStatus(BaseModel):
     status: StatusOfUser
 
+
 class UserUpdateRole(BaseModel):
     role: Role
+
 
 class UserResponse(UserBase):
     id: int
@@ -83,7 +104,8 @@ class UserResponse(UserBase):
     class Config:
         orm_mode = True
 
-#Residential
+
+# Residential
 class ResidentialComplexBase(BaseModel):
     name: str
     description: str
@@ -102,8 +124,10 @@ class ResidentialComplexBase(BaseModel):
     building_class: BuildingClass
     building_status: BuildingStatus
 
+
 class ResidentialComplexCreate(ResidentialComplexBase):
     pass
+
 
 class ResidentialComplexUpdate(BaseModel):
     name: Optional[str] = None
@@ -130,6 +154,7 @@ class ResidentialComplexResponse(ResidentialComplexBase):
     class Config:
         orm_mode = True
 
+
 class PaginatedResidentialComplexResponse(BaseModel):
     total: int
     results: List[ResidentialComplexResponse]
@@ -140,7 +165,7 @@ class PaginatedResidentialComplexResponse(BaseModel):
         orm_mode = True
 
 
-#Building
+# Building
 class BuildingBase(BaseModel):
     residential_complex_id: int
     block: int
@@ -155,8 +180,10 @@ class BuildingBase(BaseModel):
     construction_start: date
     construction_end: date
 
+
 class BuildingCreate(BuildingBase):
     pass
+
 
 class BuildingUpdate(BaseModel):
     block: Optional[int] = None
@@ -171,11 +198,13 @@ class BuildingUpdate(BaseModel):
     construction_start: Optional[date] = None
     construction_end: Optional[date] = None
 
+
 class BuildingResponse(BuildingBase):
     id: int
 
     class Config:
         orm_mode = True
+
 
 class PaginatedBuildingResponse(BaseModel):
     total: int
@@ -187,7 +216,7 @@ class PaginatedBuildingResponse(BaseModel):
         orm_mode = True
 
 
-#Apartment
+# Apartment
 class ApartmentBase(BaseModel):
     building_id: int
     number: int
@@ -205,8 +234,10 @@ class ApartmentBase(BaseModel):
     orientation: Direction
     isCorner: bool
 
+
 class ApartmentCreate(ApartmentBase):
     pass
+
 
 class ApartmentUpdate(BaseModel):
     building_id: Optional[int] = None
@@ -225,11 +256,13 @@ class ApartmentUpdate(BaseModel):
     orientation: Optional[Direction] = None
     isCorner: Optional[bool] = None
 
+
 class ApartmentResponse(ApartmentBase):
     id: int
 
     class Config:
         orm_mode = True
+
 
 class PaginatedApartmentResponse(BaseModel):
     total: int
@@ -241,7 +274,7 @@ class PaginatedApartmentResponse(BaseModel):
         orm_mode = True
 
 
-#Commercial Unit
+# Commercial Unit
 class CommercialUnitBase(BaseModel):
     building_id: int
     number: int
@@ -255,8 +288,10 @@ class CommercialUnitBase(BaseModel):
     orientation: Direction
     isCorner: bool
 
+
 class CommercialUnitCreate(CommercialUnitBase):
     pass
+
 
 class CommercialUnitUpdate(BaseModel):
     building_id: Optional[int] = None
@@ -271,11 +306,13 @@ class CommercialUnitUpdate(BaseModel):
     orientation: Optional[Direction] = None
     isCorner: Optional[bool] = None
 
+
 class CommercialUnitResponse(CommercialUnitBase):
     id: int
 
     class Config:
         orm_mode = True
+
 
 class PaginatedCommercialUnitResponse(BaseModel):
     total: int
@@ -287,19 +324,21 @@ class PaginatedCommercialUnitResponse(BaseModel):
         orm_mode = True
 
 
-
-#Review
+# Review
 class ReviewBase(BaseModel):
     residential_complex_id: int
     rating: int
     comment: str
 
+
 class ReviewCreate(ReviewBase):
     pass
+
 
 class ReviewUpdate(BaseModel):
     rating: Optional[int] = None
     comment: Optional[str] = None
+
 
 class ReviewResponse(ReviewBase):
     id: int
@@ -307,6 +346,7 @@ class ReviewResponse(ReviewBase):
 
     class Config:
         orm_mode = True
+
 
 class PaginatedReviewResponse(BaseModel):
     total: int
@@ -318,19 +358,20 @@ class PaginatedReviewResponse(BaseModel):
         orm_mode = True
 
 
-
-
-#Image
+# Image
 class ImageBase(BaseModel):
     object_id: int
     object_type: ObjectType
     img_url: str
 
+
 class ImageCreate(ImageBase):
     pass
 
+
 class ImageUpdate(BaseModel):
     img_url: Optional[str] = None
+
 
 class ImageResponse(ImageBase):
     id: int
@@ -340,7 +381,7 @@ class ImageResponse(ImageBase):
         orm_mode = True
 
 
-#Order
+# Order
 class OrderBase(BaseModel):
     user_id: int
     object_id: int
@@ -352,20 +393,22 @@ class OrderBase(BaseModel):
     booking_expiration_date: date
     status: OrderStatus
 
+
 class OrderCreate(OrderBase):
     pass
 
+
 class OrderUpdate(BaseModel):
-    order_type: Optional[OrderType] = None
-    object_type: Optional[ObjectType] = None
     booking_deposit: Optional[Decimal] = None
     status: Optional[OrderStatus] = None
+
 
 class OrderResponse(OrderBase):
     id: int
 
     class Config:
         orm_mode = True
+
 
 class PaginatedOrderResponse(BaseModel):
     total: int
@@ -381,8 +424,10 @@ class FavoriteBase(BaseModel):
     object_id: int
     object_type: ObjectType
 
+
 class FavoriteCreate(FavoriteBase):
     pass
+
 
 class FavoriteResponse(FavoriteBase):
     id: int
@@ -391,6 +436,7 @@ class FavoriteResponse(FavoriteBase):
 
     class Config:
         orm_mode = True
+
 
 class FavoriteWithObjectResponse(BaseModel):
     favorite_id: int
@@ -401,6 +447,7 @@ class FavoriteWithObjectResponse(BaseModel):
     class Config:
         orm_mode = True
 
+
 class PaginatedFavoriteResponse(BaseModel):
     total: int
     results: List[FavoriteWithObjectResponse]
@@ -410,7 +457,8 @@ class PaginatedFavoriteResponse(BaseModel):
     class Config:
         orm_mode = True
 
-#Wallet Transaction
+
+# Wallet Transaction
 class WalletTransactionBase(BaseModel):
     transaction_type: TransactionType
     amount: Decimal
@@ -419,8 +467,10 @@ class WalletTransactionBase(BaseModel):
     description: str
     order_id: int
 
+
 class WalletTransactionCreate(WalletTransactionBase):
     pass
+
 
 class WalletTransactionResponse(WalletTransactionBase):
     id: int
@@ -429,20 +479,48 @@ class WalletTransactionResponse(WalletTransactionBase):
     class Config:
         orm_mode = True
 
-#User Wallet
+
+class DepositRequest(BaseModel):
+    amount: Decimal
+    description: Optional[str] = "Deposit to wallet"
+
+
+class WithdrawRequest(BaseModel):
+    amount: Decimal
+    description: Optional[str] = "Withdrawal from wallet"
+
+
+class TransferRequest(BaseModel):
+    to_user_id: int
+    amount: Decimal
+    description: Optional[str] = "Transfer between users"
+
+
+class PaginatedTransactionResponse(BaseModel):
+    total: int
+    results: list[WalletTransactionResponse]
+    limit: int
+    offset: int
+
+
+# User Wallet
 class UserWalletBase(BaseModel):
     user_id: int
-    balance: Decimal
-    loyalty_points: Decimal
-    isActive: bool
+    balance: Optional[Decimal] = 0.0
+    loyalty_points: Optional[Decimal] = 0.0
+    isActive: Optional[bool] = True
+
 
 class UserWalletCreate(UserWalletBase):
-    pass
+    created_at: datetime
+    updated_at: datetime
+
 
 class UserWalletUpdate(BaseModel):
     balance: Optional[Decimal] = None
     loyalty_points: Optional[Decimal] = None
     isActive: Optional[bool] = None
+
 
 class UserWalletResponse(UserWalletBase):
     id: int
@@ -462,5 +540,3 @@ class UserDetailResponse(UserResponse):
 
     class Config:
         orm_mode = True
-
-
