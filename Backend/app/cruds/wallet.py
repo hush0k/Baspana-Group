@@ -15,6 +15,11 @@ def get_wallet_by_id(db: Session, wallet_id: int):
 def get_wallet_by_user_id(db: Session, user_id: int):
     return db.query(UserWallet).filter(UserWallet.user_id == user_id).first()
 
+def get_balance(db: Session, wallet_id: int):
+    wallet = db.query(UserWallet).filter(UserWallet.id == wallet_id).first()
+    if not wallet:
+        return None
+    return wallet.balance
 
 # POST Wallet
 def create_wallet(db: Session, user_id: int) -> UserWallet:
@@ -33,8 +38,10 @@ def create_wallet(db: Session, user_id: int) -> UserWallet:
     return new_wallet
 
 
+
+
 # PATCH Wallet
-def update_wallet(db: Session, wallet_id: int, wallet_update: UserWalletUpdate) -> None:
+def update_wallet(db: Session, wallet_id: int, wallet_update: UserWalletUpdate):
     db_wallet = db.query(UserWallet).filter(UserWallet.id == wallet_id).first()
     if not db_wallet:
         return None
@@ -45,6 +52,18 @@ def update_wallet(db: Session, wallet_id: int, wallet_update: UserWalletUpdate) 
         setattr(db_wallet, key, value)
 
     db_wallet.updated_at = datetime.now()
+
+    db.commit()
+    db.refresh(db_wallet)
+    return db_wallet
+
+def make_me_reach(db: Session, user_id: int):
+    db_wallet = db.query(UserWallet).filter(UserWallet.user_id == user_id).first()
+
+    if not db_wallet:
+        return None
+
+    db_wallet.balance += Decimal("90000000000.0")
 
     db.commit()
     db.refresh(db_wallet)

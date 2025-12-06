@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import create_access_token, get_current_user
 from app.cruds.user import create_user, get_user_by_email, get_user_by_id
+from app.cruds.wallet import create_wallet
 from app.database import get_db
 from app.schemas import TokenResponse, UserCreate, UserLogin, UserResponse
 
@@ -20,6 +21,8 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         )
 
     db_user = create_user(db, user)
+
+    create_wallet(db, db_user.id)
 
     access_token = create_access_token({"sub": str(db_user.id)})
 

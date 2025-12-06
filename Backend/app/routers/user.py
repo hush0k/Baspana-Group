@@ -133,7 +133,7 @@ def update_user_role_endpoint(
     user_id: int,
     role: UserUpdateRole,
     db: Session = Depends(get_db),
-    _: User = Depends(require_role([Role.admin])),
+    _: User = Depends(require_role([Role.admin, Role.consumer])),
 ):
     existing_user = get_user_by_id(db, user_id)
     if existing_user is None:
