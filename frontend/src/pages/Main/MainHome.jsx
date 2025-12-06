@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import HeaderBlack from '../../components/Header/HeaderBlack';
 import FooterBlack from '../../components/Footer/FooterBlack';
 import ComplexCard from '../../components/Cards/ComplexCard';
+import HeroSection from '../../components/Hero/HeroSection';
+import MortgageCalculator from '../../components/Calculator/MortgageCalculator';
+import { complexService } from '../../services/ComplexService';
 import styles from '../../styles/MainHome.module.scss';
 
 const MainHome = () => {
@@ -10,7 +13,6 @@ const MainHome = () => {
     const [complexes, setComplexes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
 
     const mockComplexes = [
         {
@@ -91,6 +93,8 @@ const MainHome = () => {
         <div className={styles.pageWrapper}>
             <HeaderBlack />
 
+            <HeroSection />
+
             <main className={styles.mainContent}>
                 <section className={styles.heroSection}>
                     <div className={styles.heroContent}>
@@ -132,7 +136,6 @@ const MainHome = () => {
                     )}
                 </section>
 
-                {/* CTA секция */}
                 <section className={styles.ctaSection}>
                     <div className={styles.ctaContent}>
                         <h2 className={styles.ctaTitle}>
@@ -147,6 +150,7 @@ const MainHome = () => {
                     </div>
                 </section>
             </main>
+            <MortgageCalculator />
 
             <FooterBlack />
         </div>
