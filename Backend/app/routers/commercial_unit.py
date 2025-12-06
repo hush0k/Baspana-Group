@@ -5,18 +5,31 @@ from fastapi import APIRouter, Depends, HTTPException, status as http_status
 from sqlalchemy.orm import Session
 
 from app.auth import require_role
-from app.cruds.commercial_unit import create_commercial, delete_commercial, get_commercial_by_id, get_commercial_by_number, \
-    get_commercials_filtered, \
-    update_commercial
+from app.cruds.commercial_unit import (
+    create_commercial,
+    delete_commercial,
+    get_commercial_by_id,
+    get_commercial_by_number,
+    get_commercials_filtered,
+    update_commercial,
+)
 
-from app.cruds.commercial_unit import create_commercial, get_commercial_by_id, get_commercial_by_number
+from app.cruds.commercial_unit import (
+    create_commercial,
+    get_commercial_by_id,
+    get_commercial_by_number,
+)
 from app.database import get_db
 from app.models import Direction, FinishingType, PropertyStatus, Role, User
-from app.schemas import CommercialUnitResponse, CommercialUnitUpdate,\
-	CommercialUnitCreate, \
-	PaginatedCommercialUnitResponse
+from app.schemas import (
+    CommercialUnitResponse,
+    CommercialUnitUpdate,
+    CommercialUnitCreate,
+    PaginatedCommercialUnitResponse,
+)
 
 router = APIRouter()
+
 
 @router.get("/", response_model=PaginatedCommercialUnitResponse)
 def get_commercials_endpoint(
@@ -38,7 +51,7 @@ def get_commercials_endpoint(
     sort_by: str = "floor",
     limit: int = 100,
     offset: int = 0,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     return get_commercials_filtered(
         db=db,
@@ -59,7 +72,7 @@ def get_commercials_endpoint(
         order_by=order_by,
         sort_by=sort_by,
         limit=limit,
-        offset=offset
+        offset=offset,
     )
 
 
@@ -67,38 +80,58 @@ def get_commercials_endpoint(
 def get_commercial_by_id_endpoint(commercial_id: int, db: Session = Depends(get_db)):
     existing_commercial = get_commercial_by_id(db, commercial_id)
     if existing_commercial is None:
-        raise HTTPException(status_code = http_status.HTTP_404_NOT_FOUND, detail = "commercial not found")
+        raise HTTPException(
+            status_code=http_status.HTTP_404_NOT_FOUND, detail="commercial not found"
+        )
     return existing_commercial
 
 
-#POST commercial
+# POST commercial
 @router.post("/", response_model=CommercialUnitCreate)
-def create_commercial_endpoint(commercial: CommercialUnitCreate,
-                              db: Session = Depends(get_db),
-                              _: User = Depends(require_role([Role.admin, Role.manager]))):
-    existing_commercial = get_commercial_by_number(db, commercial.number, commercial.building_id)
+def create_commercial_endpoint(
+    commercial: CommercialUnitCreate,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role([Role.admin, Role.manager])),
+):
+    existing_commercial = get_commercial_by_number(
+        db, commercial.number, commercial.building_id
+    )
     if existing_commercial:
-        raise HTTPException(status_code = http_status.HTTP_400_BAD_REQUEST, detail = "commercial already exists")
+        raise HTTPException(
+            status_code=http_status.HTTP_400_BAD_REQUEST,
+            detail="commercial already exists",
+        )
     return create_commercial(db, commercial)
 
 
-#PUT commercial
+# PUT commercial
 @router.patch("/{id}", response_model=CommercialUnitUpdate)
-def update_commercial_endpoint(commercial_id: int, commercial: CommercialUnitUpdate, db: Session = Depends(get_db),
-                              _: User = Depends(require_role([Role.admin, Role.manager]))):
+def update_commercial_endpoint(
+    commercial_id: int,
+    commercial: CommercialUnitUpdate,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role([Role.admin, Role.manager])),
+):
     existing_commercial = get_commercial_by_id(db, commercial_id)
     if not existing_commercial:
-        raise HTTPException(status_code = http_status.HTTP_404_NOT_FOUND, detail = "commercial not found")
+        raise HTTPException(
+            status_code=http_status.HTTP_404_NOT_FOUND, detail="commercial not found"
+        )
     updated_data = update_commercial(db, commercial_id, commercial)
     return updated_data
 
 
-#DELETE commercial
+# DELETE commercial
 @router.delete("/{id}", response_model=CommercialUnitResponse)
-def delete_commercial_endpoint(commercial_id: int, db: Session = Depends(get_db),
-                              _: User = Depends(require_role([Role.admin, Role.manager]))):
+def delete_commercial_endpoint(
+    commercial_id: int,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role([Role.admin, Role.manager])),
+):
     existing_commercial = get_commercial_by_id(db, commercial_id)
     if not existing_commercial:
-        raise HTTPException(status_code = http_status.HTTP_404_NOT_FOUND, detail = "commercial not found")
+        raise HTTPException(
+            status_code=http_status.HTTP_404_NOT_FOUND, detail="commercial not found"
+        )
     delete_commercial(db, commercial_id)
     return existing_commercial

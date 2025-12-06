@@ -2,6 +2,7 @@ from datetime import date
 from typing import Union
 
 from fastapi import HTTPException, status as http_status
+from sqlalchemy.dialects.mysql import DECIMAL
 from sqlalchemy.orm import Session
 
 from app.cruds.order import create_order, get_order_by_id, update_order
@@ -30,6 +31,15 @@ class OrderService:
 				status_code = http_status.HTTP_405_METHOD_NOT_ALLOWED, detail=f"Property is not available. Current status: {property_obj.status}"
 			)
 
+	@staticmethod
+	def _validate_booking_deposit(booking_deposit: DECIMAL, total_price: DECIMAL):
+		if booking_deposit > total_price:
+			raise HTTPException(status_code = http_status.HTTP_400_BAD_REQUEST, detail="Booking deposit can not exceed total price")
+
+		if booking_deposit < 0:
+			raise HTTPException(http_status.HTTP_400_BAD_REQUEST, detail="Booking deposit can not be negative")
+
+
 
 	@staticmethod
 	def _update_property_status(property_obj: Union[Apartment, CommercialUnit], new_status: PropertyStatus, db: Session):
@@ -42,6 +52,8 @@ class OrderService:
 		property_obj = OrderService._get_property_object(db, order_data.object_id, order_data.object_type)
 
 		OrderService._validate_property_availability(property_obj)
+
+		OrderService._validate_booking_deposit(property_obj.booking_deposit, property_obj.total_price)
 
 		new_order = create_order(db, order_data, user_id)
 
@@ -60,7 +72,7 @@ class OrderService:
 				status_code=http_status.HTTP_404_NOT_FOUND, detail="Order does not exist"
 			)
 
-		property_obj = OrderService._get_property_object(db, order_update.object_id, order_update.object_type)
+		property_obj = OrderService._get_property_object(db, existing_order.object_id, existing_order.object_type)
 
 		if not property_obj:
 			raise HTTPException(

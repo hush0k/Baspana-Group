@@ -5,16 +5,26 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.auth import require_role
-from app.cruds.building import create_building, delete_building, get_building_by_id, get_buildings_filtered, \
-	update_building
+from app.cruds.building import (
+    create_building,
+    delete_building,
+    get_building_by_id,
+    get_buildings_filtered,
+    update_building,
+)
 from app.database import get_db
 from app.models import Building, BuildingStatus, Role, User
-from app.schemas import BuildingCreate, BuildingResponse, BuildingUpdate, PaginatedBuildingResponse
+from app.schemas import (
+    BuildingCreate,
+    BuildingResponse,
+    BuildingUpdate,
+    PaginatedBuildingResponse,
+)
 
 router = APIRouter()
 
 
-#GET Building
+# GET Building
 @router.get("/", response_model=PaginatedBuildingResponse)
 def get_buildings_endpoint(
     complex_id: Optional[int] = None,
@@ -38,7 +48,7 @@ def get_buildings_endpoint(
     sort_by: str = "construction_end",
     limit: int = 100,
     offset: int = 0,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     return get_buildings_filtered(
         db=db,
@@ -56,56 +66,80 @@ def get_buildings_endpoint(
         max_gross_area=max_gross_area,
         min_elevators_count=min_elevators_count,
         max_elevators_count=max_elevators_count,
-        building_status = building_status,
+        building_status=building_status,
         construction_start=construction_start,
         construction_end=construction_end,
         order_by=order_by,
         sort_by=sort_by,
         limit=limit,
-        offset=offset
+        offset=offset,
     )
+
 
 @router.get("/{id}", response_model=BuildingResponse)
 def get_building_by_id_endpoint(building_id: int, db: Session = Depends(get_db)):
-	building = db.query(Building).filter(Building.id == building_id).first()
-	if not building:
-		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Building not found")
+    building = db.query(Building).filter(Building.id == building_id).first()
+    if not building:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Building not found"
+        )
 
-	return building
+    return building
 
 
-#POST Building
+# POST Building
 @router.post("/", response_model=BuildingCreate)
-def create_building_endpoint(building: BuildingCreate,
-                    db: Session = Depends(get_db),
-                    _: User = Depends(require_role([Role.admin, Role.manager]))):
-	existing_building = db.query(Building).filter((Building.residential_complex_id == building.residential_complex_id) &
-	                                              (Building.block == building.block)).first()
-	if existing_building:
-		raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Building with this ID already exists")
+def create_building_endpoint(
+    building: BuildingCreate,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role([Role.admin, Role.manager])),
+):
+    existing_building = (
+        db.query(Building)
+        .filter(
+            (Building.residential_complex_id == building.residential_complex_id)
+            & (Building.block == building.block)
+        )
+        .first()
+    )
+    if existing_building:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Building with this ID already exists",
+        )
 
-	return create_building(db, building)
+    return create_building(db, building)
 
 
-#PUT Building
+# PUT Building
 @router.patch("/{id}", response_model=BuildingUpdate)
-def update_building_endpoint(building: BuildingUpdate,
-                             building_id: int,
-                             db: Session = Depends(get_db),
-                             _: User = Depends(require_role([Role.admin, Role.manager]))):
-	existing_building = get_building_by_id(db, building_id)
-	if not existing_building:
-		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Building not found")
+def update_building_endpoint(
+    building: BuildingUpdate,
+    building_id: int,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role([Role.admin, Role.manager])),
+):
+    existing_building = get_building_by_id(db, building_id)
+    if not existing_building:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Building not found"
+        )
 
-	updated_building = update_building(db, building_id, building)
-	return updated_building
+    updated_building = update_building(db, building_id, building)
+    return updated_building
 
-#DELETE Building
+
+# DELETE Building
 @router.delete("/{id}", response_model=BuildingResponse)
-def delete_building_endpoint(building_id: int, db: Session = Depends(get_db),
-                             _: User = Depends(require_role([Role.admin, Role.manager]))):
-	existing_building = get_building_by_id(db, building_id)
-	if not existing_building:
-		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Building not found")
-	delete_building(db, building_id)
-	return existing_building
+def delete_building_endpoint(
+    building_id: int,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role([Role.admin, Role.manager])),
+):
+    existing_building = get_building_by_id(db, building_id)
+    if not existing_building:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Building not found"
+        )
+    delete_building(db, building_id)
+    return existing_building
