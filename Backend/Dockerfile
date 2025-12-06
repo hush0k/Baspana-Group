@@ -16,11 +16,19 @@ COPY requirements.txt .
 # Устанавливаем Python зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Копируем файлы alembic
+COPY alembic.ini .
+COPY alembic ./alembic
+
 # Копируем исходный код приложения
-COPY app .
+COPY app ./app
+
+# Копируем и настраиваем entrypoint скрипт
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
 
 # Открываем порт 8081
 EXPOSE 8081
 
 # Команда запуска
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8081", "--reload"]
+ENTRYPOINT ["bash", "./entrypoint.sh"]

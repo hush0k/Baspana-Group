@@ -191,6 +191,10 @@ class ResidentialComplex(Base):
     has_security = Column(Boolean)
     building_class = Column(SqlEnum(BuildingClass, name="building_class"))
     building_status = Column(SqlEnum(BuildingStatus, name="building_status"))
+    min_area = Column(DECIMAL)
+    min_price = Column(DECIMAL)
+    construction_end = Column(Date)
+    main_image = Column(String)
 
     # Relations
     buildings = relationship("Building", back_populates="residential_complex")

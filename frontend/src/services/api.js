@@ -36,6 +36,7 @@ api.interceptors.response.use(
         // Если токен истек или недействителен
         if (error.response?.status === 401) {
             localStorage.removeItem('access_token');
+            localStorage.removeItem('user');
             window.location.href = '/login';
         }
 

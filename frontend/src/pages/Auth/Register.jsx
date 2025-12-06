@@ -122,6 +122,11 @@ const Register = () => {
             const { confirmPassword, ...registerData } = formData;
             const response = await authService.register(registerData);
             localStorage.setItem('access_token', response.access_token);
+
+            // Получаем данные пользователя
+            const userData = await authService.getCurrentUser();
+            localStorage.setItem('user', JSON.stringify(userData));
+
             navigate('/');
         } catch (err) {
             console.error('Registration error:', err);

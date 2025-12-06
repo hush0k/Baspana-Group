@@ -12,6 +12,9 @@ import ComplexCard from "./components/Cards/ComplexCard";
 import MortgageCalculator from "./components/Calculator/MortgageCalculator";
 import HeroSection from "./components/Hero/HeroSection";
 import MainHome from "./pages/Main/MainHome";
+import Profile from "./pages/User/Profile";
+import BuildingsManagement from "./pages/Management/BuildingsManagement";
+import UserManagement from "./pages/Management/UserManagement";
 
 
 
@@ -23,7 +26,6 @@ const PrivateRoute = ({ children }) => {
 const App = () => {
     return (
         <Routes>
-
             <Route path="/" element={<MainHome />} />
             <Route path="/heroSection" element={<HeroSection />} />
             <Route path="/mortgageCalculator" element={<MortgageCalculator />} />
@@ -34,15 +36,33 @@ const App = () => {
             <Route path="/headerWhite" element={<HeaderWhite />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/projects" element={<MainHome />} />
+
+            {/* Protected Routes */}
             <Route
-                path="/"
+                path="/profile"
                 element={
                     <PrivateRoute>
-                        <Home />
+                        <Profile />
                     </PrivateRoute>
                 }
             />
-            <Route path="/projects" element={<MainHome />} />
+            <Route
+                path="/buildings-management"
+                element={
+                    <PrivateRoute>
+                        <BuildingsManagement />
+                    </PrivateRoute>
+                }
+            />
+            <Route
+                path="/user-management"
+                element={
+                    <PrivateRoute>
+                        <UserManagement />
+                    </PrivateRoute>
+                }
+            />
         </Routes>
     );
 };

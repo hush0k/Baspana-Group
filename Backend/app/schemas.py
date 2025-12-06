@@ -123,6 +123,10 @@ class ResidentialComplexBase(BaseModel):
     has_security: bool
     building_class: BuildingClass
     building_status: BuildingStatus
+    min_area: Optional[float] = None
+    min_price: Optional[float] = None
+    construction_end: Optional[date] = None
+    main_image: Optional[str] = None
 
 
 class ResidentialComplexCreate(ResidentialComplexBase):
@@ -146,6 +150,10 @@ class ResidentialComplexUpdate(BaseModel):
     has_security: Optional[bool] = None
     building_class: Optional[BuildingClass] = None
     building_status: Optional[BuildingStatus] = None
+    min_area: Optional[float] = None
+    min_price: Optional[float] = None
+    construction_end: Optional[date] = None
+    main_image: Optional[str] = None
 
 
 class ResidentialComplexResponse(ResidentialComplexBase):

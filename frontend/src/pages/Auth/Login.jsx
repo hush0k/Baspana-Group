@@ -42,6 +42,11 @@ const Login = () => {
         try {
             const response = await authService.login(email, password);
             localStorage.setItem('access_token', response.access_token);
+
+            // Получаем данные пользователя
+            const userData = await authService.getCurrentUser();
+            localStorage.setItem('user', JSON.stringify(userData));
+
             navigate('/');
         } catch (err) {
             console.error('Login error:', err);

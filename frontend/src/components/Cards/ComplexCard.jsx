@@ -58,7 +58,7 @@ const ComplexCard = ({ complex }) => {
             <div className={styles.cardGrid}>
                 <div className={styles.imageContainer}>
                     <img
-                        src={complex.main_image || '/placeholder-building.jpg'}
+                        src={complex.main_image || 'https://via.placeholder.com/400x300?text=ЖК+' + encodeURIComponent(complex.name)}
                         alt={complex.name}
                         className={styles.image}
                     />
@@ -84,12 +84,20 @@ const ComplexCard = ({ complex }) => {
                     <div className={styles.features}>
                         <div className={styles.feature}>
                             <span className={styles.featureIcon}>🏢</span>
-                            <span className={styles.featureText}>от {complex.min_area} м²</span>
+                            <span className={styles.featureText}>
+                                {complex.min_area
+                                    ? `от ${complex.min_area} м²`
+                                    : complex.apartment_area
+                                        ? `${formatPrice(complex.apartment_area)} м²`
+                                        : 'Уточняйте'}
+                            </span>
                         </div>
                         <div className={styles.feature}>
                             <span className={styles.featureIcon}>💰</span>
                             <span className={styles.featureText}>
-                                от {formatPrice(complex.min_price)} ₸
+                                {complex.min_price
+                                    ? `от ${formatPrice(complex.min_price)} ₸`
+                                    : 'Уточняйте'}
                             </span>
                         </div>
                         <div className={styles.feature}>
@@ -97,7 +105,9 @@ const ComplexCard = ({ complex }) => {
                             <span className={styles.featureText}>
                                 {complex.building_status === 'Completed'
                                     ? 'Сдан'
-                                    : formatDate(complex.construction_end)}
+                                    : complex.construction_end
+                                        ? formatDate(complex.construction_end)
+                                        : 'Уточняйте'}
                             </span>
                         </div>
                         <div className={styles.feature}>

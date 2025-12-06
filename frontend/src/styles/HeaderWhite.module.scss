@@ -56,6 +56,11 @@
     }
   }
 
+  .profileContainer {
+    position: relative;
+    flex-shrink: 0;
+  }
+
   .profileBtn {
     background-color: $main-color;
     color: #f0f0f0;
@@ -68,18 +73,83 @@
     transition: all 0.3s ease;
     white-space: nowrap;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
     &:hover {
       background-color: #3d2417;
       color:#ffebee;
       transform: scale(1.02);
-
-
-
     }
 
     &:active {
       transform: scale(0.98);
+    }
+
+    .arrowIcon {
+      transition: transform 0.3s ease;
+
+      &.open {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 220px;
+    overflow: hidden;
+    z-index: 1001;
+    animation: dropdownSlide 0.2s ease-out;
+
+    @keyframes dropdownSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+
+  .dropdownItem {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    text-align: left;
+    color: $main-color;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    &.logoutBtn {
+      color: #d32f2f;
+      font-weight: 600;
+
+      &:hover {
+        background-color: rgba(211, 47, 47, 0.1);
+      }
     }
   }
 
