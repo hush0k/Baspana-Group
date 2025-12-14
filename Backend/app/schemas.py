@@ -109,6 +109,7 @@ class UserResponse(UserBase):
 class ResidentialComplexBase(BaseModel):
     name: str
     description: str
+    short_description: Optional[str] = None
     block_counts: int
     playground_area: float
     apartment_area: float
@@ -136,6 +137,7 @@ class ResidentialComplexCreate(ResidentialComplexBase):
 class ResidentialComplexUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
+    short_description: Optional[str] = None
     block_counts: Optional[int] = None
     playground_area: Optional[float] = None
     apartment_area: Optional[float] = None
@@ -178,6 +180,7 @@ class BuildingBase(BaseModel):
     residential_complex_id: int
     block: int
     description: str
+    short_description: Optional[str] = None
     floor_count: int
     apartments_count: int
     commercials_count: int
@@ -196,6 +199,7 @@ class BuildingCreate(BuildingBase):
 class BuildingUpdate(BaseModel):
     block: Optional[int] = None
     description: Optional[str] = None
+    short_description: Optional[str] = None
     floor_count: Optional[int] = None
     apartments_count: Optional[int] = None
     commercials_count: Optional[int] = None
@@ -229,6 +233,8 @@ class ApartmentBase(BaseModel):
     building_id: int
     number: int
     floor: int
+    description: Optional[str] = None
+    short_description: Optional[str] = None
     apartment_area: Decimal
     apartment_type: ApartmentType
     has_balcony: bool
@@ -251,6 +257,8 @@ class ApartmentUpdate(BaseModel):
     building_id: Optional[int] = None
     number: Optional[int] = None
     floor: Optional[int] = None
+    description: Optional[str] = None
+    short_description: Optional[str] = None
     apartment_area: Optional[Decimal] = None
     apartment_type: Optional[ApartmentType] = None
     has_balcony: Optional[bool] = None

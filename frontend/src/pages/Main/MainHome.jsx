@@ -6,7 +6,7 @@ import ComplexCard from '../../components/Cards/ComplexCard';
 import HeroSection from '../../components/Hero/HeroSection';
 import MortgageCalculator from '../../components/Calculator/MortgageCalculator';
 import FilterPanel from '../../components/Filters/FilterPanel';
-import { complexService } from '../../services/ComplexService';
+import complexService from '../../services/ComplexService';
 import styles from '../../styles/MainHome.module.scss';
 
 const MainHome = () => {

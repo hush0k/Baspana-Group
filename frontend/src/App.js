@@ -13,8 +13,10 @@ import MortgageCalculator from "./components/Calculator/MortgageCalculator";
 import HeroSection from "./components/Hero/HeroSection";
 import MainHome from "./pages/Main/MainHome";
 import Profile from "./pages/User/Profile";
-import BuildingsManagement from "./pages/Management/BuildingsManagement";
 import UserManagement from "./pages/Management/UserManagement";
+import ComplexManagement from "./pages/Management/ComplexManagement";
+import BuildingManagement from "./pages/Management/BuildingManagement";
+import ApartmentManagement from "./pages/Management/ApartmentManagement";
 
 
 
@@ -34,6 +36,7 @@ const App = () => {
             <Route path = "/footerBlack" element={<FooterBlack />} />
             <Route path="/headerBlack" element={<HeaderBlack />} />
             <Route path="/headerWhite" element={<HeaderWhite />} />
+            <Route path="/complex-management" element={<PrivateRoute><ComplexManagement /></PrivateRoute>} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/projects" element={<MainHome />} />
@@ -51,7 +54,7 @@ const App = () => {
                 path="/buildings-management"
                 element={
                     <PrivateRoute>
-                        <BuildingsManagement />
+                        <BuildingManagement />
                     </PrivateRoute>
                 }
             />
@@ -60,6 +63,22 @@ const App = () => {
                 element={
                     <PrivateRoute>
                         <UserManagement />
+                    </PrivateRoute>
+                }
+            />
+            <Route
+                path="/building-management"
+                element={
+                    <PrivateRoute>
+                        <BuildingManagement />
+                    </PrivateRoute>
+                }
+            />
+            <Route
+                path="/apartments-management"
+                element={
+                    <PrivateRoute>
+                        <ApartmentManagement />
                     </PrivateRoute>
                 }
             />

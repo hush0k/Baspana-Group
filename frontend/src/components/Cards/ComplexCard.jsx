@@ -9,6 +9,26 @@ const ComplexCard = ({ complex }) => {
         navigate(`/complexes/${complex.id}`);
     };
 
+    const getImageSrc = (mainImage) => {
+        if (!mainImage) {
+            return `https://via.placeholder.com/400x300?text=ЖК+${encodeURIComponent(complex.name)}`;
+        }
+        // Если изображение уже имеет префикс data:image, возвращаем как есть
+        if (mainImage.startsWith('data:image')) {
+            return mainImage;
+        }
+        // Если это base64 без префикса, добавляем префикс
+        if (mainImage.startsWith('/9j/') || mainImage.startsWith('iVBOR')) {
+            return `data:image/jpeg;base64,${mainImage}`;
+        }
+        // Если это URL, возвращаем как есть
+        if (mainImage.startsWith('http')) {
+            return mainImage;
+        }
+        // По умолчанию считаем это base64 JPEG
+        return `data:image/jpeg;base64,${mainImage}`;
+    };
+
     const formatPrice = (price) => {
         return new Intl.NumberFormat('ru-RU').format(price);
     };
@@ -58,7 +78,7 @@ const ComplexCard = ({ complex }) => {
             <div className={styles.cardGrid}>
                 <div className={styles.imageContainer}>
                     <img
-                        src={complex.main_image || 'https://via.placeholder.com/400x300?text=ЖК+' + encodeURIComponent(complex.name)}
+                        src={getImageSrc(complex.main_image)}
                         alt={complex.name}
                         className={styles.image}
                     />
@@ -78,7 +98,7 @@ const ComplexCard = ({ complex }) => {
                     </div>
 
                     <p className={styles.description}>
-                        {complex.description}
+                        {complex.short_description}
                     </p>
 
                     <div className={styles.features}>

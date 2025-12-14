@@ -106,7 +106,7 @@ const HeaderBlack = () => {
 
                         {isManagerOrAdmin && (
                             <Link
-                                to="/buildings-management"
+                                to="/complex-management"
                                 className={styles.dropdownItem}
                                 onClick={() => setIsDropdownOpen(false)}
                             >

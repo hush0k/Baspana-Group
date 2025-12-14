@@ -95,32 +95,32 @@ def create_residential_complex_endpoint(
 # PUT Residential Complex
 @router.patch("/{id}", response_model=ResidentialComplexUpdate)
 def update_residential_complex_endpoint(
-    complex_id: int,
+    id: int,
     update_complex: ResidentialComplexUpdate,
     db: Session = Depends(get_db),
     _: User = Depends(require_role([Role.admin, Role.manager])),
 ):
-    existing_complex = get_residential_complex_by_id(db, complex_id)
+    existing_complex = get_residential_complex_by_id(db, id)
     if existing_complex is None:
         raise HTTPException(
             status_code=400, detail="Residential complex with this ID does not exist"
         )
 
-    updated_complex = update_residential_complex(db, complex_id, update_complex)
+    updated_complex = update_residential_complex(db, id, update_complex)
     return updated_complex
 
 
 # DELETE Residential Complex
 @router.delete("/{id}", response_model=ResidentialComplexResponse)
 def delete_residential_complex_endpoint(
-    complex_id: int,
+    id: int,
     db: Session = Depends(get_db),
     _: User = Depends(require_role([Role.admin, Role.manager])),
 ):
-    existing_complex = get_residential_complex_by_id(db, complex_id)
+    existing_complex = get_residential_complex_by_id(db, id)
     if existing_complex is None:
         raise HTTPException(
             status_code=400, detail="Complex with this ID does not exist"
         )
-    delete_residential_complex(db, complex_id)
+    delete_residential_complex(db, id)
     return existing_complex
