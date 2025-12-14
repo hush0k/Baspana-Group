@@ -17,6 +17,7 @@ import UserManagement from "./pages/Management/UserManagement";
 import ComplexManagement from "./pages/Management/ComplexManagement";
 import BuildingManagement from "./pages/Management/BuildingManagement";
 import ApartmentManagement from "./pages/Management/ApartmentManagement";
+import ComplexPage from "./pages/Complex/ComplexPage";
 
 
 
@@ -36,6 +37,7 @@ const App = () => {
             <Route path = "/footerBlack" element={<FooterBlack />} />
             <Route path="/headerBlack" element={<HeaderBlack />} />
             <Route path="/headerWhite" element={<HeaderWhite />} />
+            <Route path="/complex/:id" element={<ComplexPage />} />
             <Route path="/complex-management" element={<PrivateRoute><ComplexManagement /></PrivateRoute>} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

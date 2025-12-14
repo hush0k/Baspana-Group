@@ -6,7 +6,7 @@ const ComplexCard = ({ complex }) => {
     const navigate = useNavigate();
 
     const handleCardClick = () => {
-        navigate(`/complexes/${complex.id}`);
+        navigate(`/complex/${complex.id}`);
     };
 
     const getImageSrc = (mainImage) => {
