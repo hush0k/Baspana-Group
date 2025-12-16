@@ -336,3 +336,147 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+// Image upload section styles
+.imagesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  h4 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: $text-color;
+  }
+}
+
+.existingImages {
+  .imageGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+  }
+}
+
+.imageItem {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid $border-color;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.deleteImageButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(211, 47, 47, 0.9);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  opacity: 0;
+
+  .imageItem:hover & {
+    opacity: 1;
+  }
+
+  &:hover {
+    background: rgba(211, 47, 47, 1);
+    transform: scale(1.1);
+  }
+
+  svg {
+    stroke: white;
+  }
+}
+
+.uploadSection {
+  padding: 20px;
+  background: $bg-light;
+  border-radius: 8px;
+  border: 2px dashed $border-color;
+}
+
+.fileInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileInputLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: white;
+  border: 2px solid $main-color;
+  border-radius: 8px;
+  color: $main-color;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $main-color;
+    color: white;
+    transform: scale(1.02);
+  }
+
+  svg {
+    stroke: currentColor;
+  }
+}
+
+.selectedFilesCount {
+  font-size: 14px;
+  color: $text-color;
+  font-weight: 500;
+}
+
+.uploadButton {
+  margin-top: 16px;
+  padding: 12px 30px;
+  background: $main-color;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: $hover-main-color;
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

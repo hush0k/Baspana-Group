@@ -26,8 +26,10 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
     construction_end: '',
   });
 
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [mainImageFile, setMainImageFile] = useState(null);
+  const [mainImagePreview, setMainImagePreview] = useState(null);
+  const [galleryFiles, setGalleryFiles] = useState([]);
+  const [galleryPreviews, setGalleryPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -106,7 +108,7 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
     }));
   };
 
-  const handleImageChange = (e) => {
+  const handleMainImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       // Проверка типа файла
@@ -121,16 +123,56 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
         return;
       }
 
-      setImageFile(file);
+      setMainImageFile(file);
 
       // Создаем предпросмотр
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
+        setMainImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
       setError('');
     }
+  };
+
+  const handleGalleryImagesChange = (e) => {
+    const files = Array.from(e.target.files);
+    const validFiles = [];
+    const previews = [];
+
+    for (const file of files) {
+      // Проверка типа файла
+      if (!file.type.startsWith('image/')) {
+        setError('Все файлы должны быть изображениями');
+        return;
+      }
+
+      // Проверка размера файла (максимум 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Размер каждого файла не должен превышать 5MB');
+        return;
+      }
+
+      validFiles.push(file);
+
+      // Создаем предпросмотр
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        previews.push(reader.result);
+        if (previews.length === validFiles.length) {
+          setGalleryPreviews(previews);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    setGalleryFiles(validFiles);
+    setError('');
+  };
+
+  const removeGalleryImage = (index) => {
+    setGalleryFiles(prev => prev.filter((_, i) => i !== index));
+    setGalleryPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -139,32 +181,65 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
     setError('');
 
     try {
-      // Преобразуем данные в нужный формат
-      const payload = {
-        name: formData.name,
-        description: formData.description,
-        short_description: formData.short_description || null,
-        block_counts: parseInt(unformatNumber(formData.block_counts)),
-        playground_area: parseFloat(unformatNumber(formData.playground_area)),
-        apartment_area: parseFloat(unformatNumber(formData.apartment_area)),
-        commercial_area: parseFloat(unformatNumber(formData.commercial_area)),
-        parking_area: parseFloat(unformatNumber(formData.parking_area)),
-        landing_area: parseFloat(unformatNumber(formData.landing_area)),
-        material: formData.material,
-        city: formData.city,
-        address: formData.address,
-        longitude: parseFloat(formData.longitude),
-        latitude: parseFloat(formData.latitude),
-        has_security: formData.has_security,
-        building_class: formData.building_class,
-        building_status: formData.building_status,
-        min_area: formData.min_area ? parseFloat(unformatNumber(formData.min_area)) : null,
-        min_price: formData.min_price ? parseFloat(unformatNumber(formData.min_price)) : null,
-        construction_end: formData.construction_end || null,
-        main_image: imagePreview || null // Сохраняем base64 изображение
-      };
+      // Создаем FormData для отправки файлов
+      const formDataToSend = new FormData();
 
-      await complexService.createComplex(payload);
+      // Добавляем все поля формы
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('description', formData.description);
+      formDataToSend.append('short_description', formData.short_description || '');
+      formDataToSend.append('block_counts', parseInt(unformatNumber(formData.block_counts)));
+      formDataToSend.append('playground_area', parseFloat(unformatNumber(formData.playground_area)));
+      formDataToSend.append('apartment_area', parseFloat(unformatNumber(formData.apartment_area)));
+      formDataToSend.append('commercial_area', parseFloat(unformatNumber(formData.commercial_area)));
+      formDataToSend.append('parking_area', parseFloat(unformatNumber(formData.parking_area)));
+      formDataToSend.append('landing_area', parseFloat(unformatNumber(formData.landing_area)));
+      formDataToSend.append('material', formData.material);
+      formDataToSend.append('city', formData.city);
+      formDataToSend.append('address', formData.address);
+
+      // Проверяем и добавляем координаты
+      const longitude = parseFloat(formData.longitude);
+      const latitude = parseFloat(formData.latitude);
+
+      if (isNaN(longitude) || isNaN(latitude)) {
+        setError('Пожалуйста, укажите корректные координаты (широту и долготу)');
+        setLoading(false);
+        return;
+      }
+
+      formDataToSend.append('longitude', longitude);
+      formDataToSend.append('latitude', latitude);
+      formDataToSend.append('has_security', formData.has_security);
+      formDataToSend.append('building_class', formData.building_class);
+      formDataToSend.append('building_status', formData.building_status);
+
+      if (formData.min_area) {
+        formDataToSend.append('min_area', parseFloat(unformatNumber(formData.min_area)));
+      }
+      if (formData.min_price) {
+        formDataToSend.append('min_price', parseFloat(unformatNumber(formData.min_price)));
+      }
+      if (formData.construction_end) {
+        formDataToSend.append('construction_end', formData.construction_end);
+      }
+
+      // Добавляем главное изображение если есть
+      if (mainImageFile) {
+        formDataToSend.append('main_image', mainImageFile);
+      }
+
+      // Создаем комплекс
+      const createdComplex = await complexService.createComplex(formDataToSend);
+
+      // Загружаем изображения галереи если есть
+      if (galleryFiles.length > 0 && createdComplex.id) {
+        const imageService = (await import('../../services/ImageService')).default;
+        for (const file of galleryFiles) {
+          await imageService.uploadImage(file, createdComplex.id, 'Residential complex');
+        }
+      }
+
       onSuccess();
       onClose();
 
@@ -172,6 +247,7 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
       setFormData({
         name: '',
         description: '',
+        short_description: '',
         block_counts: '',
         playground_area: '',
         apartment_area: '',
@@ -190,8 +266,10 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
         min_price: '',
         construction_end: '',
       });
-      setImageFile(null);
-      setImagePreview(null);
+      setMainImageFile(null);
+      setMainImagePreview(null);
+      setGalleryFiles([]);
+      setGalleryPreviews([]);
     } catch (err) {
       console.error('Ошибка создания комплекса:', err);
 
@@ -307,7 +385,7 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Долгота <span className={styles.required}>*</span></label>
+                  <label>Долгота (Longitude) <span className={styles.required}>*</span></label>
                   <input
                     type="number"
                     step="0.000001"
@@ -315,12 +393,15 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
                     value={formData.longitude}
                     onChange={handleChange}
                     required
-                    placeholder="76.9286"
+                    placeholder="76.928694"
                   />
+                  <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
+                    Пример: Алматы - 76.928694, Астана - 71.430564
+                  </small>
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Широта <span className={styles.required}>*</span></label>
+                  <label>Широта (Latitude) <span className={styles.required}>*</span></label>
                   <input
                     type="number"
                     step="0.000001"
@@ -328,9 +409,24 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
                     value={formData.latitude}
                     onChange={handleChange}
                     required
-                    placeholder="43.2220"
+                    placeholder="43.238949"
                   />
+                  <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
+                    Пример: Алматы - 43.238949, Астана - 51.128422
+                  </small>
                 </div>
+              </div>
+              <div style={{
+                background: '#e3f2fd',
+                padding: '12px',
+                borderRadius: '8px',
+                fontSize: '13px',
+                color: '#1565c0',
+                marginTop: '8px'
+              }}>
+                💡 Координаты нужны для отображения карты и инфраструктуры на странице ЖК.
+                Получить координаты можно на <a href="https://2gis.kz" target="_blank" rel="noopener noreferrer" style={{color: '#1565c0', fontWeight: 'bold'}}>2ГИС</a>
+                или Google Maps (правый клик → "Что здесь?")
               </div>
             </div>
 
@@ -509,22 +605,49 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={handleImageChange}
+                  onChange={handleMainImageChange}
                   className={styles.fileInput}
                 />
-                {imagePreview && (
+                {mainImagePreview && (
                   <div className={styles.imagePreview}>
-                    <img src={imagePreview} alt="Предпросмотр" />
+                    <img src={mainImagePreview} alt="Предпросмотр главного изображения" />
                     <button
                       type="button"
                       className={styles.removeImage}
                       onClick={() => {
-                        setImageFile(null);
-                        setImagePreview(null);
+                        setMainImageFile(null);
+                        setMainImagePreview(null);
                       }}
                     >
                       Удалить
                     </button>
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Изображения для галереи</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleGalleryImagesChange}
+                  className={styles.fileInput}
+                />
+                {galleryPreviews.length > 0 && (
+                  <div className={styles.galleryPreview}>
+                    {galleryPreviews.map((preview, index) => (
+                      <div key={index} className={styles.imagePreview}>
+                        <img src={preview} alt={`Галерея ${index + 1}`} />
+                        <button
+                          type="button"
+                          className={styles.removeImage}
+                          onClick={() => removeGalleryImage(index)}
+                        >
+                          Удалить
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>

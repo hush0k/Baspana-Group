@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import complexService from '../../services/ComplexService';
 import buildingService from '../../services/BuildingService';
+import imageService from '../../services/ImageService';
 import styles from '../../styles/CreateComplexModal.module.scss';
 
 const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
@@ -21,6 +22,9 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
     construction_start: '',
     construction_end: ''
   });
+  const [images, setImages] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -34,6 +38,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
     if (isOpen && buildingId) {
       fetchComplexes();
       fetchBuildingData();
+      fetchBuildingImages();
     }
   }, [isOpen, buildingId]);
 
@@ -74,6 +79,15 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
     }
   };
 
+  const fetchBuildingImages = async () => {
+    try {
+      const imagesData = await imageService.getImages(buildingId, 'Building');
+      setImages(imagesData || []);
+    } catch (err) {
+      console.error('Ошибка загрузки изображений:', err);
+    }
+  };
+
   const formatNumber = (value) => {
     if (!value) return '';
     const cleanValue = value.toString().replace(/[^\d.]/g, '');
@@ -102,6 +116,44 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
       ...prev,
       [name]: formatted
     }));
+  };
+
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files);
+  };
+
+  const handleUploadImages = async () => {
+    if (selectedFiles.length === 0) return;
+
+    setUploadingImages(true);
+    try {
+      for (const file of selectedFiles) {
+        await imageService.uploadImage(file, buildingId, 'Building');
+      }
+      await fetchBuildingImages();
+      setSelectedFiles([]);
+      // Reset file input
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput) fileInput.value = '';
+    } catch (err) {
+      console.error('Ошибка загрузки изображений:', err);
+      setError('Не удалось загрузить изображения');
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  const handleDeleteImage = async (imageId) => {
+    if (!window.confirm('Вы уверены, что хотите удалить это изображение?')) return;
+
+    try {
+      await imageService.deleteImage(imageId);
+      await fetchBuildingImages();
+    } catch (err) {
+      console.error('Ошибка удаления изображения:', err);
+      setError('Не удалось удалить изображение');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -319,6 +371,73 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
                     required
                     placeholder="0"
                   />
+                </div>
+              </div>
+            </div>
+
+            {/* Изображения */}
+            <div className={styles.formSection}>
+              <h3>Изображения блока</h3>
+
+              <div className={styles.imagesSection}>
+                {/* Существующие изображения */}
+                {images.length > 0 && (
+                  <div className={styles.existingImages}>
+                    <h4>Загруженные изображения ({images.length})</h4>
+                    <div className={styles.imageGrid}>
+                      {images.map((image) => (
+                        <div key={image.id} className={styles.imageItem}>
+                          <img src={image.img_url} alt="Building" />
+                          <button
+                            type="button"
+                            className={styles.deleteImageButton}
+                            onClick={() => handleDeleteImage(image.id)}
+                            title="Удалить изображение"
+                          >
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                              <path d="M4 4L12 12M4 12L12 4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Загрузка новых изображений */}
+                <div className={styles.uploadSection}>
+                  <h4>Добавить новые изображения</h4>
+                  <div className={styles.fileInputWrapper}>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleFileSelect}
+                      className={styles.fileInput}
+                      id="building-images"
+                    />
+                    <label htmlFor="building-images" className={styles.fileInputLabel}>
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                      Выбрать файлы
+                    </label>
+                    {selectedFiles.length > 0 && (
+                      <span className={styles.selectedFilesCount}>
+                        {selectedFiles.length} файл(ов) выбрано
+                      </span>
+                    )}
+                  </div>
+                  {selectedFiles.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={handleUploadImages}
+                      className={styles.uploadButton}
+                      disabled={uploadingImages}
+                    >
+                      {uploadingImages ? 'Загрузка...' : 'Загрузить изображения'}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

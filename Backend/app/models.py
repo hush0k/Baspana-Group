@@ -200,6 +200,7 @@ class ResidentialComplex(Base):
     # Relations
     buildings = relationship("Building", back_populates="residential_complex")
     reviews = relationship("Review", back_populates="residential_complex")
+    infrastructures = relationship("Infrastructure", back_populates="residential_complex")
 
     @property
     def images(self):
@@ -429,3 +430,33 @@ class WalletTransaction(Base):
 
     wallet = relationship("UserWallet", back_populates="transactions")
     order = relationship("Order", back_populates="wallet_transactions")
+
+
+class InfrastructureCategory(str, Enum):
+    education = "Education"  # Образование
+    shopping = "Shopping"  # Покупки и развлечения
+    parks = "Parks"  # Парки и отдых
+    health = "Health"  # Здоровье
+    transport = "Transport"  # Транспорт
+    sports = "Sports"  # Спорт
+    restaurants = "Restaurants"  # Рестораны и кафе
+    services = "Services"  # Услуги
+
+
+class Infrastructure(Base):
+    __tablename__ = "infrastructure"
+
+    id = Column(Integer, primary_key=True)
+    residential_complex_id = Column(Integer, ForeignKey("residential_complex.id"))
+    category = Column(SqlEnum(InfrastructureCategory, name="infrastructure_category"))
+    name = Column(String, nullable=False)
+    distance = Column(String)  # Например: "5 мин", "500 м", "10 мин пешком"
+    description = Column(String, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    # Relations
+    residential_complex = relationship("ResidentialComplex", back_populates="infrastructures")
+
+
+# Обновляем ResidentialComplex чтобы добавить связь с Infrastructure

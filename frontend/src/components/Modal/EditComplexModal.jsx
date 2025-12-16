@@ -27,8 +27,11 @@ const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
     construction_end: '',
   });
 
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [mainImageFile, setMainImageFile] = useState(null);
+  const [mainImagePreview, setMainImagePreview] = useState(null);
+  const [existingGalleryImages, setExistingGalleryImages] = useState([]);
+  const [galleryFiles, setGalleryFiles] = useState([]);
+  const [galleryPreviews, setGalleryPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
   const [error, setError] = useState('');
@@ -110,7 +113,16 @@ const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
       });
 
       if (complex.main_image) {
-        setImagePreview(complex.main_image);
+        setMainImagePreview(complex.main_image);
+      }
+
+      // Загружаем существующие изображения галереи
+      try {
+        const imageService = (await import('../../services/ImageService')).default;
+        const images = await imageService.getImages(complexId, 'Residential complex');
+        setExistingGalleryImages(images || []);
+      } catch (err) {
+        console.error('Ошибка загрузки изображений галереи:', err);
       }
     } catch (err) {
       console.error('Ошибка загрузки данных комплекса:', err);
@@ -153,7 +165,7 @@ const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
     }));
   };
 
-  const handleImageChange = (e) => {
+  const handleMainImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       if (!file.type.startsWith('image/')) {
@@ -166,14 +178,62 @@ const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
         return;
       }
 
-      setImageFile(file);
+      setMainImageFile(file);
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
+        setMainImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
       setError('');
+    }
+  };
+
+  const handleGalleryImagesChange = (e) => {
+    const files = Array.from(e.target.files);
+    const validFiles = [];
+    const previews = [];
+
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) {
+        setError('Все файлы должны быть изображениями');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Размер каждого файла не должен превышать 5MB');
+        return;
+      }
+
+      validFiles.push(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        previews.push(reader.result);
+        if (previews.length === validFiles.length) {
+          setGalleryPreviews(previews);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    setGalleryFiles(validFiles);
+    setError('');
+  };
+
+  const removeGalleryImage = (index) => {
+    setGalleryFiles(prev => prev.filter((_, i) => i !== index));
+    setGalleryPreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeExistingGalleryImage = async (imageId) => {
+    try {
+      const imageService = (await import('../../services/ImageService')).default;
+      await imageService.deleteImage(imageId);
+      setExistingGalleryImages(prev => prev.filter(img => img.id !== imageId));
+    } catch (err) {
+      console.error('Ошибка удаления изображения:', err);
+      setError('Не удалось удалить изображение');
     }
   };
 
@@ -182,51 +242,161 @@ const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
     setLoading(true);
     setError('');
 
-    const payload = {
-      name: formData.name,
-      description: formData.description,
-      short_description: formData.short_description || null,
-      block_counts: parseInt(unformatNumber(formData.block_counts)),
-      playground_area: parseFloat(unformatNumber(formData.playground_area)),
-      apartment_area: parseFloat(unformatNumber(formData.apartment_area)),
-      commercial_area: parseFloat(unformatNumber(formData.commercial_area)),
-      parking_area: parseFloat(unformatNumber(formData.parking_area)),
-      landing_area: parseFloat(unformatNumber(formData.landing_area)),
-      material: formData.material,
-      city: formData.city,
-      address: formData.address,
-      longitude: parseFloat(formData.longitude),
-      latitude: parseFloat(formData.latitude),
-      has_security: formData.has_security,
-      building_class: formData.building_class,
-      building_status: formData.building_status,
-      min_area: formData.min_area ? parseFloat(unformatNumber(formData.min_area)) : null,
-      min_price: formData.min_price ? parseFloat(unformatNumber(formData.min_price)) : null,
-      construction_end: formData.construction_end || null,
-      main_image: imagePreview || null
-    };
+    console.log('=== НАЧАЛО ОБНОВЛЕНИЯ ЖК ===');
+    console.log('Complex ID:', complexId);
+    console.log('Form Data:', formData);
+    console.log('Main Image File:', mainImageFile);
 
     try {
-      await api.patch(`/complexes/${complexId}`, payload);
+      // Проверяем координаты сразу
+      const longitude = parseFloat(formData.longitude);
+      const latitude = parseFloat(formData.latitude);
+
+      if (isNaN(longitude) || isNaN(latitude)) {
+        setError('Пожалуйста, укажите корректные координаты (широту и долготу)');
+        setLoading(false);
+        return;
+      }
+
+      // ВСЕГДА используем FormData, потому что бэкенд ожидает Form данные
+      console.log('Создание FormData для отправки...');
+      const formDataToSend = new FormData();
+
+      // Обязательные поля (всегда отправляем)
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('description', formData.description);
+      formDataToSend.append('short_description', formData.short_description || '');
+      formDataToSend.append('material', formData.material);
+      formDataToSend.append('city', formData.city);
+      formDataToSend.append('address', formData.address);
+      formDataToSend.append('longitude', longitude);
+      formDataToSend.append('latitude', latitude);
+      formDataToSend.append('building_class', formData.building_class);
+      formDataToSend.append('building_status', formData.building_status);
+
+      // Boolean поле - отправляем как строку для FormData
+      formDataToSend.append('has_security', formData.has_security ? 'true' : 'false');
+
+      // Числовые поля - проверяем на NaN перед отправкой
+      const blockCounts = parseInt(unformatNumber(formData.block_counts));
+      if (!isNaN(blockCounts)) {
+        formDataToSend.append('block_counts', blockCounts);
+      }
+
+      const playgroundArea = parseFloat(unformatNumber(formData.playground_area));
+      if (!isNaN(playgroundArea)) {
+        formDataToSend.append('playground_area', playgroundArea);
+      }
+
+      const apartmentArea = parseFloat(unformatNumber(formData.apartment_area));
+      if (!isNaN(apartmentArea)) {
+        formDataToSend.append('apartment_area', apartmentArea);
+      }
+
+      const commercialArea = parseFloat(unformatNumber(formData.commercial_area));
+      if (!isNaN(commercialArea)) {
+        formDataToSend.append('commercial_area', commercialArea);
+      }
+
+      const parkingArea = parseFloat(unformatNumber(formData.parking_area));
+      if (!isNaN(parkingArea)) {
+        formDataToSend.append('parking_area', parkingArea);
+      }
+
+      const landingArea = parseFloat(unformatNumber(formData.landing_area));
+      if (!isNaN(landingArea)) {
+        formDataToSend.append('landing_area', landingArea);
+      }
+
+      // Опциональные поля
+      if (formData.min_area) {
+        const minArea = parseFloat(unformatNumber(formData.min_area));
+        if (!isNaN(minArea)) {
+          formDataToSend.append('min_area', minArea);
+        }
+      }
+
+      if (formData.min_price) {
+        const minPrice = parseFloat(unformatNumber(formData.min_price));
+        if (!isNaN(minPrice)) {
+          formDataToSend.append('min_price', minPrice);
+        }
+      }
+
+      if (formData.construction_end) {
+        formDataToSend.append('construction_end', formData.construction_end);
+      }
+
+      // Добавляем изображение только если оно есть
+      if (mainImageFile) {
+        console.log('Добавление нового изображения');
+        formDataToSend.append('main_image', mainImageFile);
+      }
+
+      // Логируем содержимое FormData для отладки
+      console.log('FormData содержимое:');
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(`  ${key}: ${value}`);
+      }
+
+      console.log('Отправка PATCH запроса с FormData...');
+      const response = await api.patch(`/complexes/${complexId}`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('Ответ от сервера:', response.data);
+
+      // Загружаем новые изображения галереи если есть
+      if (galleryFiles.length > 0) {
+        console.log('Загрузка изображений галереи:', galleryFiles.length);
+        const imageService = (await import('../../services/ImageService')).default;
+        for (const file of galleryFiles) {
+          await imageService.uploadImage(file, complexId, 'Residential complex');
+        }
+      }
+
+      console.log('=== УСПЕШНОЕ ОБНОВЛЕНИЕ ЖК ===');
       onSuccess();
       onClose();
     } catch (err) {
-      console.error('Ошибка обновления комплекса:', err);
+      console.error('=== ОШИБКА ОБНОВЛЕНИЯ КОМПЛЕКСА ===');
+      console.error('Error full:', err);
+      console.error('Error message:', err.message);
+      console.error('Error response:', err.response);
+      console.error('Error response status:', err.response?.status);
+      console.error('Error response headers:', err.response?.headers);
       console.error('Error response data:', err.response?.data);
-      console.error('Payload sent:', payload);
+      console.error('Error request:', err.request);
+      console.error('Error config:', err.config);
 
       let errorMessage = 'Ошибка при обновлении комплекса';
 
-      if (err.response?.data?.detail) {
-        const detail = err.response.data.detail;
+      if (err.response) {
+        // Сервер ответил с ошибкой
+        console.error(`Сервер вернул статус: ${err.response.status}`);
 
-        if (Array.isArray(detail)) {
-          errorMessage = detail.map(error => error.msg || JSON.stringify(error)).join(', ');
-        } else if (typeof detail === 'string') {
-          errorMessage = detail;
-        } else if (typeof detail === 'object') {
-          errorMessage = detail.msg || JSON.stringify(detail);
+        if (err.response.data?.detail) {
+          const detail = err.response.data.detail;
+
+          if (Array.isArray(detail)) {
+            errorMessage = detail.map(error => error.msg || JSON.stringify(error)).join(', ');
+          } else if (typeof detail === 'string') {
+            errorMessage = detail;
+          } else if (typeof detail === 'object') {
+            errorMessage = detail.msg || JSON.stringify(detail);
+          }
+        } else {
+          errorMessage = `Ошибка ${err.response.status}: ${err.response.statusText}`;
         }
+      } else if (err.request) {
+        // Запрос был отправлен, но ответа не получено
+        console.error('Запрос отправлен, но ответа не получено');
+        errorMessage = 'Сервер не отвечает. Проверьте подключение к бэкенду.';
+      } else {
+        // Ошибка при настройке запроса
+        console.error('Ошибка при настройке запроса:', err.message);
+        errorMessage = `Ошибка: ${err.message}`;
       }
 
       setError(errorMessage);
@@ -535,22 +705,79 @@ const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={handleImageChange}
+                    onChange={handleMainImageChange}
                     className={styles.fileInput}
                   />
-                  {imagePreview && (
+                  {mainImagePreview && (
                     <div className={styles.imagePreview}>
-                      <img src={imagePreview} alt="Предпросмотр" />
+                      <img src={mainImagePreview} alt="Предпросмотр главного изображения" />
                       <button
                         type="button"
                         className={styles.removeImage}
                         onClick={() => {
-                          setImageFile(null);
-                          setImagePreview(null);
+                          setMainImageFile(null);
+                          setMainImagePreview(null);
                         }}
                       >
                         Удалить
                       </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Изображения для галереи</label>
+
+                  {/* Существующие изображения галереи */}
+                  {existingGalleryImages.length > 0 && (
+                    <div className={styles.existingGallery}>
+                      <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                        Существующие изображения:
+                      </p>
+                      <div className={styles.galleryPreview}>
+                        {existingGalleryImages.map((image) => (
+                          <div key={image.id} className={styles.imagePreview}>
+                            <img src={image.img_url} alt={`Галерея ${image.id}`} />
+                            <button
+                              type="button"
+                              className={styles.removeImage}
+                              onClick={() => removeExistingGalleryImage(image.id)}
+                            >
+                              Удалить
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Новые изображения для загрузки */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleGalleryImagesChange}
+                    className={styles.fileInput}
+                  />
+                  {galleryPreviews.length > 0 && (
+                    <div className={styles.newGallery}>
+                      <p style={{ fontSize: '14px', color: '#6b7280', marginTop: '12px', marginBottom: '8px' }}>
+                        Новые изображения для добавления:
+                      </p>
+                      <div className={styles.galleryPreview}>
+                        {galleryPreviews.map((preview, index) => (
+                          <div key={index} className={styles.imagePreview}>
+                            <img src={preview} alt={`Новое ${index + 1}`} />
+                            <button
+                              type="button"
+                              className={styles.removeImage}
+                              onClick={() => removeGalleryImage(index)}
+                            >
+                              Удалить
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>

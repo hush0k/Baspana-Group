@@ -3,37 +3,120 @@ import styles from '../../styles/ComplexDetail.module.scss';
 
 const ComplexGallery = ({ images }) => {
     const [selectedImage, setSelectedImage] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (!images || images.length === 0) {
-        return null;
+        return (
+            <section className={styles.gallerySection}>
+                <h2 className={styles.sectionTitle}>Галерея</h2>
+                <p style={{ textAlign: 'center', color: '#6b7280', padding: '40px 0' }}>
+                    Изображения отсутствуют
+                </p>
+            </section>
+        );
     }
+
+    const handlePrevious = () => {
+        setSelectedImage((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+    };
+
+    const handleNext = () => {
+        setSelectedImage((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+    };
 
     return (
         <section className={styles.gallerySection}>
-            <div className={styles.mainImageContainer}>
+            <h2 className={styles.sectionTitle}>Галерея</h2>
+
+            {/* Основное изображение */}
+            <div className={styles.mainImageContainer} onClick={() => setIsModalOpen(true)}>
                 <img
                     src={images[selectedImage]?.img_url}
                     alt={`Фото ${selectedImage + 1}`}
                     className={styles.mainGalleryImage}
                 />
+                <div className={styles.imageCounter}>
+                    {selectedImage + 1} / {images.length}
+                </div>
+
+                {/* Кнопки навигации */}
+                {images.length > 1 && (
+                    <>
+                        <button
+                            className={`${styles.navButton} ${styles.navButtonPrev}`}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handlePrevious();
+                            }}
+                        >
+                            ‹
+                        </button>
+                        <button
+                            className={`${styles.navButton} ${styles.navButtonNext}`}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleNext();
+                            }}
+                        >
+                            ›
+                        </button>
+                    </>
+                )}
             </div>
 
+            {/* Миниатюры всех изображений */}
             <div className={styles.thumbnailGrid}>
-                {images.slice(0, 3).map((image, index) => (
+                {images.map((image, index) => (
                     <div
-                        key={image.id}
+                        key={image.id || index}
                         className={`${styles.thumbnail} ${selectedImage === index ? styles.thumbnailActive : ''}`}
                         onClick={() => setSelectedImage(index)}
                     >
                         <img src={image.img_url} alt={`Миниатюра ${index + 1}`} />
                     </div>
                 ))}
-                {images.length > 3 && (
-                    <div className={styles.morePhotos}>
-                        <span>Еще {images.length - 3} фото</span>
-                    </div>
-                )}
             </div>
+
+            {/* Модальное окно для полноэкранного просмотра */}
+            {isModalOpen && (
+                <div className={styles.galleryModal} onClick={() => setIsModalOpen(false)}>
+                    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                        <button
+                            className={styles.modalClose}
+                            onClick={() => setIsModalOpen(false)}
+                        >
+                            ✕
+                        </button>
+
+                        <img
+                            src={images[selectedImage]?.img_url}
+                            alt={`Фото ${selectedImage + 1}`}
+                            className={styles.modalImage}
+                        />
+
+                        <div className={styles.modalCounter}>
+                            {selectedImage + 1} / {images.length}
+                        </div>
+
+                        {images.length > 1 && (
+                            <>
+                                <button
+                                    className={`${styles.modalNavButton} ${styles.modalNavButtonPrev}`}
+                                    onClick={handlePrevious}
+                                >
+                                    ‹
+                                </button>
+                                <button
+                                    className={`${styles.modalNavButton} ${styles.modalNavButtonNext}`}
+                                    onClick={handleNext}
+                                >
+                                    ›
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </section>
     );
 };

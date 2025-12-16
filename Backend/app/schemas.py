@@ -10,6 +10,7 @@ from .models import (
     City,
     Direction,
     FinishingType,
+    InfrastructureCategory,
     MaterialType,
     ObjectType,
     OrderStatus,
@@ -553,6 +554,35 @@ class UserDetailResponse(UserResponse):
     favorites: List[FavoriteResponse] = []
     reviews: List[ReviewResponse] = []
     wallet: Optional[UserWalletResponse] = None
+
+    class Config:
+        orm_mode = True
+
+
+# Infrastructure
+class InfrastructureBase(BaseModel):
+    residential_complex_id: int
+    category: InfrastructureCategory
+    name: str
+    distance: str
+    description: Optional[str] = None
+
+
+class InfrastructureCreate(InfrastructureBase):
+    pass
+
+
+class InfrastructureUpdate(BaseModel):
+    category: Optional[InfrastructureCategory] = None
+    name: Optional[str] = None
+    distance: Optional[str] = None
+    description: Optional[str] = None
+
+
+class InfrastructureResponse(InfrastructureBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         orm_mode = True

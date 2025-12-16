@@ -1,107 +1,60 @@
 @startuml
 !theme plain
+left to right direction
+scale 1
+
+skinparam backgroundColor #f0ece5
+
 skinparam usecase {
     BackgroundColor LightBlue
     BorderColor DarkBlue
 }
+
 skinparam actor {
     BackgroundColor LightGreen
     BorderColor DarkGreen
 }
 
-title Use Case Diagram - Construction Company Website
+title Real Estate Management System
 
-' Actors
-actor "Customer\n(CONSUMER)" as Consumer
-actor "Manager\n(MANAGER)" as Manager
-actor "Administrator\n(ADMIN)" as Admin
-actor "Guest" as Guest
+' Actors (top)
+actor Guest
+actor User
+actor Manager
+actor Admin
 
-' System
-rectangle "Real Estate Management System" {
+Guest <|-- User
+User <|-- Manager
+Manager <|-- Admin
 
-    ' Public use cases
-    usecase "Browse Residential Complexes" as UC1
-    usecase "Browse Apartments" as UC2
-    usecase "Search and Filter" as UC3
-    usecase "View Detailed Information" as UC4
+rectangle "System" {
 
-    ' Authentication
-    usecase "Register" as UC5
-    usecase "Login" as UC6
-    usecase "Logout" as UC7
-
-    ' Customer functions
-    usecase "Add to Favorites" as UC8
-    usecase "View Favorites" as UC9
-    usecase "Book Apartment" as UC10
-    usecase "Purchase Apartment" as UC11
-    usecase "Select Payment Method" as UC12
-    usecase "View Order History" as UC13
-
-    ' Manager functions
-    usecase "Manage Apartments" as UC14
-    usecase "View Orders" as UC15
-    usecase "Update Order Status" as UC16
-    usecase "Manage Buildings" as UC17
-
-    ' Administrator functions
-    usecase "Manage Users" as UC18
-    usecase "Manage Residential Complexes" as UC19
-    usecase "View Analytics" as UC20
-    usecase "Manage Roles" as UC21
-    usecase "Manage System" as UC22
+    usecase "Browse & Search\nApartments" as UC1
+    usecase "View Details" as UC2
+    usecase "Authentication\n(Login / Register)" as UC3
+    usecase "Favorites" as UC4
+    usecase "Book / Purchase\nApartment" as UC5
+    usecase "Payment" as UC6
+    usecase "Property & Order\nManagement" as UC7
+    usecase "System\nAdministration" as UC8
+    usecase "User\nManagement" as UC9
+    usecase "Filter buildings" as UC10
+    usecase "View order\nHistory" as UC11
 }
 
-' Guest connections
+' Connections
 Guest --> UC1
 Guest --> UC2
 Guest --> UC3
-Guest --> UC4
-Guest --> UC5
-Guest --> UC6
+Guest --> UC10
 
-' Consumer connections
-Consumer --> UC1
-Consumer --> UC2
-Consumer --> UC3
-Consumer --> UC4
-Consumer --> UC7
-Consumer --> UC8
-Consumer --> UC9
-Consumer --> UC10
-Consumer --> UC11
-Consumer --> UC12
-Consumer --> UC13
+User --> UC4
+User --> UC5
+UC5 ..> UC6 : <<include>>
+User --> UC11
 
-' Manager connections
-Manager --> UC1
-Manager --> UC2
-Manager --> UC3
-Manager --> UC4
 Manager --> UC7
-Manager --> UC14
-Manager --> UC15
-Manager --> UC16
-Manager --> UC17
-
-' Admin connections
-Admin --> UC7
-Admin --> UC18
-Admin --> UC19
-Admin --> UC20
-Admin --> UC21
-Admin --> UC22
-Admin --> UC14
-Admin --> UC15
-Admin --> UC16
-Admin --> UC17
-
-' Relationships between use cases
-UC11 ..> UC12 : <<include>>
-UC10 ..> UC12 : <<include>>
-UC5 ..> UC6 : <<extend>>
-
-note right of UC12 : Cash, Card,\nMortgage, Installment
+Admin --> UC8
+Admin --> UC9
 
 @enduml

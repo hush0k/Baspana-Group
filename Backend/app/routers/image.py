@@ -5,6 +5,7 @@ from fastapi import (
     APIRouter,
     Depends,
     File,
+    Form,
     HTTPException,
     UploadFile,
     status as http_status,
@@ -48,8 +49,8 @@ def get_image_by_id_endpoint(image_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=ImageResponse)
 async def create_image_endpoint(
     file: UploadFile = File(...),
-    object_id: int = None,
-    object_type: ObjectType = None,
+    object_id: int = Form(...),
+    object_type: ObjectType = Form(...),
     db: Session = Depends(get_db),
     _: User = Depends(require_role([Role.admin, Role.manager])),
 ):

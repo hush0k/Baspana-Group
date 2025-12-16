@@ -80,8 +80,8 @@ const ComplexDetailPage = () => {
         );
     }
 
-    const mainImage = images.length > 0 ? images[0].img_url : null;
-    const masterPlanImage = images.find(img => img.img_url.includes('plan'))?.img_url;
+    // Используем главную картинку из модели комплекса
+    const mainImage = complex.main_image || (images.length > 0 ? images[0].img_url : null);
 
     return (
         <div className={styles.pageWrapper}>
@@ -110,13 +110,18 @@ const ComplexDetailPage = () => {
 
                     <div id="masterplan">
                         <MasterPlan
-                            masterPlanImage={masterPlanImage}
+                            blockCount={complex.block_counts}
                             buildings={buildings}
+                            complexId={complex.id}
                         />
                     </div>
 
                     <div id="infrastructure">
-                        <ComplexInfrastructure city={complex.city} />
+                        <ComplexInfrastructure
+                            latitude={complex.latitude}
+                            longitude={complex.longitude}
+                            complexName={complex.name}
+                        />
                     </div>
 
                     <ContactForm />

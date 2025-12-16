@@ -1,11 +1,11 @@
 @startuml
-skinparam backgroundColor #f8fafc
+skinparam backgroundColor #f0ece5
 skinparam shadowing false
 skinparam roundcorner 6
 skinparam packageStyle rectangle
 
 skinparam entity {
-    BackgroundColor #ffffff
+    BackgroundColor #f0ece5
     BorderColor #334155
     FontSize 12
     FontName "Inter"

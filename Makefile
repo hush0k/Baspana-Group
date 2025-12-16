@@ -39,6 +39,10 @@ rebuild-back:
 migrate:
 	$(DC) exec $(BACKEND) alembic upgrade head
 
+# Миграция изображений комплексов (перенос первого изображения в main_image)
+migrate-images:
+	$(DC) exec $(BACKEND) python scripts/migrate_complex_images.py
+
 # Проверить текущую версию миграций
 status:
 	$(DC) exec $(BACKEND) alembic current
