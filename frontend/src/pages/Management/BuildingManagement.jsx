@@ -180,6 +180,15 @@ const BuildingManagement = () => {
             <span>Квартиры</span>
           </div>
 
+          <div className={styles.navItem} onClick={() => navigate('/promotions-management')}>
+            <span className={styles.navIcon}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+              </svg>
+            </span>
+            <span>Акции</span>
+          </div>
+
           <div className={styles.navItem}>
             <span className={styles.navIcon}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -289,7 +298,6 @@ const BuildingManagement = () => {
                     </th>
                     <th>№ БЛОКА</th>
                     <th>ЖК</th>
-                    <th>ОПИСАНИЕ</th>
                     <th>ЭТАЖЕЙ</th>
                     <th>КВАРТИР</th>
                     <th>ПЛОЩАДЬ</th>
@@ -314,12 +322,6 @@ const BuildingManagement = () => {
                         style={{ cursor: 'pointer' }}
                       >
                         {getComplexName(building.residential_complex_id)}
-                      </td>
-                      <td
-                        onClick={() => handleView(building.id)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        {building.description || '—'}
                       </td>
                       <td
                         onClick={() => handleView(building.id)}

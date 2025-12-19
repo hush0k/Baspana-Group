@@ -201,6 +201,7 @@ class ResidentialComplex(Base):
     buildings = relationship("Building", back_populates="residential_complex")
     reviews = relationship("Review", back_populates="residential_complex")
     infrastructures = relationship("Infrastructure", back_populates="residential_complex")
+    promotions = relationship("Promotion", back_populates="residential_complex")
 
     @property
     def images(self):
@@ -323,7 +324,8 @@ class Review(Base):
 
     id = Column(Integer, primary_key=True)
     residential_complex_id = Column(Integer, ForeignKey("residential_complex.id"))
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    author_name = Column(String, nullable=True)
     rating = Column(Integer)
     comment = Column(String)
     created_at = Column(DateTime, default=datetime.now)
@@ -459,4 +461,23 @@ class Infrastructure(Base):
     residential_complex = relationship("ResidentialComplex", back_populates="infrastructures")
 
 
-# Обновляем ResidentialComplex чтобы добавить связь с Infrastructure
+class Promotion(Base):
+    __tablename__ = "promotions"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String, nullable=False)
+    short_description = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+    discount_percentage = Column(DECIMAL(5, 2), nullable=False)
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=False)
+    image_url = Column(String, nullable=True)
+    residential_complex_id = Column(Integer, ForeignKey("residential_complex.id"), nullable=True)
+    apartment_type = Column(SqlEnum(ApartmentType, name="apartment_type"), nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    residential_complex = relationship("ResidentialComplex", back_populates="promotions")
+
+

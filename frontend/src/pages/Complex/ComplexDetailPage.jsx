@@ -9,6 +9,7 @@ import ComplexGallery from '../../components/Complex/ComplexGallery';
 import MasterPlan from '../../components/Complex/MasterPlan';
 import ComplexInfrastructure from '../../components/Complex/ComplexInfrastructure';
 import ContactForm from '../../components/Complex/ContactForm';
+import ReviewBlock from '../../components/Review/ReviewBlock';
 import complexService from '../../services/ComplexService';
 import imageService from '../../services/ImageService';
 import buildingService from '../../services/BuildingService';
@@ -97,6 +98,7 @@ const ComplexDetailPage = () => {
                         <button onClick={() => scrollToSection('gallery')}>Галерея</button>
                         <button onClick={() => scrollToSection('masterplan')}>Генплан</button>
                         <button onClick={() => scrollToSection('infrastructure')}>Инфраструктура</button>
+                        <button onClick={() => scrollToSection('reviews')}>Отзывы</button>
                     </nav>
 
                     <div id="about">
@@ -122,6 +124,10 @@ const ComplexDetailPage = () => {
                             longitude={complex.longitude}
                             complexName={complex.name}
                         />
+                    </div>
+
+                    <div id="reviews">
+                        <ReviewBlock complexId={complex.id} />
                     </div>
 
                     <ContactForm />

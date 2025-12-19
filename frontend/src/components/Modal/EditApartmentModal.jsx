@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import apartmentService from '../../services/ApartmentService';
 import buildingService from '../../services/BuildingService';
 import complexService from '../../services/ComplexService';
+import imageService from '../../services/ImageService';
 import styles from '../../styles/CreateComplexModal.module.scss';
 
 const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
   const [complexes, setComplexes] = useState([]);
   const [buildings, setBuildings] = useState([]);
   const [filteredBuildings, setFilteredBuildings] = useState([]);
+  const [images, setImages] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [formData, setFormData] = useState({
     building_id: '',
     residential_complex_id: '',
@@ -68,6 +72,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
       fetchComplexes();
       fetchBuildings();
       fetchApartmentData();
+      fetchApartmentImages();
     }
   }, [isOpen, apartmentId]);
 
@@ -138,6 +143,55 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
     } catch (err) {
       console.error('Ошибка загрузки данных квартиры:', err);
       setError('Не удалось загрузить данные квартиры');
+    }
+  };
+
+  const fetchApartmentImages = async () => {
+    try {
+      const imagesData = await imageService.getImages(apartmentId, 'Apartment');
+      setImages(imagesData || []);
+    } catch (err) {
+      console.error('Ошибка загрузки изображений:', err);
+    }
+  };
+
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files);
+  };
+
+  const handleUploadImages = async () => {
+    if (selectedFiles.length === 0) return;
+
+    setUploadingImages(true);
+    try {
+      for (const file of selectedFiles) {
+        await imageService.uploadImage(file, apartmentId, 'Apartment');
+      }
+      setSelectedFiles([]);
+      await fetchApartmentImages();
+      // Очищаем input
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput) fileInput.value = '';
+    } catch (err) {
+      console.error('Ошибка загрузки изображений:', err);
+      setError('Не удалось загрузить изображения');
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  const handleDeleteImage = async (imageId) => {
+    if (!window.confirm('Вы уверены, что хотите удалить это изображение?')) {
+      return;
+    }
+
+    try {
+      await imageService.deleteImage(imageId);
+      await fetchApartmentImages();
+    } catch (err) {
+      console.error('Ошибка удаления изображения:', err);
+      setError('Не удалось удалить изображение');
     }
   };
 
@@ -483,6 +537,90 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
                     placeholder="0"
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* Фотогалерея */}
+            <div className={styles.formSection}>
+              <h3>Фотогалерея</h3>
+
+              {/* Существующие изображения */}
+              {images.length > 0 && (
+                <div className={styles.imagesGrid} style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                  gap: '10px',
+                  marginBottom: '20px'
+                }}>
+                  {images.map(image => (
+                    <div key={image.id} style={{ position: 'relative' }}>
+                      <img
+                        src={image.url}
+                        alt="Apartment"
+                        style={{
+                          width: '100%',
+                          height: '150px',
+                          objectFit: 'cover',
+                          borderRadius: '8px'
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteImage(image.id)}
+                        style={{
+                          position: 'absolute',
+                          top: '5px',
+                          right: '5px',
+                          background: 'rgba(255, 0, 0, 0.7)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: '25px',
+                          height: '25px',
+                          cursor: 'pointer',
+                          fontSize: '16px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Загрузка новых изображений */}
+              <div className={styles.formGroup}>
+                <label>Добавить изображения</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileSelect}
+                  style={{ marginBottom: '10px' }}
+                />
+                {selectedFiles.length > 0 && (
+                  <div style={{ marginTop: '10px' }}>
+                    <p>Выбрано файлов: {selectedFiles.length}</p>
+                    <button
+                      type="button"
+                      onClick={handleUploadImages}
+                      disabled={uploadingImages}
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#10b981',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: uploadingImages ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      {uploadingImages ? 'Загрузка...' : 'Загрузить изображения'}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

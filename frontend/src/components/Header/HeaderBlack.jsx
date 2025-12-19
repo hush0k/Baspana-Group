@@ -71,7 +71,7 @@ const HeaderBlack = () => {
                 <Link to="/projects">Проекты</Link>
                 <Link to="/payment">Способы оплаты</Link>
                 <Link to="/promotions">Акции</Link>
-                <Link to="/contacts">Контакты</Link>
+                <Link to="/about">О нас</Link>
             </nav>
 
             <div className={styles.profileContainer} ref={dropdownRef}>

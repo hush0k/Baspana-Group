@@ -88,8 +88,8 @@ def get_apartments_endpoint(
 
 
 @router.get("/{id}", response_model=ApartmentResponse)
-def get_apartment_by_id_endpoint(apartment_id: int, db: Session = Depends(get_db)):
-    existing_apartment = get_apartment_by_id(db, apartment_id)
+def get_apartment_by_id_endpoint(id: int, db: Session = Depends(get_db)):
+    existing_apartment = get_apartment_by_id(db, id)
     if existing_apartment is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Apartment not found"
@@ -115,30 +115,30 @@ def create_apartment_endpoint(
 
 
 # PUT Apartmentblackd
-@router.patch("/{id}", response_model=ApartmentUpdate)
+@router.patch("/{id}", response_model=ApartmentResponse)
 def update_apartment_endpoint(
-    apartment_id: int,
+    id: int,
     apartment: ApartmentUpdate,
     db: Session = Depends(get_db),
     _: User = Depends(require_role([Role.admin, Role.manager])),
 ):
-    existing_apartment = get_apartment_by_id(db, apartment_id)
+    existing_apartment = get_apartment_by_id(db, id)
     if not existing_apartment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Apartment not found"
         )
-    updated_data = update_apartment(db, apartment_id, apartment)
+    updated_data = update_apartment(db, id, apartment)
     return updated_data
 
 
 # DELETE Apartment
 @router.delete("/{id}", response_model=ApartmentResponse)
 def delete_apartment_endpoint(
-    apartment_id: int,
+    id: int,
     db: Session = Depends(get_db),
     _: User = Depends(require_role([Role.admin, Role.manager])),
 ):
-    existing_apartment = get_apartment_by_id(db, apartment_id)
+    existing_apartment = get_apartment_by_id(db, id)
     if not existing_apartment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Apartment not found"

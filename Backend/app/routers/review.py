@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status as http_status
 from sqlalchemy.orm import Session
 
-from app.auth import get_current_user
+from app.auth import get_current_user, get_current_user_optional
 from app.cruds.review import (
     create_review,
     delete_review,
@@ -74,10 +74,18 @@ def get_complex_average_rating_endpoint(complex_id: int, db: Session = Depends(g
 )
 def create_review_endpoint(
     review: ReviewCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_current_user_optional),
     db: Session = Depends(get_db),
 ):
-    new_review = create_review(db, review, current_user.id)
+    # Validate: either user is authenticated OR author_name is provided for anonymous review
+    if not current_user and not review.author_name:
+        raise HTTPException(
+            status_code=http_status.HTTP_400_BAD_REQUEST,
+            detail="Either authentication or author_name is required",
+        )
+
+    user_id = current_user.id if current_user else None
+    new_review = create_review(db, review, user_id)
 
     if not new_review:
         raise HTTPException(

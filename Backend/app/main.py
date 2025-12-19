@@ -11,6 +11,7 @@ from .routers import (
     image,
     infrastructure,
     order,
+    promotion,
     residential_complex,
     review,
     user,
@@ -45,6 +46,7 @@ app.include_router (order.router, prefix = "/api/orders", tags = ["Orders"])
 app.include_router (favorites.router, prefix = "/api/favorites", tags = ["Favorites"])
 app.include_router (review.router, prefix = "/api/reviews", tags = ["Reviews"])
 app.include_router (wallet.router, prefix = "/api/wallet", tags = ["Wallet"])
+app.include_router (promotion.router, prefix = "/api/promotions", tags = ["Promotions"])
 
 
 @app.get ("/")

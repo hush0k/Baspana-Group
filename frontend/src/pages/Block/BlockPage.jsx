@@ -7,19 +7,48 @@ import BlockGallery from '../../components/BlockPage/BlockGallery';
 import ApartmentSelector from '../../components/BlockPage/ApartmentSelector';
 import BlockDescription from '../../components/BlockPage/BlockDescription';
 import BlockCharacteristics from '../../components/BlockPage/BlockCharacteristics';
+import ReviewBlock from '../../components/Review/ReviewBlock';
 import { getBlockById } from '../../services/BlockService';
+import imageService from '../../services/ImageService';
+import apartmentService from '../../services/ApartmentService';
+import complexService from '../../services/ComplexService';
 import styles from '../../styles/BlockPage.module.scss';
 
 const BlockPage = () => {
     const { blockId } = useParams();
     const [blockData, setBlockData] = useState(null);
+    const [images, setImages] = useState([]);
+    const [apartments, setApartments] = useState([]);
+    const [complexName, setComplexName] = useState('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchBlockData = async () => {
             try {
+                // Загружаем данные блока
                 const data = await getBlockById(blockId);
                 setBlockData(data);
+
+                // Загружаем изображения блока
+                const imagesData = await imageService.getImages(blockId, 'Building');
+                setImages(imagesData || []);
+
+                // Загружаем квартиры блока
+                const apartmentsData = await apartmentService.getApartments({
+                    building_id: blockId,
+                    limit: 1000
+                });
+                setApartments(apartmentsData.results || []);
+
+                // Загружаем название ЖК
+                if (data.residential_complex_id) {
+                    const complexData = await complexService.getComplexes({
+                        id: data.residential_complex_id
+                    });
+                    if (complexData.results && complexData.results.length > 0) {
+                        setComplexName(complexData.results[0].name);
+                    }
+                }
             } catch (error) {
                 console.error('Error fetching block:', error);
             } finally {
@@ -39,21 +68,32 @@ const BlockPage = () => {
 
             <main className={styles.content}>
                 <BlockHeader
-                    complexName={blockData.complex_name}
-                    blockName={blockData.name}
+                    complexName={complexName}
+                    blockName={`Блок ${blockData.block}`}
                 />
 
                 <div className={styles.mainSection}>
-                    <BlockGallery images={blockData.images} />
+                    <BlockGallery images={images} />
                     <ApartmentSelector
-                        apartments={blockData.apartments}
-                        floors={blockData.floor_range}
-                        rooms={blockData.room_options}
+                        apartments={apartments}
+                        buildingData={blockData}
                     />
                 </div>
 
-                <BlockDescription description={blockData.description} />
-                <BlockCharacteristics characteristics={blockData.characteristics} />
+                <BlockDescription description={blockData.description || blockData.short_description} />
+                <BlockCharacteristics characteristics={{
+                    floors: blockData.floor_count,
+                    apartments: blockData.apartments_count,
+                    commercials: blockData.commercials_count,
+                    parking: blockData.parking_count,
+                    elevators: blockData.elevators_count,
+                    area: blockData.gross_area,
+                    status: blockData.status
+                }} />
+
+                {blockData.residential_complex_id && (
+                    <ReviewBlock complexId={blockData.residential_complex_id} />
+                )}
             </main>
 
             <Footer />

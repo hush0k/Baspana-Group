@@ -276,6 +276,10 @@ class ApartmentUpdate(BaseModel):
 
 class ApartmentResponse(ApartmentBase):
     id: int
+    has_promotion: Optional[bool] = False
+    original_price: Optional[Decimal] = None
+    discounted_price: Optional[Decimal] = None
+    promotion_discount: Optional[Decimal] = None
 
     class Config:
         orm_mode = True
@@ -347,9 +351,16 @@ class ReviewBase(BaseModel):
     rating: int
     comment: str
 
+    @field_validator("rating")
+    @classmethod
+    def validate_rating(cls, value: int) -> int:
+        if value < 1 or value > 5:
+            raise ValueError("Rating must be between 1 and 5")
+        return value
+
 
 class ReviewCreate(ReviewBase):
-    pass
+    author_name: Optional[str] = None  # For anonymous reviews
 
 
 class ReviewUpdate(BaseModel):
@@ -359,6 +370,8 @@ class ReviewUpdate(BaseModel):
 
 class ReviewResponse(ReviewBase):
     id: int
+    user_id: Optional[int] = None
+    author_name: Optional[str] = None
     created_at: datetime
 
     class Config:
@@ -580,6 +593,45 @@ class InfrastructureUpdate(BaseModel):
 
 
 class InfrastructureResponse(InfrastructureBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class PromotionBase(BaseModel):
+    title: str
+    short_description: Optional[str] = None
+    description: Optional[str] = None
+    discount_percentage: Decimal
+    start_date: date
+    end_date: date
+    image_url: Optional[str] = None
+    residential_complex_id: Optional[int] = None
+    apartment_type: Optional[ApartmentType] = None
+    is_active: bool = True
+
+
+class PromotionCreate(PromotionBase):
+    pass
+
+
+class PromotionUpdate(BaseModel):
+    title: Optional[str] = None
+    short_description: Optional[str] = None
+    description: Optional[str] = None
+    discount_percentage: Optional[Decimal] = None
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    image_url: Optional[str] = None
+    residential_complex_id: Optional[int] = None
+    apartment_type: Optional[ApartmentType] = None
+    is_active: Optional[bool] = None
+
+
+class PromotionResponse(PromotionBase):
     id: int
     created_at: datetime
     updated_at: datetime

@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta
-from typing import List
+from typing import List, Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -14,7 +14,9 @@ from app.database import get_db
 from app.models import Role, User
 
 security = HTTPBearer()
+security_optional = HTTPBearer(auto_error=False)
 Token = Annotated[HTTPAuthorizationCredentials, Depends(security)]
+OptionalToken = Annotated[Optional[HTTPAuthorizationCredentials], Depends(security_optional)]
 
 
 def create_access_token(data: dict):
@@ -62,6 +64,23 @@ def get_current_user(token: Token, db: Session = Depends(get_db)):
         return user
     except JWTError:
         raise credentials_exception
+
+
+def get_current_user_optional(token: OptionalToken, db: Session = Depends(get_db)) -> Optional[User]:
+    """Get current user if token is provided, otherwise return None (for anonymous access)"""
+    if token is None:
+        return None
+
+    try:
+        user_id = verify_token(token.credentials, os.getenv("SECRET_KEY"))
+        user = get_user_by_id(db, user_id)
+
+        if not user or not user.is_active:
+            return None
+
+        return user
+    except (JWTError, HTTPException):
+        return None
 
 
 def require_role(allowed_roles: List[Role]):

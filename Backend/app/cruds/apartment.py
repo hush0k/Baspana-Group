@@ -1,16 +1,18 @@
 from decimal import Decimal
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Query, Session
+from sqlalchemy.orm import Query, Session, joinedload
 
 from app.models import (
     Apartment,
     ApartmentType,
+    Building,
     Direction,
     FinishingType,
     PropertyStatus,
 )
 from app.schemas import ApartmentCreate, ApartmentUpdate
+from app.cruds.promotion import get_active_promotions_for_apartment
 
 
 def _apply_apartment_filters(
@@ -90,6 +92,34 @@ def _apply_apartment_sorting(
     return query
 
 
+def _enrich_apartment_with_promotion(db: Session, apartment: Apartment):
+    building = db.query(Building).filter(Building.id == apartment.building_id).first()
+    if not building:
+        return apartment
+
+    promotion = get_active_promotions_for_apartment(
+        db,
+        residential_complex_id=building.residential_complex_id,
+        apartment_type=apartment.apartment_type
+    )
+
+    if promotion:
+        discount_multiplier = (100 - promotion.discount_percentage) / 100
+        discounted_price = apartment.total_price * discount_multiplier
+
+        apartment.has_promotion = True
+        apartment.original_price = apartment.total_price
+        apartment.discounted_price = discounted_price
+        apartment.promotion_discount = promotion.discount_percentage
+    else:
+        apartment.has_promotion = False
+        apartment.original_price = apartment.total_price
+        apartment.discounted_price = apartment.total_price
+        apartment.promotion_discount = Decimal(0)
+
+    return apartment
+
+
 # GET Apartment
 def get_apartments_filtered(
     db: Session,
@@ -147,11 +177,16 @@ def get_apartments_filtered(
     total = query.count()
     results = query.offset(offset).limit(limit).all()
 
-    return {"total": total, "results": results, "limit": limit, "offset": offset}
+    enriched_results = [_enrich_apartment_with_promotion(db, apt) for apt in results]
+
+    return {"total": total, "results": enriched_results, "limit": limit, "offset": offset}
 
 
 def get_apartment_by_id(db: Session, apartment_id: int):
-    return db.query(Apartment).filter(Apartment.id == apartment_id).first()
+    apartment = db.query(Apartment).filter(Apartment.id == apartment_id).first()
+    if apartment:
+        return _enrich_apartment_with_promotion(db, apartment)
+    return None
 
 
 def get_apartment_by_number(db: Session, number: int, building_id: int):

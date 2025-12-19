@@ -178,7 +178,8 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
     };
 
     try {
-      await buildingService.updateBuilding(buildingId, payload);
+      // Используем PATCH вместо PUT с JSON payload
+      await api.patch(`/buildings/${buildingId}`, payload);
       onSuccess();
       onClose();
     } catch (err) {

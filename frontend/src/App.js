@@ -17,8 +17,12 @@ import UserManagement from "./pages/Management/UserManagement";
 import ComplexManagement from "./pages/Management/ComplexManagement";
 import BuildingManagement from "./pages/Management/BuildingManagement";
 import ApartmentManagement from "./pages/Management/ApartmentManagement";
+import PromotionManagement from "./pages/Management/PromotionManagement";
 import ComplexDetailPage from "./pages/Complex/ComplexDetailPage";
 import BlockPage from "./pages/Block/BlockPage";
+import ApartmentPage from "./pages/Apartment/ApartmentPage";
+import PromotionsPage from "./pages/OnePages/PromotionsPage";
+import ProjectsPage from "./pages/Projects/ProjectsPage";
 
 
 
@@ -39,7 +43,10 @@ const App = () => {
             <Route path="/headerBlack" element={<HeaderBlack />} />
             <Route path="/headerWhite" element={<HeaderWhite />} />
             <Route path="/buildings/:blockId" element={<BlockPage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/promotions" element={<PromotionsPage />} />
             <Route path="/complex/:id" element={<ComplexDetailPage />} />
+            <Route path="/apartments/:apartmentId" element={<ApartmentPage />} />
             <Route path="/complex-management" element={<PrivateRoute><ComplexManagement /></PrivateRoute>} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -83,6 +90,14 @@ const App = () => {
                 element={
                     <PrivateRoute>
                         <ApartmentManagement />
+                    </PrivateRoute>
+                }
+            />
+            <Route
+                path="/promotions-management"
+                element={
+                    <PrivateRoute>
+                        <PromotionManagement />
                     </PrivateRoute>
                 }
             />

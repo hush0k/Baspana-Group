@@ -105,21 +105,24 @@ def get_average_rating(db: Session, residential_complex_id: int):
 
 
 # POST Review
-def create_review(db: Session, review: ReviewCreate, user_id):
-    existing_review = (
-        db.query(Review)
-        .filter(
-            Review.user_id == user_id,
-            Review.residential_complex_id == review.residential_complex_id,
+def create_review(db: Session, review: ReviewCreate, user_id=None):
+    # For authenticated users, check if they already reviewed this complex
+    if user_id:
+        existing_review = (
+            db.query(Review)
+            .filter(
+                Review.user_id == user_id,
+                Review.residential_complex_id == review.residential_complex_id,
+            )
+            .first()
         )
-        .first()
-    )
-    if existing_review:
-        return None
+        if existing_review:
+            return None
 
     new_review = Review(
         residential_complex_id=review.residential_complex_id,
         user_id=user_id,
+        author_name=review.author_name,
         rating=review.rating,
         comment=review.comment,
     )
