@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import BlockHeader from '../../components/BlockPage/BlockHeader';
@@ -11,14 +12,17 @@ import ReviewBlock from '../../components/Review/ReviewBlock';
 import { getBlockById } from '../../services/BlockService';
 import imageService from '../../services/ImageService';
 import apartmentService from '../../services/ApartmentService';
+import commercialUnitService from '../../services/CommercialUnitService';
 import complexService from '../../services/ComplexService';
 import styles from '../../styles/BlockPage.module.scss';
 
 const BlockPage = () => {
     const { blockId } = useParams();
+    const { t } = useTranslation();
     const [blockData, setBlockData] = useState(null);
     const [images, setImages] = useState([]);
     const [apartments, setApartments] = useState([]);
+    const [commercialUnits, setCommercialUnits] = useState([]);
     const [complexName, setComplexName] = useState('');
     const [loading, setLoading] = useState(true);
 
@@ -40,6 +44,13 @@ const BlockPage = () => {
                 });
                 setApartments(apartmentsData.results || []);
 
+                // Загружаем коммерческие помещения блока
+                const commercialUnitsData = await commercialUnitService.getCommercialUnits({
+                    building_id: blockId,
+                    limit: 1000
+                });
+                setCommercialUnits(commercialUnitsData.results || []);
+
                 // Загружаем название ЖК
                 if (data.residential_complex_id) {
                     const complexData = await complexService.getComplexes({
@@ -59,8 +70,8 @@ const BlockPage = () => {
         fetchBlockData();
     }, [blockId]);
 
-    if (loading) return <div>Загрузка...</div>;
-    if (!blockData) return <div>Блок не найден</div>;
+    if (loading) return <div>{t('common.loading')}</div>;
+    if (!blockData) return <div>{t('blockPage.blockNotFound')}</div>;
 
     return (
         <div className={styles.blockPage}>
@@ -69,13 +80,14 @@ const BlockPage = () => {
             <main className={styles.content}>
                 <BlockHeader
                     complexName={complexName}
-                    blockName={`Блок ${blockData.block}`}
+                    blockName={`${t('blockPage.block')} ${blockData.block}`}
                 />
 
                 <div className={styles.mainSection}>
                     <BlockGallery images={images} />
                     <ApartmentSelector
                         apartments={apartments}
+                        commercialUnits={commercialUnits}
                         buildingData={blockData}
                     />
                 </div>

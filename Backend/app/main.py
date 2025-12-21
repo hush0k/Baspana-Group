@@ -1,8 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 
 from . import config
 from .routers import (
+    ai_assistant,
     apartment,
     auth,
     building,
@@ -19,6 +22,16 @@ from .routers import (
 )
 
 app = FastAPI (title = "Baspana Group Backend API")
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    print("Validation error details:")
+    print(exc.errors())
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={"detail": exc.errors()},
+    )
 
 app.add_middleware (
 	CORSMiddleware,
@@ -47,6 +60,7 @@ app.include_router (favorites.router, prefix = "/api/favorites", tags = ["Favori
 app.include_router (review.router, prefix = "/api/reviews", tags = ["Reviews"])
 app.include_router (wallet.router, prefix = "/api/wallet", tags = ["Wallet"])
 app.include_router (promotion.router, prefix = "/api/promotions", tags = ["Promotions"])
+app.include_router (ai_assistant.router, prefix = "/api", tags = ["AI Assistant"])
 
 
 @app.get ("/")

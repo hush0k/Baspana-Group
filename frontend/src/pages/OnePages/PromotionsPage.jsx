@@ -33,7 +33,10 @@ const PromotionsPage = () => {
 
                 const data = await getPromotions(params);
                 // Backend returns { total, results }
-                setPromotions(data.results || data);
+                console.log('Промоции с сервера:', data);
+                const promotionsList = data.results || data;
+                console.log('Список промоций:', promotionsList);
+                setPromotions(promotionsList);
             } catch (error) {
                 console.error('Error fetching promotions:', error);
                 setPromotions([]);
@@ -69,11 +72,6 @@ const PromotionsPage = () => {
                         Group
                     </p>
                 </div>
-
-                <PromotionFilters
-                    activeFilter={activeFilter}
-                    onFilterChange={setActiveFilter}
-                />
 
                 <div className={styles.promotionsList}>
                     {promotions.map(promotion => (

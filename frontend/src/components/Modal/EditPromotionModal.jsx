@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import promotionService from '../../services/PromotionService';
 import complexService from '../../services/ComplexService';
 import styles from '../../styles/CreateComplexModal.module.scss';
 
 const EditPromotionModal = ({ isOpen, onClose, onSuccess, promotionId }) => {
+  const { t } = useTranslation();
   const [complexes, setComplexes] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     short_description: '',
@@ -21,12 +26,12 @@ const EditPromotionModal = ({ isOpen, onClose, onSuccess, promotionId }) => {
   const [error, setError] = useState('');
 
   const apartmentTypeOptions = [
-    { value: '', label: 'Все типы' },
-    { value: 'Studio', label: 'Студия' },
-    { value: 'One Bedroom', label: '1-комнатная' },
-    { value: 'Two Bedroom', label: '2-комнатная' },
-    { value: 'Three Bedroom', label: '3-комнатная' },
-    { value: 'Penthouse', label: 'Пентхаус' }
+    { value: '', label: t('common.all') },
+    { value: 'Studio', label: t('apartment.types.Studio') },
+    { value: 'One Bedroom', label: t('apartment.types.One Bedroom') },
+    { value: 'Two Bedroom', label: t('apartment.types.Two Bedroom') },
+    { value: 'Three Bedroom', label: t('apartment.types.Three Bedroom') },
+    { value: 'Penthouse', label: t('apartment.types.Penthouse') }
   ];
 
   useEffect(() => {
@@ -66,7 +71,7 @@ const EditPromotionModal = ({ isOpen, onClose, onSuccess, promotionId }) => {
       });
     } catch (err) {
       console.error('Ошибка загрузки данных акции:', err);
-      setError('Не удалось загрузить данные акции');
+      setError(t('modal.loadError'));
     }
   };
 
@@ -76,6 +81,45 @@ const EditPromotionModal = ({ isOpen, onClose, onSuccess, promotionId }) => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUploadImage = async () => {
+    if (!selectedFile) return;
+
+    setUploadingImage(true);
+    setError('');
+    try {
+      const result = await promotionService.uploadPromotionImage(selectedFile);
+      setFormData(prev => ({ ...prev, image_url: result.image_url }));
+      setSelectedFile(null);
+      setImagePreview(null);
+      alert(t('modal.imageUploadSuccess'));
+    } catch (err) {
+      console.error('Ошибка загрузки изображения:', err);
+      setError(t('modal.imageUploadError'));
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFormData(prev => ({ ...prev, image_url: '' }));
+    setSelectedFile(null);
+    setImagePreview(null);
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) fileInput.value = '';
   };
 
   const handleSubmit = async (e) => {
@@ -114,7 +158,7 @@ const EditPromotionModal = ({ isOpen, onClose, onSuccess, promotionId }) => {
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <h2>Редактировать акцию</h2>
+          <h2>{t('modal.edit')} {t('promotion.title')}</h2>
           <button className={styles.closeButton} onClick={onClose}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -131,63 +175,116 @@ const EditPromotionModal = ({ isOpen, onClose, onSuccess, promotionId }) => {
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGrid}>
             <div className={styles.formSection}>
-              <h3>Основная информация</h3>
+              <h3>{t('modal.basicInfo')}</h3>
 
               <div className={styles.formGroup}>
-                <label>Название акции <span className={styles.required}>*</span></label>
+                <label>{t('promotion.title')} <span className={styles.required}>*</span></label>
                 <input
                   type="text"
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
                   required
-                  placeholder="Новогодняя скидка"
+                  placeholder={t('promotion.title')}
                 />
               </div>
 
               <div className={styles.formGroup}>
-                <label>Краткое описание</label>
+                <label>{t('modal.shortDescription')}</label>
                 <textarea
                   name="short_description"
                   value={formData.short_description}
                   onChange={handleChange}
                   maxLength={300}
                   rows="2"
-                  placeholder="Краткое описание акции (макс. 300 символов)"
+                  placeholder={t('modal.shortDescription')}
                 />
                 <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
-                  {formData.short_description?.length || 0}/300 символов
+                  {formData.short_description?.length || 0}/300
                 </small>
               </div>
 
               <div className={styles.formGroup}>
-                <label>Полное описание</label>
+                <label>{t('modal.fullDescription')}</label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   rows="4"
-                  placeholder="Подробное описание акции"
+                  placeholder={t('modal.fullDescription')}
                 />
               </div>
 
               <div className={styles.formGroup}>
-                <label>URL изображения</label>
-                <input
-                  type="url"
-                  name="image_url"
-                  value={formData.image_url}
-                  onChange={handleChange}
-                  placeholder="https://example.com/image.jpg"
-                />
+                <label>{t('modal.mainImage')}</label>
+                {formData.image_url ? (
+                  <div style={{ marginBottom: '10px' }}>
+                    <img
+                      src={formData.image_url}
+                      alt="Preview"
+                      style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '8px' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      style={{
+                        marginTop: '10px',
+                        padding: '8px 16px',
+                        backgroundColor: '#ef4444',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {t('modal.removeImage')}
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileSelect}
+                      style={{ marginBottom: '10px' }}
+                    />
+                    {imagePreview && (
+                      <div style={{ marginBottom: '10px' }}>
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '8px' }}
+                        />
+                      </div>
+                    )}
+                    {selectedFile && (
+                      <button
+                        type="button"
+                        onClick={handleUploadImage}
+                        disabled={uploadingImage}
+                        style={{
+                          padding: '8px 16px',
+                          backgroundColor: '#10b981',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: uploadingImage ? 'not-allowed' : 'pointer',
+                          opacity: uploadingImage ? 0.6 : 1
+                        }}
+                      >
+                        {uploadingImage ? t('modal.loading') : t('modal.uploadImage')}
+                      </button>
+                    )}
+                  </>
+                )}
                 <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
-                  Введите прямую ссылку на изображение
+                  {t('modal.selectImage')} (JPG, PNG)
                 </small>
               </div>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Скидка (%) <span className={styles.required}>*</span></label>
+                  <label>{t('modal.discount')} (%) <span className={styles.required}>*</span></label>
                   <input
                     type="number"
                     name="discount_percentage"
@@ -209,17 +306,17 @@ const EditPromotionModal = ({ isOpen, onClose, onSuccess, promotionId }) => {
                     onChange={handleChange}
                     style={{ width: 'auto', marginRight: '8px' }}
                   />
-                  <label style={{ margin: 0 }}>Активна</label>
+                  <label style={{ margin: 0 }}>{t('modal.active')}</label>
                 </div>
               </div>
             </div>
 
             <div className={styles.formSection}>
-              <h3>Период действия</h3>
+              <h3>{t('promotion.period')}</h3>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Дата начала <span className={styles.required}>*</span></label>
+                  <label>{t('modal.startDate')} <span className={styles.required}>*</span></label>
                   <input
                     type="date"
                     name="start_date"
@@ -230,7 +327,7 @@ const EditPromotionModal = ({ isOpen, onClose, onSuccess, promotionId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Дата окончания <span className={styles.required}>*</span></label>
+                  <label>{t('modal.endDate')} <span className={styles.required}>*</span></label>
                   <input
                     type="date"
                     name="end_date"
@@ -243,27 +340,27 @@ const EditPromotionModal = ({ isOpen, onClose, onSuccess, promotionId }) => {
             </div>
 
             <div className={styles.formSection}>
-              <h3>Применение акции</h3>
+              <h3>{t('promotion.conditions')}</h3>
 
               <div className={styles.formGroup}>
-                <label>Жилой комплекс</label>
+                <label>{t('complex.title')}</label>
                 <select
                   name="residential_complex_id"
                   value={formData.residential_complex_id}
                   onChange={handleChange}
                 >
-                  <option value="">Все ЖК</option>
+                  <option value="">{t('common.all')}</option>
                   {complexes.map(complex => (
                     <option key={complex.id} value={complex.id}>{complex.name}</option>
                   ))}
                 </select>
                 <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
-                  Если не выбрано, акция применяется ко всем ЖК
+                  {t('modal.optional')}
                 </small>
               </div>
 
               <div className={styles.formGroup}>
-                <label>Тип квартиры</label>
+                <label>{t('modal.apartmentType')}</label>
                 <select
                   name="apartment_type"
                   value={formData.apartment_type}
@@ -274,7 +371,7 @@ const EditPromotionModal = ({ isOpen, onClose, onSuccess, promotionId }) => {
                   ))}
                 </select>
                 <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
-                  Если не выбрано, акция применяется ко всем типам
+                  {t('modal.optional')}
                 </small>
               </div>
             </div>
@@ -282,10 +379,10 @@ const EditPromotionModal = ({ isOpen, onClose, onSuccess, promotionId }) => {
 
           <div className={styles.modalFooter}>
             <button type="button" className={styles.cancelButton} onClick={onClose} disabled={loading}>
-              Отмена
+              {t('modal.cancel')}
             </button>
             <button type="submit" className={styles.submitButton} disabled={loading}>
-              {loading ? 'Сохранение...' : 'Сохранить изменения'}
+              {loading ? t('modal.loading') : t('modal.save')}
             </button>
           </div>
         </form>

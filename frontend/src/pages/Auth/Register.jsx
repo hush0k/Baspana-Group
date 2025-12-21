@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { authService } from '../../services/AuthService';
 import styles from '../../styles/Register.module.scss';
 
 const Register = () => {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -112,7 +114,7 @@ const Register = () => {
 
         // Проверка совпадения паролей
         if (formData.password !== formData.confirmPassword) {
-            setError('Пароли не совпадают');
+            setError(t('auth.passwordMismatch'));
             return;
         }
 
@@ -140,7 +142,7 @@ const Register = () => {
         <div className={styles.container}>
             <div className={styles.authContainer}>
                 <div className={styles.title}>
-                    <h2>Зарегистрируйтесь</h2>
+                    <h2>{t('auth.registerTitle')}</h2>
                 </div>
 
                 {error && (
@@ -154,12 +156,12 @@ const Register = () => {
                 <form className={styles.authForm} onSubmit={handleSubmit}>
                     <div className={styles.formInput}>
                         <div className={styles.formGroup}>
-                            <label htmlFor="first_name">Имя:</label>
+                            <label htmlFor="first_name">{t('auth.firstName')}:</label>
                             <input
                                 type="text"
                                 id="first_name"
                                 name="first_name"
-                                placeholder="Введите ваше имя"
+                                placeholder={t('auth.firstNamePlaceholder')}
                                 value={formData.first_name}
                                 onChange={handleChange}
                                 required
@@ -167,12 +169,12 @@ const Register = () => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="last_name">Фамилия:</label>
+                            <label htmlFor="last_name">{t('auth.lastName')}:</label>
                             <input
                                 type="text"
                                 id="last_name"
                                 name="last_name"
-                                placeholder="Введите вашу фамилию"
+                                placeholder={t('auth.lastNamePlaceholder')}
                                 value={formData.last_name}
                                 onChange={handleChange}
                                 required
@@ -180,12 +182,12 @@ const Register = () => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="email">Email:</label>
+                            <label htmlFor="email">{t('auth.email')}:</label>
                             <input
                                 type="email"
                                 id="email"
                                 name="email"
-                                placeholder="Введите ваш email"
+                                placeholder={t('auth.emailPlaceholder')}
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
@@ -193,7 +195,7 @@ const Register = () => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="date_of_birth">Дата рождения:</label>
+                            <label htmlFor="date_of_birth">{t('auth.dateOfBirth')}:</label>
                             <input
                                 type="date"
                                 id="date_of_birth"
@@ -205,12 +207,12 @@ const Register = () => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="phone_number">Телефон:</label>
+                            <label htmlFor="phone_number">{t('auth.phone')}:</label>
                             <input
                                 type="tel"
                                 id="phone_number"
                                 name="phone_number"
-                                placeholder="+7 (___) ___-__-__"
+                                placeholder={t('auth.phonePlaceholder')}
                                 value={formData.phone_number}
                                 onChange={handleChange}
                                 required
@@ -218,7 +220,7 @@ const Register = () => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="city">Город:</label>
+                            <label htmlFor="city">{t('auth.city')}:</label>
                             <select
                                 id="city"
                                 name="city"
@@ -245,12 +247,12 @@ const Register = () => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="password">Пароль:</label>
+                            <label htmlFor="password">{t('auth.password')}:</label>
                             <input
                                 type="password"
                                 id="password"
                                 name="password"
-                                placeholder="Введите пароль"
+                                placeholder={t('auth.passwordPlaceholder')}
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
@@ -258,12 +260,12 @@ const Register = () => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="confirmPassword">Подтвердите пароль:</label>
+                            <label htmlFor="confirmPassword">{t('auth.confirmPassword')}:</label>
                             <input
                                 type="password"
                                 id="confirmPassword"
                                 name="confirmPassword"
-                                placeholder="Повторите пароль"
+                                placeholder={t('auth.confirmPasswordPlaceholder')}
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
                                 required
@@ -274,12 +276,12 @@ const Register = () => {
                     <div className={styles.formAction}>
                         <button type="submit" className={styles.authBtn} disabled={loading}>
                             <span className={styles.buttonText}>
-                                {loading ? 'Загрузка...' : 'Зарегистрироваться'}
+                                {loading ? t('auth.loading') : t('auth.registerButton')}
                             </span>
                         </button>
 
                         <p className={styles.authLink}>
-                            Уже есть аккаунт? <a href="/login">Войти</a>
+                            {t('auth.haveAccount')} <a href="/login">{t('auth.loginButton')}</a>
                         </p>
                     </div>
                 </form>

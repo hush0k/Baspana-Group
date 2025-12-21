@@ -10,6 +10,7 @@ from app.schemas import CommercialUnitCreate, CommercialUnitUpdate
 
 def _apply_commercial_filters(
     query: Query,
+    building_id: int = None,
     min_floor: int = None,
     max_floor: int = None,
     min_space_area: Decimal = None,
@@ -25,6 +26,8 @@ def _apply_commercial_filters(
     orientation: Direction = None,
     isCorner: bool = None,
 ) -> Query:
+    if building_id is not None:
+        query = query.filter(CommercialUnit.building_id == building_id)
     if min_floor is not None:
         query = query.filter(CommercialUnit.floor >= min_floor)
     if max_floor is not None:
@@ -74,6 +77,7 @@ def _apply_commercial_sorting(
 # GET Commercials
 def get_commercials_filtered(
     db: Session,
+    building_id: int = None,
     min_floor: int = None,
     max_floor: int = None,
     min_space_area: Decimal = None,
@@ -97,6 +101,7 @@ def get_commercials_filtered(
 
     query = _apply_commercial_filters(
         query,
+        building_id=building_id,
         min_floor=min_floor,
         max_floor=max_floor,
         min_space_area=min_space_area,

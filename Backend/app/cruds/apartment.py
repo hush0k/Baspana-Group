@@ -17,6 +17,7 @@ from app.cruds.promotion import get_active_promotions_for_apartment
 
 def _apply_apartment_filters(
     query: Query,
+    building_id: int = None,
     min_floor: int = None,
     max_floor: int = None,
     min_apartment_area: Decimal = None,
@@ -37,6 +38,8 @@ def _apply_apartment_filters(
     orientation: Direction = None,
     isCorner: bool = None,
 ) -> Query:
+    if building_id is not None:
+        query = query.filter(Apartment.building_id == building_id)
     if min_floor is not None:
         query = query.filter(Apartment.floor >= min_floor)
     if max_floor is not None:
@@ -123,6 +126,7 @@ def _enrich_apartment_with_promotion(db: Session, apartment: Apartment):
 # GET Apartment
 def get_apartments_filtered(
     db: Session,
+    building_id: int = None,
     min_floor: int = None,
     max_floor: int = None,
     min_apartment_area: Decimal = None,
@@ -151,6 +155,7 @@ def get_apartments_filtered(
 
     query = _apply_apartment_filters(
         query,
+        building_id=building_id,
         min_floor=min_floor,
         max_floor=max_floor,
         min_apartment_area=min_apartment_area,

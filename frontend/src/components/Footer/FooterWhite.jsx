@@ -1,38 +1,40 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styles from '../../styles/FooterWhite.module.scss';
 
 const FooterWhite = () => {
+    const { t } = useTranslation();
+
     return (
         <footer className={styles.footer}>
             <div className={styles.container}>
                 <div className={styles.column}>
                     <h3 className={styles.title}>Baspana Group</h3>
                     <p className={styles.description}>
-                        Строительная компания, специализирующаяся на создании качественных и надежных объектов.
-                        Наша миссия — воплощать ваши мечты в реальность.
+                        {t('footer.description')}
                     </p>
                 </div>
 
                 <div className={styles.column}>
-                    <h4 className={styles.columnTitle}>Карта сайта</h4>
+                    <h4 className={styles.columnTitle}>{t('footer.sitemap')}</h4>
                     <nav className={styles.nav}>
-                        <Link to="/">Главная</Link>
-                        <Link to="/about">О нас</Link>
-                        <Link to="/services">Услуги</Link>
-                        <Link to="/projects">Проекты</Link>
-                        <Link to="/contacts">Контакты</Link>
+                        <Link to="/">{t('header.home')}</Link>
+                        <Link to="/about">{t('header.about')}</Link>
+                        <Link to="/services">{t('footer.services')}</Link>
+                        <Link to="/projects">{t('header.projects')}</Link>
+                        <Link to="/contacts">{t('header.contacts')}</Link>
                     </nav>
                 </div>
 
                 <div className={styles.column}>
-                    <h4 className={styles.columnTitle}>Контакты</h4>
+                    <h4 className={styles.columnTitle}>{t('footer.contacts')}</h4>
                     <div className={styles.contacts}>
                         <div className={styles.contactItem}>
                             <svg className={styles.icon} width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
                             </svg>
-                            <span>Казахстан, Алматы</span>
+                            <span>{t('footer.location')}</span>
                         </div>
 
                         <div className={styles.contactItem}>
@@ -52,7 +54,7 @@ const FooterWhite = () => {
                 </div>
 
                 <div className={styles.column}>
-                    <h4 className={styles.columnTitle}>Мы в соцсетях</h4>
+                    <h4 className={styles.columnTitle}>{t('footer.socialMedia')}</h4>
                     <div className={styles.socials}>
                         <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -79,11 +81,11 @@ const FooterWhite = () => {
             <div className={styles.bottom}>
                 <div className={styles.container}>
                     <p className={styles.copyright}>
-                        © 2025 Baspana Group. Все права защищены.
+                        {t('footer.copyrightFull')}
                     </p>
                     <div className={styles.bottomLinks}>
-                        <Link to="/privacy">Политика конфиденциальности</Link>
-                        <Link to="/sitemap">Карта сайта</Link>
+                        <Link to="/privacy">{t('footer.privacyPolicy')}</Link>
+                        <Link to="/sitemap">{t('footer.sitemap')}</Link>
                     </div>
                 </div>
             </div>

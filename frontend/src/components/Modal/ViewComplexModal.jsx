@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 import styles from '../../styles/ViewComplexModal.module.scss';
 
 const ViewComplexModal = ({ isOpen, onClose, complexId }) => {
+  const { t } = useTranslation();
   const [complex, setComplex] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +23,7 @@ const ViewComplexModal = ({ isOpen, onClose, complexId }) => {
       setComplex(response.data);
     } catch (err) {
       console.error('Ошибка загрузки данных комплекса:', err);
-      setError('Не удалось загрузить данные комплекса');
+      setError(t('modal.loadError'));
     } finally {
       setLoading(false);
     }
@@ -32,57 +34,18 @@ const ViewComplexModal = ({ isOpen, onClose, complexId }) => {
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   };
 
-  const getCityLabel = (city) => {
-    const cityMap = {
-      'Almaty': 'Алматы',
-      'Astana': 'Астана',
-      'Shymkent': 'Шымкент',
-      'Karaganda': 'Караганда',
-      'Aktobe': 'Актобе',
-      'Taraz': 'Тараз',
-      'Pavlodar': 'Павлодар',
-      'Oskemen': 'Усть-Каменогорск',
-      'Semey': 'Семей',
-      'Kostanay': 'Костанай',
-      'Kyzylorda': 'Кызылорда',
-      'Atyrau': 'Атырау',
-      'Oral': 'Уральск',
-      'Petropavl': 'Петропавловск',
-      'Turkistan': 'Туркестан'
-    };
-    return cityMap[city] || city;
-  };
-
   const getMaterialLabel = (material) => {
-    const materialMap = {
-      'Brick': 'Кирпич',
-      'Monolith': 'Монолит',
-      'Panel': 'Панель',
-      'Block': 'Блок',
-      'Mixed': 'Смешанный'
-    };
-    return materialMap[material] || material;
+    return t(`apartment.materials.${material}`, material);
   };
 
   const getClassLabel = (buildingClass) => {
-    const classMap = {
-      'Economic': 'Эконом',
-      'Comfort': 'Комфорт',
-      'Comfort+': 'Комфорт+',
-      'Business': 'Бизнес',
-      'Luxury': 'Люкс'
-    };
-    return classMap[buildingClass] || buildingClass;
+    return t(`complex.buildingClass.${buildingClass}`, buildingClass);
   };
 
   const getStatusLabel = (status) => {
-    const statusMap = {
-      'Project': 'Проект',
-      'Under Construction': 'Строится',
-      'Completed': 'Сдан'
-    };
-    return statusMap[status] || status;
+    return t(`complex.buildingStatus.${status}`, status);
   };
+
 
   const getStatusColor = (status) => {
     const colorMap = {
@@ -141,7 +104,7 @@ const ViewComplexModal = ({ isOpen, onClose, complexId }) => {
                 </div>
                 <div className={styles.infoRow}>
                   <span className={styles.label}>Город:</span>
-                  <span className={styles.value}>{getCityLabel(complex.city)}</span>
+                  <span className={styles.value}>{complex.city}</span>
                 </div>
                 <div className={styles.infoRow}>
                   <span className={styles.label}>Адрес:</span>

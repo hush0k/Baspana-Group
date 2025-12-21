@@ -1,9 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styles from '../../styles/ComplexCard.module.scss';
 
 const ComplexCard = ({ complex }) => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const handleCardClick = () => {
         navigate(`/complex/${complex.id}`);
@@ -34,23 +36,11 @@ const ComplexCard = ({ complex }) => {
     };
 
     const getClassText = (buildingClass) => {
-        const classMap = {
-            'Economic': 'Эконом',
-            'Comfort': 'Комфорт',
-            'Comfort+': 'Комфорт+',
-            'Business': 'Бизнес',
-            'Luxury': 'Премиум'
-        };
-        return classMap[buildingClass] || buildingClass;
+        return t(`complex.buildingClass.${buildingClass}`, buildingClass);
     };
 
     const getStatusText = (status) => {
-        const statusMap = {
-            'Project': 'Проект',
-            'Under Construction': 'Строится',
-            'Completed': 'Сдан'
-        };
-        return statusMap[status] || status;
+        return t(`complex.buildingStatus.${status}`, status);
     };
 
     const getStatusIcon = (status) => {
@@ -106,28 +96,28 @@ const ComplexCard = ({ complex }) => {
                             <span className={styles.featureIcon}>🏢</span>
                             <span className={styles.featureText}>
                                 {complex.min_area
-                                    ? `от ${complex.min_area} м²`
+                                    ? `${t('card.from')} ${complex.min_area} ${t('common.sqm')}`
                                     : complex.apartment_area
-                                        ? `${formatPrice(complex.apartment_area)} м²`
-                                        : 'Уточняйте'}
+                                        ? `${formatPrice(complex.apartment_area)} ${t('common.sqm')}`
+                                        : t('common.contactForDetails')}
                             </span>
                         </div>
                         <div className={styles.feature}>
                             <span className={styles.featureIcon}>💰</span>
                             <span className={styles.featureText}>
                                 {complex.min_price
-                                    ? `от ${formatPrice(complex.min_price)} ₸`
-                                    : 'Уточняйте'}
+                                    ? `${t('card.from')} ${formatPrice(complex.min_price)} ${t('common.tenge')}`
+                                    : t('common.contactForDetails')}
                             </span>
                         </div>
                         <div className={styles.feature}>
                             <span className={styles.featureIcon}>📅</span>
                             <span className={styles.featureText}>
                                 {complex.building_status === 'Completed'
-                                    ? 'Сдан'
+                                    ? getStatusText('Completed')
                                     : complex.construction_end
                                         ? formatDate(complex.construction_end)
-                                        : 'Уточняйте'}
+                                        : t('common.contactForDetails')}
                             </span>
                         </div>
                         <div className={styles.feature}>
@@ -151,7 +141,7 @@ const ComplexCard = ({ complex }) => {
                             handleCardClick();
                         }}
                     >
-                        Подробнее о проекте
+                        {t('common.viewMoreAboutProject')}
                     </button>
                 </div>
             </div>

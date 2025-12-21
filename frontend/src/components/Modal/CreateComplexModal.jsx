@@ -607,7 +607,14 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
                   accept="image/*"
                   onChange={handleMainImageChange}
                   className={styles.fileInput}
+                  id="mainImageInput"
                 />
+                <label htmlFor="mainImageInput" className={styles.fileInputLabel}>
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  {mainImageFile ? 'Изменить изображение' : 'Выбрать изображение'}
+                </label>
                 {mainImagePreview && (
                   <div className={styles.imagePreview}>
                     <img src={mainImagePreview} alt="Предпросмотр главного изображения" />
@@ -633,7 +640,14 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
                   multiple
                   onChange={handleGalleryImagesChange}
                   className={styles.fileInput}
+                  id="galleryImagesInput"
                 />
+                <label htmlFor="galleryImagesInput" className={styles.fileInputLabel}>
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  {galleryFiles.length > 0 ? `Добавить еще (${galleryFiles.length} выбрано)` : 'Выбрать изображения'}
+                </label>
                 {galleryPreviews.length > 0 && (
                   <div className={styles.galleryPreview}>
                     {galleryPreviews.map((preview, index) => (

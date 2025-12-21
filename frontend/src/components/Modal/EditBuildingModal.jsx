@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 import complexService from '../../services/ComplexService';
 import buildingService from '../../services/BuildingService';
@@ -6,6 +7,7 @@ import imageService from '../../services/ImageService';
 import styles from '../../styles/CreateComplexModal.module.scss';
 
 const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
+  const { t } = useTranslation();
   const [complexes, setComplexes] = useState([]);
   const [formData, setFormData] = useState({
     residential_complex_id: '',
@@ -29,9 +31,9 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
   const [error, setError] = useState('');
 
   const statusOptions = [
-    { value: 'Project', label: 'Проект' },
-    { value: 'Under Construction', label: 'Строится' },
-    { value: 'Completed', label: 'Сдан' }
+    { value: 'Project', label: t('complex.buildingStatus.Project') },
+    { value: 'Under Construction', label: t('complex.buildingStatus.Under Construction') },
+    { value: 'Completed', label: t('complex.buildingStatus.Completed') }
   ];
 
   useEffect(() => {
@@ -75,7 +77,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
       });
     } catch (err) {
       console.error('Ошибка загрузки данных блока:', err);
-      setError('Не удалось загрузить данные блока');
+      setError(t('modal.loadError'));
     }
   };
 
@@ -138,21 +140,21 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
       if (fileInput) fileInput.value = '';
     } catch (err) {
       console.error('Ошибка загрузки изображений:', err);
-      setError('Не удалось загрузить изображения');
+      setError(t('modal.imageUploadError'));
     } finally {
       setUploadingImages(false);
     }
   };
 
   const handleDeleteImage = async (imageId) => {
-    if (!window.confirm('Вы уверены, что хотите удалить это изображение?')) return;
+    if (!window.confirm(t('modal.confirmDelete', 'Вы уверены, что хотите удалить это изображение?'))) return;
 
     try {
       await imageService.deleteImage(imageId);
       await fetchBuildingImages();
     } catch (err) {
       console.error('Ошибка удаления изображения:', err);
-      setError('Не удалось удалить изображение');
+      setError(t('modal.deleteError', 'Не удалось удалить изображение'));
     }
   };
 
@@ -185,7 +187,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
     } catch (err) {
       console.error('Ошибка обновления блока:', err);
 
-      let errorMessage = 'Ошибка при обновлении блока';
+      let errorMessage = t('modal.updateError', 'Ошибка при обновлении');
       if (err.response?.data?.detail) {
         const detail = err.response.data.detail;
         if (Array.isArray(detail)) {
@@ -208,7 +210,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <h2>Редактировать блок</h2>
+          <h2>{t('modal.edit')} {t('blockPage.block')}</h2>
           <button className={styles.closeButton} onClick={onClose}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -226,17 +228,17 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
           <div className={styles.formGrid}>
             {/* Основная информация */}
             <div className={styles.formSection}>
-              <h3>Основная информация</h3>
+              <h3>{t('modal.basicInfo')}</h3>
 
               <div className={styles.formGroup}>
-                <label>Жилой комплекс <span className={styles.required}>*</span></label>
+                <label>{t('complex.title')} <span className={styles.required}>*</span></label>
                 <select
                   name="residential_complex_id"
                   value={formData.residential_complex_id}
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Выберите ЖК</option>
+                  <option value="">{t('modal.selectComplex', 'Выберите ЖК')}</option>
                   {complexes.map(complex => (
                     <option key={complex.id} value={complex.id}>{complex.name}</option>
                   ))}
@@ -245,7 +247,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Номер блока <span className={styles.required}>*</span></label>
+                  <label>{t('modal.blockNumber', 'Номер блока')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="block"
@@ -257,7 +259,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Статус <span className={styles.required}>*</span></label>
+                  <label>{t('complex.status')} <span className={styles.required}>*</span></label>
                   <select name="status" value={formData.status} onChange={handleChange} required>
                     {statusOptions.map(option => (
                       <option key={option.value} value={option.value}>{option.label}</option>
@@ -267,39 +269,39 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
               </div>
 
               <div className={styles.formGroup}>
-                <label>Краткое описание (для карточки)</label>
+                <label>{t('modal.shortDescription')}</label>
                 <textarea
                   name="short_description"
                   value={formData.short_description}
                   onChange={handleChange}
                   maxLength={300}
                   rows="2"
-                  placeholder="Краткое описание блока (макс. 300 символов)"
+                  placeholder={t('modal.blockShortDesc', 'Краткое описание блока (макс. 300 символов)')}
                 />
                 <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
-                  {formData.short_description?.length || 0}/300 символов
+                  {formData.short_description?.length || 0}/300 {t('modal.characters', 'символов')}
                 </small>
               </div>
 
               <div className={styles.formGroup}>
-                <label>Полное описание</label>
+                <label>{t('modal.fullDescription')}</label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   rows="4"
-                  placeholder="Подробное описание блока"
+                  placeholder={t('modal.blockFullDesc', 'Подробное описание блока')}
                 />
               </div>
             </div>
 
             {/* Характеристики */}
             <div className={styles.formSection}>
-              <h3>Характеристики</h3>
+              <h3>{t('modal.characteristics')}</h3>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Этажей <span className={styles.required}>*</span></label>
+                  <label>{t('complex.floors')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="floor_count"
@@ -311,7 +313,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Общая площадь (м²) <span className={styles.required}>*</span></label>
+                  <label>{t('modal.totalArea', 'Общая площадь')} ({t('common.sqm')}) <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="gross_area"
@@ -325,7 +327,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Квартир <span className={styles.required}>*</span></label>
+                  <label>{t('blockPage.apartments')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="apartments_count"
@@ -337,7 +339,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Коммерческих помещений <span className={styles.required}>*</span></label>
+                  <label>{t('blockPage.commercialUnits')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="commercials_count"
@@ -351,7 +353,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Парковочных мест <span className={styles.required}>*</span></label>
+                  <label>{t('blockPage.parking')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="parking_count"
@@ -363,7 +365,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Лифтов <span className={styles.required}>*</span></label>
+                  <label>{t('blockPage.elevators')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="elevators_count"
@@ -378,13 +380,13 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
 
             {/* Изображения */}
             <div className={styles.formSection}>
-              <h3>Изображения блока</h3>
+              <h3>{t('modal.buildingImages', 'Изображения блока')}</h3>
 
               <div className={styles.imagesSection}>
                 {/* Существующие изображения */}
                 {images.length > 0 && (
                   <div className={styles.existingImages}>
-                    <h4>Загруженные изображения ({images.length})</h4>
+                    <h4>{t('modal.uploadedImages', 'Загруженные изображения')} ({images.length})</h4>
                     <div className={styles.imageGrid}>
                       {images.map((image) => (
                         <div key={image.id} className={styles.imageItem}>
@@ -393,7 +395,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
                             type="button"
                             className={styles.deleteImageButton}
                             onClick={() => handleDeleteImage(image.id)}
-                            title="Удалить изображение"
+                            title={t('modal.removeImage')}
                           >
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                               <path d="M4 4L12 12M4 12L12 4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
@@ -407,7 +409,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
 
                 {/* Загрузка новых изображений */}
                 <div className={styles.uploadSection}>
-                  <h4>Добавить новые изображения</h4>
+                  <h4>{t('modal.addNewImages', 'Добавить новые изображения')}</h4>
                   <div className={styles.fileInputWrapper}>
                     <input
                       type="file"
@@ -421,11 +423,11 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                       </svg>
-                      Выбрать файлы
+                      {t('modal.selectFiles', 'Выбрать файлы')}
                     </label>
                     {selectedFiles.length > 0 && (
                       <span className={styles.selectedFilesCount}>
-                        {selectedFiles.length} файл(ов) выбрано
+                        {selectedFiles.length} {t('modal.filesSelected', 'файл(ов) выбрано')}
                       </span>
                     )}
                   </div>
@@ -436,7 +438,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
                       className={styles.uploadButton}
                       disabled={uploadingImages}
                     >
-                      {uploadingImages ? 'Загрузка...' : 'Загрузить изображения'}
+                      {uploadingImages ? t('modal.uploading', 'Загрузка...') : t('modal.uploadImages', 'Загрузить изображения')}
                     </button>
                   )}
                 </div>
@@ -445,11 +447,11 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
 
             {/* Сроки строительства */}
             <div className={styles.formSection}>
-              <h3>Сроки строительства</h3>
+              <h3>{t('modal.constructionDates', 'Сроки строительства')}</h3>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Начало строительства</label>
+                  <label>{t('modal.constructionStart', 'Начало строительства')}</label>
                   <input
                     type="date"
                     name="construction_start"
@@ -459,7 +461,7 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Окончание строительства</label>
+                  <label>{t('modal.constructionEnd', 'Окончание строительства')}</label>
                   <input
                     type="date"
                     name="construction_end"
@@ -473,10 +475,10 @@ const EditBuildingModal = ({ isOpen, onClose, onSuccess, buildingId }) => {
 
           <div className={styles.modalFooter}>
             <button type="button" className={styles.cancelButton} onClick={onClose} disabled={loading}>
-              Отмена
+              {t('modal.cancel')}
             </button>
             <button type="submit" className={styles.submitButton} disabled={loading}>
-              {loading ? 'Сохранение...' : 'Сохранить изменения'}
+              {loading ? t('modal.saving', 'Сохранение...') : t('modal.saveChanges', 'Сохранить изменения')}
             </button>
           </div>
         </form>

@@ -15,6 +15,12 @@ api.interceptors.request.use(
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+
+        // Если отправляется FormData, удаляем Content-Type чтобы браузер сам установил multipart/form-data
+        if (config.data instanceof FormData) {
+            delete config.headers['Content-Type'];
+        }
+
         console.log('Request:', config.method.toUpperCase(), config.url);
         return config;
     },

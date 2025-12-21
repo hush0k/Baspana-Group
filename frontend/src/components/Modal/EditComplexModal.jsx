@@ -707,7 +707,14 @@ const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
                     accept="image/*"
                     onChange={handleMainImageChange}
                     className={styles.fileInput}
+                    id="editMainImageInput"
                   />
+                  <label htmlFor="editMainImageInput" className={styles.fileInputLabel}>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    {mainImageFile ? 'Изменить изображение' : 'Выбрать изображение'}
+                  </label>
                   {mainImagePreview && (
                     <div className={styles.imagePreview}>
                       <img src={mainImagePreview} alt="Предпросмотр главного изображения" />
@@ -758,7 +765,14 @@ const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
                     multiple
                     onChange={handleGalleryImagesChange}
                     className={styles.fileInput}
+                    id="editGalleryImagesInput"
                   />
+                  <label htmlFor="editGalleryImagesInput" className={styles.fileInputLabel} style={{ marginTop: '12px' }}>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    {galleryFiles.length > 0 ? `Добавить еще (${galleryFiles.length} выбрано)` : 'Добавить новые изображения'}
+                  </label>
                   {galleryPreviews.length > 0 && (
                     <div className={styles.newGallery}>
                       <p style={{ fontSize: '14px', color: '#6b7280', marginTop: '12px', marginBottom: '8px' }}>

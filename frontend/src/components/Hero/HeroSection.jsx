@@ -1,22 +1,23 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from '../../styles/HeroSection.module.scss';
 
 const HeroSection = () => {
+    const { t } = useTranslation();
+
     return (
         <section className={styles.heroSection}>
             <div className={styles.heroOverlay}></div>
             <div className={styles.heroContent}>
                 <h1 className={styles.heroTitle}>
-                    Строим будущее.<br />
-                    Надежно и<br />
-                    качественно.
+                    {t('hero.title')}<br />
+                    {t('hero.subtitle')}
                 </h1>
                 <p className={styles.heroDescription}>
-                    Откройте для себя проекты, созданные с заботой о каждой детали и
-                    высочайшими стандартами качества.
+                    {t('hero.description')}
                 </p>
                 <button className={styles.heroButton}>
-                    Смотреть проекты
+                    {t('hero.viewProjects')}
                 </button>
             </div>
         </section>

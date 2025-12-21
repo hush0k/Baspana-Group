@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { authService } from '../../services/AuthService';
+import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import styles from '../../styles/HeaderWhite.module.scss';
 import logo from '../../assets/image/Baspana_Logo_white.png';
 
 const HeaderWhite = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
@@ -67,12 +70,14 @@ const HeaderWhite = () => {
             </div>
 
             <nav className={styles.nav}>
-                <Link to="/">Главная</Link>
-                <Link to="/projects">Проекты</Link>
-                <Link to="/payment">Способы оплаты</Link>
-                <Link to="/promotions">Акции</Link>
-                <Link to="/contacts">Контакты</Link>
+                <Link to="/">{t('header.home')}</Link>
+                <Link to="/payment">{t('header.payment')}</Link>
+                <Link to="/promotions">{t('header.promotions')}</Link>
+                <Link to="/contacts">{t('header.contacts')}</Link>
             </nav>
+
+            <div className={styles.rightSection}>
+                <LanguageSwitcher />
 
             <div className={styles.profileContainer} ref={dropdownRef}>
                 <button className={styles.profileBtn} onClick={handleProfileClick}>
@@ -90,7 +95,7 @@ const HeaderWhite = () => {
                             </svg>
                         </>
                     ) : (
-                        'Войти'
+                        t('header.login')
                     )}
                 </button>
 
@@ -101,16 +106,16 @@ const HeaderWhite = () => {
                             className={styles.dropdownItem}
                             onClick={() => setIsDropdownOpen(false)}
                         >
-                            Личный кабинет
+                            {t('header.profile')}
                         </Link>
 
                         {isManagerOrAdmin && (
                             <Link
-                                to="/buildings-management"
+                                to="/complex-management"
                                 className={styles.dropdownItem}
                                 onClick={() => setIsDropdownOpen(false)}
                             >
-                                Панель управления
+                                {t('management.title')}
                             </Link>
                         )}
 
@@ -120,7 +125,7 @@ const HeaderWhite = () => {
                                 className={styles.dropdownItem}
                                 onClick={() => setIsDropdownOpen(false)}
                             >
-                                Управление пользователями
+                                {t('management.userManagement')}
                             </Link>
                         )}
 
@@ -128,10 +133,11 @@ const HeaderWhite = () => {
                             className={`${styles.dropdownItem} ${styles.logoutBtn}`}
                             onClick={handleLogout}
                         >
-                            Выйти из аккаунта
+                            {t('header.logout')}
                         </button>
                     </div>
                 )}
+            </div>
             </div>
         </header>
     );

@@ -34,6 +34,7 @@ router = APIRouter()
 
 @router.get("/", response_model=PaginatedApartmentResponse)
 def get_apartments_endpoint(
+    building_id: Optional[int] = None,
     min_floor: Optional[int] = None,
     max_floor: Optional[int] = None,
     min_apartment_area: Optional[Decimal] = None,
@@ -61,6 +62,7 @@ def get_apartments_endpoint(
 ):
     return get_apartments_filtered(
         db=db,
+        building_id=building_id,
         min_floor=min_floor,
         max_floor=max_floor,
         min_apartment_area=min_apartment_area,

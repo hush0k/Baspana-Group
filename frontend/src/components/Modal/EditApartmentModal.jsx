@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import apartmentService from '../../services/ApartmentService';
 import buildingService from '../../services/BuildingService';
 import complexService from '../../services/ComplexService';
@@ -6,6 +7,7 @@ import imageService from '../../services/ImageService';
 import styles from '../../styles/CreateComplexModal.module.scss';
 
 const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
+  const { t } = useTranslation();
   const [complexes, setComplexes] = useState([]);
   const [buildings, setBuildings] = useState([]);
   const [filteredBuildings, setFilteredBuildings] = useState([]);
@@ -36,35 +38,35 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
   const [error, setError] = useState('');
 
   const apartmentTypeOptions = [
-    { value: 'Studio', label: 'Студия' },
-    { value: 'One Bedroom', label: '1-комнатная' },
-    { value: 'Two Bedroom', label: '2-комнатная' },
-    { value: 'Three Bedroom', label: '3-комнатная' },
-    { value: 'Penthouse', label: 'Пентхаус' }
+    { value: 'Studio', label: t('apartment.types.Studio') },
+    { value: 'One Bedroom', label: t('apartment.types.One Bedroom') },
+    { value: 'Two Bedroom', label: t('apartment.types.Two Bedroom') },
+    { value: 'Three Bedroom', label: t('apartment.types.Three Bedroom') },
+    { value: 'Penthouse', label: t('apartment.types.Penthouse') }
   ];
 
   const statusOptions = [
-    { value: 'Free', label: 'Свободно' },
-    { value: 'Booked', label: 'Забронировано' },
-    { value: 'Sold', label: 'Продано' }
+    { value: 'Free', label: t('apartment.free') },
+    { value: 'Booked', label: t('apartment.booked') },
+    { value: 'Sold', label: t('apartment.sold') }
   ];
 
   const finishingTypeOptions = [
-    { value: 'Black Box', label: 'Черновая' },
-    { value: 'White Box', label: 'Предчистовая' },
-    { value: 'Finished', label: 'Чистовая' },
-    { value: 'Turnkey', label: 'Под ключ' }
+    { value: 'Black Box', label: t('apartment.finishingTypes.Black Box') },
+    { value: 'White Box', label: t('apartment.finishingTypes.White Box') },
+    { value: 'Finished', label: t('apartment.finishingTypes.Finished') },
+    { value: 'Turnkey', label: t('apartment.finishingTypes.Turnkey') }
   ];
 
   const orientationOptions = [
-    { value: 'North', label: 'Север' },
-    { value: 'South', label: 'Юг' },
-    { value: 'East', label: 'Восток' },
-    { value: 'West', label: 'Запад' },
-    { value: 'North-East', label: 'Северо-Восток' },
-    { value: 'North-West', label: 'Северо-Запад' },
-    { value: 'South-East', label: 'Юго-Восток' },
-    { value: 'South-West', label: 'Юго-Запад' }
+    { value: 'North', label: t('apartment.orientations.North') },
+    { value: 'South', label: t('apartment.orientations.South') },
+    { value: 'East', label: t('apartment.orientations.East') },
+    { value: 'West', label: t('apartment.orientations.West') },
+    { value: 'Northeast', label: t('apartment.orientations.Northeast') },
+    { value: 'Northwest', label: t('apartment.orientations.Northwest') },
+    { value: 'Southeast', label: t('apartment.orientations.Southeast') },
+    { value: 'Southwest', label: t('apartment.orientations.Southwest') }
   ];
 
   useEffect(() => {
@@ -142,7 +144,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
       });
     } catch (err) {
       console.error('Ошибка загрузки данных квартиры:', err);
-      setError('Не удалось загрузить данные квартиры');
+      setError(t('modal.loadError'));
     }
   };
 
@@ -175,14 +177,14 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
       if (fileInput) fileInput.value = '';
     } catch (err) {
       console.error('Ошибка загрузки изображений:', err);
-      setError('Не удалось загрузить изображения');
+      setError(t('modal.imageUploadError'));
     } finally {
       setUploadingImages(false);
     }
   };
 
   const handleDeleteImage = async (imageId) => {
-    if (!window.confirm('Вы уверены, что хотите удалить это изображение?')) {
+    if (!window.confirm(t('modal.confirmDelete', 'Вы уверены, что хотите удалить это изображение?'))) {
       return;
     }
 
@@ -191,7 +193,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
       await fetchApartmentImages();
     } catch (err) {
       console.error('Ошибка удаления изображения:', err);
-      setError('Не удалось удалить изображение');
+      setError(t('modal.deleteError', 'Не удалось удалить изображение'));
     }
   };
 
@@ -261,7 +263,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
     } catch (err) {
       console.error('Ошибка обновления квартиры:', err);
 
-      let errorMessage = 'Ошибка при обновлении квартиры';
+      let errorMessage = t('modal.updateError', 'Ошибка при обновлении квартиры');
       if (err.response?.data?.detail) {
         const detail = err.response.data.detail;
         if (Array.isArray(detail)) {
@@ -284,7 +286,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <h2>Редактировать квартиру</h2>
+          <h2>{t('modal.edit')} {t('apartment.title')}</h2>
           <button className={styles.closeButton} onClick={onClose}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -302,17 +304,17 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
           <div className={styles.formGrid}>
             {/* Основная информация */}
             <div className={styles.formSection}>
-              <h3>Основная информация</h3>
+              <h3>{t('modal.basicInfo')}</h3>
 
               <div className={styles.formGroup}>
-                <label>Жилой комплекс <span className={styles.required}>*</span></label>
+                <label>{t('complex.title')} <span className={styles.required}>*</span></label>
                 <select
                   name="residential_complex_id"
                   value={formData.residential_complex_id}
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Выберите ЖК</option>
+                  <option value="">{t('modal.selectComplex', 'Выберите ЖК')}</option>
                   {complexes.map(complex => (
                     <option key={complex.id} value={complex.id}>{complex.name}</option>
                   ))}
@@ -320,7 +322,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
               </div>
 
               <div className={styles.formGroup}>
-                <label>Блок <span className={styles.required}>*</span></label>
+                <label>{t('blockPage.block')} <span className={styles.required}>*</span></label>
                 <select
                   name="building_id"
                   value={formData.building_id}
@@ -328,16 +330,16 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
                   required
                   disabled={!formData.residential_complex_id}
                 >
-                  <option value="">Выберите блок</option>
+                  <option value="">{t('modal.selectBlock', 'Выберите блок')}</option>
                   {filteredBuildings.map(building => (
-                    <option key={building.id} value={building.id}>Блок {building.block}</option>
+                    <option key={building.id} value={building.id}>{t('blockPage.block')} {building.block}</option>
                   ))}
                 </select>
               </div>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Номер квартиры <span className={styles.required}>*</span></label>
+                  <label>{t('modal.apartmentNumber', 'Номер квартиры')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="number"
@@ -349,7 +351,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Этаж <span className={styles.required}>*</span></label>
+                  <label>{t('apartment.floor')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="floor"
@@ -363,7 +365,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Тип квартиры <span className={styles.required}>*</span></label>
+                  <label>{t('modal.apartmentType')} <span className={styles.required}>*</span></label>
                   <select name="apartment_type" value={formData.apartment_type} onChange={handleChange} required>
                     {apartmentTypeOptions.map(option => (
                       <option key={option.value} value={option.value}>{option.label}</option>
@@ -372,7 +374,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Статус <span className={styles.required}>*</span></label>
+                  <label>{t('apartment.status')} <span className={styles.required}>*</span></label>
                   <select name="status" value={formData.status} onChange={handleChange} required>
                     {statusOptions.map(option => (
                       <option key={option.value} value={option.value}>{option.label}</option>
@@ -382,39 +384,39 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
               </div>
 
               <div className={styles.formGroup}>
-                <label>Краткое описание (для карточки)</label>
+                <label>{t('modal.shortDescription')}</label>
                 <textarea
                   name="short_description"
                   value={formData.short_description}
                   onChange={handleChange}
                   maxLength={300}
                   rows="2"
-                  placeholder="Краткое описание квартиры (макс. 300 символов)"
+                  placeholder={t('modal.shortDescriptionPlaceholder', 'Краткое описание квартиры (макс. 300 символов)')}
                 />
                 <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
-                  {formData.short_description?.length || 0}/300 символов
+                  {formData.short_description?.length || 0}/300 {t('modal.characters', 'символов')}
                 </small>
               </div>
 
               <div className={styles.formGroup}>
-                <label>Полное описание</label>
+                <label>{t('modal.fullDescription')}</label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   rows="4"
-                  placeholder="Подробное описание квартиры"
+                  placeholder={t('modal.fullDescriptionPlaceholder', 'Подробное описание квартиры')}
                 />
               </div>
             </div>
 
             {/* Характеристики */}
             <div className={styles.formSection}>
-              <h3>Характеристики</h3>
+              <h3>{t('modal.characteristics')}</h3>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Площадь квартиры (м²) <span className={styles.required}>*</span></label>
+                  <label>{t('apartment.area')} ({t('common.sqm')}) <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="apartment_area"
@@ -426,7 +428,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Площадь кухни (м²) <span className={styles.required}>*</span></label>
+                  <label>{t('apartment.kitchen')} ({t('common.sqm')}) <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="kitchen_area"
@@ -440,7 +442,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Количество санузлов <span className={styles.required}>*</span></label>
+                  <label>{t('apartment.bathroom')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="bathroom_count"
@@ -452,7 +454,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Высота потолков (м) <span className={styles.required}>*</span></label>
+                  <label>{t('apartment.ceiling')} (м) <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="ceiling_height"
@@ -466,7 +468,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Тип отделки <span className={styles.required}>*</span></label>
+                  <label>{t('apartment.finishing')} <span className={styles.required}>*</span></label>
                   <select name="finishing_type" value={formData.finishing_type} onChange={handleChange} required>
                     {finishingTypeOptions.map(option => (
                       <option key={option.value} value={option.value}>{option.label}</option>
@@ -475,7 +477,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Ориентация <span className={styles.required}>*</span></label>
+                  <label>{t('apartment.orientation')} <span className={styles.required}>*</span></label>
                   <select name="orientation" value={formData.orientation} onChange={handleChange} required>
                     {orientationOptions.map(option => (
                       <option key={option.value} value={option.value}>{option.label}</option>
@@ -493,7 +495,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
                     onChange={handleChange}
                     style={{ width: 'auto', marginRight: '8px' }}
                   />
-                  <label style={{ margin: 0 }}>Наличие балкона</label>
+                  <label style={{ margin: 0 }}>{t('apartment.balcony')}</label>
                 </div>
 
                 <div className={styles.formGroup} style={{ alignItems: 'center', flexDirection: 'row' }}>
@@ -504,18 +506,18 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
                     onChange={handleChange}
                     style={{ width: 'auto', marginRight: '8px' }}
                   />
-                  <label style={{ margin: 0 }}>Угловая квартира</label>
+                  <label style={{ margin: 0 }}>{t('apartment.corner')}</label>
                 </div>
               </div>
             </div>
 
             {/* Цены */}
             <div className={styles.formSection}>
-              <h3>Цены</h3>
+              <h3>{t('modal.pricing')}</h3>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Цена за м² (₸) <span className={styles.required}>*</span></label>
+                  <label>{t('apartment.pricePerSqm')} ({t('common.tenge')}) <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="price_per_sqr"
@@ -527,7 +529,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Общая цена (₸) <span className={styles.required}>*</span></label>
+                  <label>{t('apartment.price')} ({t('common.tenge')}) <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="total_price"
@@ -542,7 +544,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
 
             {/* Фотогалерея */}
             <div className={styles.formSection}>
-              <h3>Фотогалерея</h3>
+              <h3>{t('apartment.gallery')}</h3>
 
               {/* Существующие изображения */}
               {images.length > 0 && (
@@ -593,7 +595,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
 
               {/* Загрузка новых изображений */}
               <div className={styles.formGroup}>
-                <label>Добавить изображения</label>
+                <label>{t('modal.addImages')}</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -603,7 +605,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
                 />
                 {selectedFiles.length > 0 && (
                   <div style={{ marginTop: '10px' }}>
-                    <p>Выбрано файлов: {selectedFiles.length}</p>
+                    <p>{t('modal.filesSelected', 'Выбрано файлов')}: {selectedFiles.length}</p>
                     <button
                       type="button"
                       onClick={handleUploadImages}
@@ -617,7 +619,7 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
                         cursor: uploadingImages ? 'not-allowed' : 'pointer'
                       }}
                     >
-                      {uploadingImages ? 'Загрузка...' : 'Загрузить изображения'}
+                      {uploadingImages ? t('modal.uploading', 'Загрузка...') : t('modal.uploadImages', 'Загрузить изображения')}
                     </button>
                   </div>
                 )}
@@ -627,10 +629,10 @@ const EditApartmentModal = ({ isOpen, onClose, onSuccess, apartmentId }) => {
 
           <div className={styles.modalFooter}>
             <button type="button" className={styles.cancelButton} onClick={onClose} disabled={loading}>
-              Отмена
+              {t('modal.cancel')}
             </button>
             <button type="submit" className={styles.submitButton} disabled={loading}>
-              {loading ? 'Сохранение...' : 'Сохранить изменения'}
+              {loading ? t('modal.saving', 'Сохранение...') : t('modal.saveChanges', 'Сохранить изменения')}
             </button>
           </div>
         </form>

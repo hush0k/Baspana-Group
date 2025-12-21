@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import HeaderBlack from '../../components/Header/HeaderBlack';
 import FooterBlack from '../../components/Footer/FooterBlack';
 import ComplexCard from '../../components/Cards/ComplexCard';
@@ -11,6 +12,7 @@ import styles from '../../styles/MainHome.module.scss';
 
 const MainHome = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [complexes, setComplexes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -29,7 +31,7 @@ const MainHome = () => {
                 setLoading(false);
             } catch (err) {
                 console.error('Error loading complexes:', err);
-                setError('Не удалось загрузить проекты');
+                setError(t('mainPage.errorLoadingProjects'));
                 setLoading(false);
             }
         };
@@ -58,11 +60,10 @@ const MainHome = () => {
                 <section className={styles.heroSection}>
                     <div className={styles.heroContent}>
                         <h1 className={styles.heroTitle}>
-                            Наши жилые комплексы
+                            {t('mainPage.ourComplexes')}
                         </h1>
                         <p className={styles.heroDescription}>
-                            Откройте для себя наши проекты: от современных городских квартир
-                            до уютных семейных домов. Найдите свой идеальный дом с Baspana Group.
+                            {t('mainPage.heroDescription')}
                         </p>
                     </div>
                 </section>
@@ -79,7 +80,7 @@ const MainHome = () => {
                     {loading ? (
                         <div className={styles.loadingContainer}>
                             <div className={styles.spinner}></div>
-                            <p>Загрузка проектов...</p>
+                            <p>{t('mainPage.loadingProjects')}</p>
                         </div>
                     ) : error ? (
                         <div className={styles.errorContainer}>
@@ -88,7 +89,7 @@ const MainHome = () => {
                                 onClick={() => window.location.reload()}
                                 className={styles.retryButton}
                             >
-                                Попробовать снова
+                                {t('mainPage.retry')}
                             </button>
                         </div>
                     ) : (
@@ -106,13 +107,13 @@ const MainHome = () => {
                 <section className={styles.ctaSection}>
                     <div className={styles.ctaContent}>
                         <h2 className={styles.ctaTitle}>
-                            Не нашли подходящий проект?
+                            {t('mainPage.notFoundProject')}
                         </h2>
                         <p className={styles.ctaDescription}>
-                            Свяжитесь с нами, и мы поможем подобрать идеальный вариант специально для вас
+                            {t('mainPage.contactUs')}
                         </p>
                         <button className={styles.ctaButton}>
-                            Получить консультацию
+                            {t('mainPage.getConsultation')}
                         </button>
                     </div>
                 </section>

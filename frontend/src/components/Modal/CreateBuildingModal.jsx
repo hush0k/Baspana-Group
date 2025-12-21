@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 import complexService from '../../services/ComplexService';
 import styles from '../../styles/CreateComplexModal.module.scss';
 
 const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
+  const { t } = useTranslation();
   const [complexes, setComplexes] = useState([]);
   const [formData, setFormData] = useState({
     residential_complex_id: '',
@@ -24,9 +26,9 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
   const [error, setError] = useState('');
 
   const statusOptions = [
-    { value: 'Project', label: 'Проект' },
-    { value: 'Under Construction', label: 'Строится' },
-    { value: 'Completed', label: 'Сдан' }
+    { value: 'Project', label: t('complex.buildingStatus.Project') },
+    { value: 'Under Construction', label: t('complex.buildingStatus.Under Construction') },
+    { value: 'Completed', label: t('complex.buildingStatus.Completed') }
   ];
 
   useEffect(() => {
@@ -121,8 +123,8 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
       });
     } catch (err) {
       console.error('Ошибка создания блока:', err);
-      
-      let errorMessage = 'Ошибка при создании блока';
+
+      let errorMessage = t('modal.createError', 'Ошибка при создании блока');
       if (err.response?.data?.detail) {
         const detail = err.response.data.detail;
         if (Array.isArray(detail)) {
@@ -145,7 +147,7 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <h2>Создать новый блок</h2>
+          <h2>{t('modal.create')} {t('blockPage.block')}</h2>
           <button className={styles.closeButton} onClick={onClose}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -163,17 +165,17 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
           <div className={styles.formGrid}>
             {/* Основная информация */}
             <div className={styles.formSection}>
-              <h3>Основная информация</h3>
+              <h3>{t('modal.basicInfo')}</h3>
 
               <div className={styles.formGroup}>
-                <label>Жилой комплекс <span className={styles.required}>*</span></label>
+                <label>{t('complex.title')} <span className={styles.required}>*</span></label>
                 <select
                   name="residential_complex_id"
                   value={formData.residential_complex_id}
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Выберите ЖК</option>
+                  <option value="">{t('modal.selectComplex', 'Выберите ЖК')}</option>
                   {complexes.map(complex => (
                     <option key={complex.id} value={complex.id}>{complex.name}</option>
                   ))}
@@ -182,7 +184,7 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Номер блока <span className={styles.required}>*</span></label>
+                  <label>{t('modal.blockNumber', 'Номер блока')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="block"
@@ -194,7 +196,7 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Статус <span className={styles.required}>*</span></label>
+                  <label>{t('complex.status')} <span className={styles.required}>*</span></label>
                   <select name="status" value={formData.status} onChange={handleChange} required>
                     {statusOptions.map(option => (
                       <option key={option.value} value={option.value}>{option.label}</option>
@@ -204,39 +206,39 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
               </div>
 
               <div className={styles.formGroup}>
-                <label>Краткое описание (для карточки)</label>
+                <label>{t('modal.shortDescription')}</label>
                 <textarea
                   name="short_description"
                   value={formData.short_description}
                   onChange={handleChange}
                   maxLength={300}
                   rows="2"
-                  placeholder="Краткое описание блока (макс. 300 символов)"
+                  placeholder={t('modal.blockShortDesc', 'Краткое описание блока (макс. 300 символов)')}
                 />
                 <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
-                  {formData.short_description?.length || 0}/300 символов
+                  {formData.short_description?.length || 0}/300 {t('modal.characters', 'символов')}
                 </small>
               </div>
 
               <div className={styles.formGroup}>
-                <label>Полное описание</label>
+                <label>{t('modal.fullDescription')}</label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   rows="4"
-                  placeholder="Подробное описание блока"
+                  placeholder={t('modal.blockFullDesc', 'Подробное описание блока')}
                 />
               </div>
             </div>
 
             {/* Характеристики */}
             <div className={styles.formSection}>
-              <h3>Характеристики</h3>
+              <h3>{t('modal.characteristics')}</h3>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Этажей <span className={styles.required}>*</span></label>
+                  <label>{t('complex.floors')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="floor_count"
@@ -248,7 +250,7 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Общая площадь (м²) <span className={styles.required}>*</span></label>
+                  <label>{t('modal.totalArea', 'Общая площадь')} ({t('common.sqm')}) <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="gross_area"
@@ -262,7 +264,7 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Квартир <span className={styles.required}>*</span></label>
+                  <label>{t('blockPage.apartments')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="apartments_count"
@@ -274,7 +276,7 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Коммерческих помещений <span className={styles.required}>*</span></label>
+                  <label>{t('blockPage.commercialUnits')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="commercials_count"
@@ -288,7 +290,7 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Парковочных мест <span className={styles.required}>*</span></label>
+                  <label>{t('blockPage.parking')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="parking_count"
@@ -300,7 +302,7 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Лифтов <span className={styles.required}>*</span></label>
+                  <label>{t('blockPage.elevators')} <span className={styles.required}>*</span></label>
                   <input
                     type="text"
                     name="elevators_count"
@@ -315,11 +317,11 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
 
             {/* Сроки строительства */}
             <div className={styles.formSection}>
-              <h3>Сроки строительства</h3>
+              <h3>{t('modal.constructionDates', 'Сроки строительства')}</h3>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Начало строительства</label>
+                  <label>{t('modal.constructionStart', 'Начало строительства')}</label>
                   <input
                     type="date"
                     name="construction_start"
@@ -329,7 +331,7 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Окончание строительства</label>
+                  <label>{t('modal.constructionEnd', 'Окончание строительства')}</label>
                   <input
                     type="date"
                     name="construction_end"
@@ -343,10 +345,10 @@ const CreateBuildingModal = ({ isOpen, onClose, onSuccess }) => {
 
           <div className={styles.modalFooter}>
             <button type="button" className={styles.cancelButton} onClick={onClose} disabled={loading}>
-              Отмена
+              {t('modal.cancel')}
             </button>
             <button type="submit" className={styles.submitButton} disabled={loading}>
-              {loading ? 'Создание...' : 'Создать блок'}
+              {loading ? t('modal.creating', 'Создание...') : `${t('modal.create')} ${t('blockPage.block')}`}
             </button>
           </div>
         </form>

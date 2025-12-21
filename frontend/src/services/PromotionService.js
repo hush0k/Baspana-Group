@@ -49,11 +49,29 @@ const promotionService = {
             console.error('Error deleting promotion:', error);
             throw error;
         }
+    },
+
+    uploadPromotionImage: async (file) => {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await api.post('/promotions/upload-image', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error uploading promotion image:', error);
+            throw error;
+        }
     }
 };
 
 export const getPromotions = promotionService.getPromotions;
 export const getPromotionById = promotionService.getPromotionById;
+export const uploadPromotionImage = promotionService.uploadPromotionImage;
 export const requestConsultation = async (phone) => {
     try {
         const response = await api.post('/consultations', { phone });

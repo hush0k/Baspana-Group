@@ -88,3 +88,29 @@ def delete_promotion_endpoint(
         )
     delete_promotion(db, db_promotion)
     return db_promotion
+
+
+@router.post("/upload-image")
+async def upload_promotion_image(
+    file: UploadFile = File(...),
+    _: User = Depends(require_role([Role.admin, Role.manager])),
+):
+    """Upload promotion image to Cloudinary and return URL"""
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail="File must be an image",
+        )
+
+    try:
+        result = uploader.upload(
+            file.file,
+            folder="baspana/promotions",
+            resource_type="image",
+        )
+        return {"image_url": result["secure_url"]}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to upload image: {str(e)}"
+        )

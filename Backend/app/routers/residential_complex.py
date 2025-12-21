@@ -94,7 +94,7 @@ async def create_residential_complex_endpoint(
     address: str = Form(...),
     longitude: float = Form(...),
     latitude: float = Form(...),
-    has_security: bool = Form(...),
+    has_security: str = Form(...),
     building_class: BuildingClass = Form(...),
     building_status: BuildingStatus = Form(...),
     min_area: Optional[float] = Form(None),
@@ -129,6 +129,9 @@ async def create_residential_complex_endpoint(
     # Создаем объект схемы для создания комплекса
     from datetime import date
 
+    # Конвертируем has_security из строки в boolean
+    has_security_bool = has_security.lower() in ('true', '1', 'yes') if isinstance(has_security, str) else bool(has_security)
+
     complex_data = ResidentialComplexCreate(
         name=name,
         description=description,
@@ -144,7 +147,7 @@ async def create_residential_complex_endpoint(
         address=address,
         longitude=longitude,
         latitude=latitude,
-        has_security=has_security,
+        has_security=has_security_bool,
         building_class=building_class,
         building_status=building_status,
         min_area=min_area,
@@ -174,7 +177,7 @@ async def update_residential_complex_endpoint(
     address: Optional[str] = Form(None),
     longitude: Optional[float] = Form(None),
     latitude: Optional[float] = Form(None),
-    has_security: Optional[bool] = Form(None),
+    has_security: Optional[str] = Form(None),
     building_class: Optional[BuildingClass] = Form(None),
     building_status: Optional[BuildingStatus] = Form(None),
     min_area: Optional[float] = Form(None),
@@ -239,7 +242,8 @@ async def update_residential_complex_endpoint(
     if latitude is not None:
         update_data['latitude'] = latitude
     if has_security is not None:
-        update_data['has_security'] = has_security
+        has_security_bool = has_security.lower() in ('true', '1', 'yes') if isinstance(has_security, str) else bool(has_security)
+        update_data['has_security'] = has_security_bool
     if building_class is not None:
         update_data['building_class'] = building_class
     if building_status is not None:

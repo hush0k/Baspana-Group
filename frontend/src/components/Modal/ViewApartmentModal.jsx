@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import apartmentService from '../../services/ApartmentService';
 import buildingService from '../../services/BuildingService';
 import styles from '../../styles/ViewComplexModal.module.scss';
 
 const ViewApartmentModal = ({ isOpen, onClose, apartmentId }) => {
+  const { t } = useTranslation();
   const [apartment, setApartment] = useState(null);
   const [building, setBuilding] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -27,7 +29,7 @@ const ViewApartmentModal = ({ isOpen, onClose, apartmentId }) => {
       setBuilding(buildingData);
     } catch (err) {
       console.error('Ошибка загрузки данных квартиры:', err);
-      setError('Не удалось загрузить данные квартиры');
+      setError(t('modal.loadError'));
     } finally {
       setLoading(false);
     }
@@ -39,23 +41,12 @@ const ViewApartmentModal = ({ isOpen, onClose, apartmentId }) => {
   };
 
   const getApartmentTypeLabel = (type) => {
-    const typeMap = {
-      'Studio': 'Студия',
-      'One Bedroom': '1-комнатная',
-      'Two Bedroom': '2-комнатная',
-      'Three Bedroom': '3-комнатная',
-      'Penthouse': 'Пентхаус'
-    };
-    return typeMap[type] || type;
+    return t(`apartment.types.${type}`, type);
   };
 
   const getStatusLabel = (status) => {
-    const statusMap = {
-      'Free': 'Свободно',
-      'Booked': 'Забронировано',
-      'Sold': 'Продано'
-    };
-    return statusMap[status] || status;
+    const statusKey = status.toLowerCase();
+    return t(`apartment.${statusKey}`, status);
   };
 
   const getStatusColor = (status) => {
@@ -68,16 +59,14 @@ const ViewApartmentModal = ({ isOpen, onClose, apartmentId }) => {
   };
 
   const getFinishingTypeLabel = (type) => {
-    const typeMap = {
-      'Black Box': 'Черновая',
-      'White Box': 'Предчистовая',
-      'Finished': 'Чистовая',
-      'Turnkey': 'Под ключ'
-    };
-    return typeMap[type] || type;
+    return t(`apartment.finishingTypes.${type}`, type);
   };
 
   const getOrientationLabel = (orientation) => {
+    return t(`apartment.orientations.${orientation}`, orientation);
+  };
+
+  const getOrientationLabelOld = (orientation) => {
     const orientationMap = {
       'North': 'Север',
       'South': 'Юг',

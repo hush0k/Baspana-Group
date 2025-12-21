@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { authService } from '../../services/AuthService';
 import styles from '../../styles/Login.module.scss';
 import main from '../../assets/image/auth_main_logo.jpg';
 import logo from '../../assets/image/Baspana_Logo_login.png';
 
 const Login = () => {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -31,7 +33,7 @@ const Login = () => {
             return JSON.stringify(detail);
         }
 
-        return 'Ошибка входа. Проверьте данные.';
+        return t('auth.loginError');
     };
 
     const handleSubmit = async (e) => {
@@ -66,17 +68,17 @@ const Login = () => {
                     <img src={logo} alt="Logo"/>
                 </div>
 
-                <h2 className={styles.title}>Добро пожаловать!</h2>
+                <h2 className={styles.title}>{t('auth.welcome')}</h2>
 
                 {error && <div className={styles.errorMessage}>{error}</div>}
 
                 <form className={styles.authForm} onSubmit={handleSubmit}>
                     <div className={styles.formGroup}>
-                        <label htmlFor="email">Email:</label>
+                        <label htmlFor="email">{t('auth.email')}:</label>
                         <input
                             type="email"
                             id="email"
-                            placeholder="Введите ваш email"
+                            placeholder={t('auth.emailPlaceholder')}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -84,11 +86,11 @@ const Login = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label htmlFor="password">Пароль:</label>
+                        <label htmlFor="password">{t('auth.password')}:</label>
                         <input
                             type="password"
                             id="password"
-                            placeholder="Введите пароль"
+                            placeholder={t('auth.passwordPlaceholder')}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -97,12 +99,12 @@ const Login = () => {
 
                     <button type="submit" className={styles.authBtn} disabled={loading}>
                         <span className={styles.buttonText}>
-                            {loading ? 'Загрузка...' : 'Войти'}
+                            {loading ? t('auth.loading') : t('auth.loginButton')}
                         </span>
                     </button>
 
                     <p className={styles.authLink}>
-                        Нет аккаунта? <a href="/register">Зарегистрироваться</a>
+                        {t('auth.noAccount')} <a href="/register">{t('auth.registerButton')}</a>
                     </p>
                 </form>
             </div>

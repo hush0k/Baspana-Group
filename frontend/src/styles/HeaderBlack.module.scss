@@ -54,6 +54,12 @@
     }
   }
 
+  .rightSection {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
   .profileContainer {
     position: relative;
     flex-shrink: 0;

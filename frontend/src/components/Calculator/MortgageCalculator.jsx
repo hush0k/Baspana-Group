@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from '../../styles/MortgageCalculator.module.scss';
 
 const MortgageCalculator = () => {
+    const { t } = useTranslation();
     const [price, setPrice] = useState(25000000);
     const [downPayment, setDownPayment] = useState(5000000);
     const [years, setYears] = useState(20);
@@ -27,14 +29,13 @@ const MortgageCalculator = () => {
         <div className={styles.container}>
             <div className={styles.calculatorContent}>
                 <div className={styles.leftSide}>
-                    <h2 className={styles.title}>Калькулятор ипотеки и рассрочки</h2>
+                    <h2 className={styles.title}>{t('calculator.titleFull')}</h2>
                     <p className={styles.subtitle}>
-                        Рассчитайте ваш ежемесячный платеж и подайте заявку на
-                        консультацию, чтобы узнать о лучших условиях для вас.
+                        {t('calculator.subtitle')}
                     </p>
 
                     <div className={styles.inputGroup}>
-                        <label className={styles.label}>Стоимость недвижимости, ₸</label>
+                        <label className={styles.label}>{t('calculator.propertyPrice')}, {t('common.tenge')}</label>
                         <input
                             type="number"
                             value={price}
@@ -53,7 +54,7 @@ const MortgageCalculator = () => {
                     </div>
 
                     <div className={styles.inputGroup}>
-                        <label className={styles.label}>Первоначальный взнос, ₸</label>
+                        <label className={styles.label}>{t('calculator.initialPayment')}, {t('common.tenge')}</label>
                         <input
                             type="number"
                             value={downPayment}
@@ -72,7 +73,7 @@ const MortgageCalculator = () => {
                     </div>
 
                     <div className={styles.inputGroup}>
-                        <label className={styles.label}>Срок кредита, лет</label>
+                        <label className={styles.label}>{t('calculator.loanTerm')}, {t('calculator.years')}</label>
                         <input
                             type="number"
                             value={years}
@@ -93,15 +94,15 @@ const MortgageCalculator = () => {
 
                 <div className={styles.rightSide}>
                     <div className={styles.resultCard}>
-                        <p className={styles.resultLabel}>Ежемесячный платеж</p>
+                        <p className={styles.resultLabel}>{t('calculator.monthlyPayment')}</p>
                         <h3 className={styles.resultAmount}>
-                            {formatNumber(monthlyPayment)} ₸
+                            {formatNumber(monthlyPayment)} {t('common.tenge')}
                         </h3>
                         <p className={styles.resultNote}>
-                            Расчет является предварительным. Точные условия уточняйте у менеджера.
+                            {t('calculator.note')}
                         </p>
                         <button className={styles.consultButton}>
-                            Оставить заявку на консультацию
+                            {t('calculator.consultButton')}
                         </button>
                     </div>
                 </div>
