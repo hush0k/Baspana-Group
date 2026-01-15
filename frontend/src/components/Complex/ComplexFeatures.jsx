@@ -1,26 +1,29 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from '../../styles/ComplexDetail.module.scss';
 
 const ComplexFeatures = ({ complex }) => {
+    const { t } = useTranslation();
+
     const features = [
         {
             icon: '🏠',
-            title: 'Закрытый двор',
+            title: t('complex.features.closedYard'),
             available: complex?.has_security
         },
         {
             icon: '🅿️',
-            title: 'Подземный паркинг',
-            available: true // можно добавить поле в модель
+            title: t('complex.features.parking'),
+            available: true
         },
         {
             icon: '🏢',
-            title: 'Зоны отдыха',
+            title: t('complex.features.relaxZones'),
             available: true
         },
         {
             icon: '📍',
-            title: 'Удобное расположение',
+            title: t('complex.features.goodLocation'),
             available: true
         }
     ];

@@ -15,6 +15,7 @@ from .models import (
     ObjectType,
     OrderStatus,
     OrderType,
+    PanoramaType,
     PaymentType,
     PropertyStatus,
     Role,
@@ -108,56 +109,45 @@ class UserResponse(UserBase):
 
 # Residential
 class ResidentialComplexBase(BaseModel):
-    name: str
-    description: str
-    short_description: Optional[str] = None
-    block_counts: int
-    playground_area: float
-    apartment_area: float
-    commercial_area: float
-    parking_area: float
-    landing_area: float
-    material: MaterialType
-    city: City
-    address: str
-    longitude: float
-    latitude: float
-    has_security: bool
-    building_class: BuildingClass
-    building_status: BuildingStatus
-    min_area: Optional[float] = None
-    min_price: Optional[float] = None
-    construction_end: Optional[date] = None
-    main_image: Optional[str] = None
-
-
-class ResidentialComplexCreate(ResidentialComplexBase):
-    pass
-
-
-class ResidentialComplexUpdate(BaseModel):
     name: Optional[str] = None
-    description: Optional[str] = None
-    short_description: Optional[str] = None
+
+    ru_description: Optional[str] = None
+    en_description: Optional[str] = None
+    kz_description: Optional[str] = None
+
+    ru_short_description: Optional[str] = None
+    en_short_description: Optional[str] = None
+    kz_short_description: Optional[str] = None
+
     block_counts: Optional[int] = None
     playground_area: Optional[float] = None
     apartment_area: Optional[float] = None
     commercial_area: Optional[float] = None
     parking_area: Optional[float] = None
     landing_area: Optional[float] = None
+
     material: Optional[MaterialType] = None
     city: Optional[City] = None
     address: Optional[str] = None
+
     longitude: Optional[float] = None
     latitude: Optional[float] = None
+
     has_security: Optional[bool] = None
     building_class: Optional[BuildingClass] = None
     building_status: Optional[BuildingStatus] = None
+
     min_area: Optional[float] = None
     min_price: Optional[float] = None
     construction_end: Optional[date] = None
+
     main_image: Optional[str] = None
 
+class ResidentialComplexCreate(ResidentialComplexBase):
+    pass
+
+class ResidentialComplexUpdate(ResidentialComplexBase):
+    pass
 
 class ResidentialComplexResponse(ResidentialComplexBase):
     id: int
@@ -180,8 +170,15 @@ class PaginatedResidentialComplexResponse(BaseModel):
 class BuildingBase(BaseModel):
     residential_complex_id: int
     block: int
-    description: str
-    short_description: Optional[str] = None
+
+    ru_description: Optional[str] = None
+    en_description: Optional[str] = None
+    kz_description: Optional[str] = None
+
+    ru_short_description: Optional[str] = None
+    en_short_description: Optional[str] = None
+    kz_short_description: Optional[str] = None
+
     floor_count: int
     apartments_count: int
     commercials_count: int
@@ -199,8 +196,15 @@ class BuildingCreate(BuildingBase):
 
 class BuildingUpdate(BaseModel):
     block: Optional[int] = None
-    description: Optional[str] = None
-    short_description: Optional[str] = None
+
+    ru_description: Optional[str] = None
+    en_description: Optional[str] = None
+    kz_description: Optional[str] = None
+
+    ru_short_description: Optional[str] = None
+    en_short_description: Optional[str] = None
+    kz_short_description: Optional[str] = None
+
     floor_count: Optional[int] = None
     apartments_count: Optional[int] = None
     commercials_count: Optional[int] = None
@@ -234,8 +238,15 @@ class ApartmentBase(BaseModel):
     building_id: int
     number: int
     floor: int
-    description: Optional[str] = None
-    short_description: Optional[str] = None
+
+    ru_description: Optional[str] = None
+    en_description: Optional[str] = None
+    kz_description: Optional[str] = None
+
+    ru_short_description: Optional[str] = None
+    en_short_description: Optional[str] = None
+    kz_short_description: Optional[str] = None
+
     apartment_area: Decimal
     apartment_type: ApartmentType
     has_balcony: bool
@@ -258,8 +269,15 @@ class ApartmentUpdate(BaseModel):
     building_id: Optional[int] = None
     number: Optional[int] = None
     floor: Optional[int] = None
-    description: Optional[str] = None
-    short_description: Optional[str] = None
+
+    ru_description: Optional[str] = None
+    en_description: Optional[str] = None
+    kz_description: Optional[str] = None
+
+    ru_short_description: Optional[str] = None
+    en_short_description: Optional[str] = None
+    kz_short_description: Optional[str] = None
+
     apartment_area: Optional[Decimal] = None
     apartment_type: Optional[ApartmentType] = None
     has_balcony: Optional[bool] = None
@@ -300,6 +318,15 @@ class CommercialUnitBase(BaseModel):
     building_id: int
     number: int
     floor: int
+
+    ru_description: Optional[str] = None
+    en_description: Optional[str] = None
+    kz_description: Optional[str] = None
+
+    ru_short_description: Optional[str] = None
+    en_short_description: Optional[str] = None
+    kz_short_description: Optional[str] = None
+
     space_area: Decimal
     ceiling_height: Decimal
     finishing_type: FinishingType
@@ -318,6 +345,15 @@ class CommercialUnitUpdate(BaseModel):
     building_id: Optional[int] = None
     number: Optional[int] = None
     floor: Optional[int] = None
+
+    ru_description: Optional[str] = None
+    en_description: Optional[str] = None
+    kz_description: Optional[str] = None
+
+    ru_short_description: Optional[str] = None
+    en_short_description: Optional[str] = None
+    kz_short_description: Optional[str] = None
+
     space_area: Optional[Decimal] = None
     ceiling_height: Optional[Decimal] = None
     finishing_type: Optional[FinishingType] = None
@@ -638,3 +674,20 @@ class PromotionResponse(PromotionBase):
 
     class Config:
         orm_mode = True
+
+
+class PanoramaBase(BaseModel):
+    residential_complex_id: Optional[int] = None
+    apartment_id: Optional[int] = None
+    file_url: str
+    type: PanoramaType
+    title: Optional[str] = None
+
+class PanoramaCreate(PanoramaBase):
+    pass
+
+class PanoramaResponse(PanoramaBase):
+    id: int
+
+    class Config:
+        from_attributes = True

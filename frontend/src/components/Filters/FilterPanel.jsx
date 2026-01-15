@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import styles from '../../styles/FilterPanel.module.scss';
+import {useTranslation} from "react-i18next";
+
 
 const FilterPanel = ({ filters, onFilterChange, onReset }) => {
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
     const [isSortOpen, setIsSortOpen] = useState(false);
+    const { t } = useTranslation();
 
     const cities = ['Almaty', 'Astana', 'Shymkent', 'Karaganda', 'Aktobe', 'Taraz'];
     const buildingClasses = ['Economic', 'Comfort', 'Comfort+', 'Business', 'Luxury'];
@@ -41,7 +44,7 @@ const FilterPanel = ({ filters, onFilterChange, onReset }) => {
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M2.5 5H17.5M5 10H15M7.5 15H12.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                     </svg>
-                    Фильтры
+                    {t('filter.filter')}
                     {getActiveFiltersCount() > 0 && (
                         <span className={styles.badge}>{getActiveFiltersCount()}</span>
                     )}
@@ -54,12 +57,12 @@ const FilterPanel = ({ filters, onFilterChange, onReset }) => {
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M6 4V16M6 16L3 13M6 16L9 13M14 4L11 7M14 4L17 7M14 4V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
-                    Сортировка
+                    {t('filter.sort')}
                 </button>
 
                 {getActiveFiltersCount() > 0 && (
                     <button className={styles.resetBtn} onClick={onReset}>
-                        Сбросить всё
+                        {t('filter.drop')}
                     </button>
                 )}
             </div>
@@ -73,7 +76,7 @@ const FilterPanel = ({ filters, onFilterChange, onReset }) => {
                             <label>Поиск</label>
                             <input
                                 type="text"
-                                placeholder="Название ЖК..."
+                                placeholder={t('filter.name')}
                                 value={filters.search || ''}
                                 onChange={(e) => handleChange('search', e.target.value)}
                                 className={styles.input}
@@ -82,13 +85,13 @@ const FilterPanel = ({ filters, onFilterChange, onReset }) => {
 
                         {/* Город */}
                         <div className={styles.filterGroup}>
-                            <label>Город</label>
+                            <label>{t('filter.city')}</label>
                             <select
                                 value={filters.city || ''}
                                 onChange={(e) => handleChange('city', e.target.value)}
                                 className={styles.select}
                             >
-                                <option value="">Все города</option>
+                                <option value="">{t('filter.allCity')}</option>
                                 {cities.map(city => (
                                     <option key={city} value={city}>{city}</option>
                                 ))}
@@ -97,13 +100,13 @@ const FilterPanel = ({ filters, onFilterChange, onReset }) => {
 
                         {/* Класс */}
                         <div className={styles.filterGroup}>
-                            <label>Класс</label>
+                            <label>{t('filter.class')}</label>
                             <select
                                 value={filters.building_class || ''}
                                 onChange={(e) => handleChange('building_class', e.target.value)}
                                 className={styles.select}
                             >
-                                <option value="">Все классы</option>
+                                <option value="">{t('filter.allClass')}</option>
                                 {buildingClasses.map(cls => (
                                     <option key={cls} value={cls}>{cls}</option>
                                 ))}
@@ -112,13 +115,13 @@ const FilterPanel = ({ filters, onFilterChange, onReset }) => {
 
                         {/* Статус */}
                         <div className={styles.filterGroup}>
-                            <label>Статус</label>
+                            <label>{t('filter.status')}</label>
                             <select
                                 value={filters.building_status || ''}
                                 onChange={(e) => handleChange('building_status', e.target.value)}
                                 className={styles.select}
                             >
-                                <option value="">Все статусы</option>
+                                <option value="">{t('filter.allStat')}</option>
                                 {buildingStatuses.map(status => (
                                     <option key={status} value={status}>{status}</option>
                                 ))}
@@ -127,13 +130,13 @@ const FilterPanel = ({ filters, onFilterChange, onReset }) => {
 
                         {/* Материал */}
                         <div className={styles.filterGroup}>
-                            <label>Материал</label>
+                            <label>{t('filter.material')}</label>
                             <select
                                 value={filters.material || ''}
                                 onChange={(e) => handleChange('material', e.target.value)}
                                 className={styles.select}
                             >
-                                <option value="">Все материалы</option>
+                                <option value="">{t('filter.allMat')}</option>
                                 {materials.map(material => (
                                     <option key={material} value={material}>{material}</option>
                                 ))}
@@ -142,13 +145,13 @@ const FilterPanel = ({ filters, onFilterChange, onReset }) => {
 
                         {/* Охрана */}
                         <div className={styles.filterGroup}>
-                            <label>Охрана</label>
+                            <label>{t('filter.security')}</label>
                             <select
                                 value={filters.has_security === undefined ? '' : filters.has_security}
                                 onChange={(e) => handleChange('has_security', e.target.value === '' ? undefined : e.target.value === 'true')}
                                 className={styles.select}
                             >
-                                <option value="">Не важно</option>
+                                <option value="">{t('filter.noMatters')}</option>
                                 <option value="true">Есть</option>
                                 <option value="false">Нет</option>
                             </select>
@@ -177,14 +180,14 @@ const FilterPanel = ({ filters, onFilterChange, onReset }) => {
                         </div>
 
                         <div className={styles.filterGroup}>
-                            <label>Порядок</label>
+                            <label>{t('filter.order')}</label>
                             <select
                                 value={filters.order || 'asc'}
                                 onChange={(e) => handleChange('order', e.target.value)}
                                 className={styles.select}
                             >
-                                <option value="asc">По возрастанию</option>
-                                <option value="desc">По убыванию</option>
+                                <option value="asc">{t('filter.asc')}</option>
+                                <option value="desc">{t('filter.desc')}</option>
                             </select>
                         </div>
                     </div>

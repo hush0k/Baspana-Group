@@ -176,8 +176,12 @@ class ResidentialComplex(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    description = Column(String)
-    short_description = Column(String(300))
+    kz_description = Column(String)
+    en_description = Column(String)
+    ru_description = Column(String)
+    ru_short_description = Column(String(300))
+    kz_short_description = Column(String(300))
+    en_short_description = Column(String(300))
     block_counts = Column(Integer)
     playground_area = Column(DECIMAL)
     apartment_area = Column(DECIMAL)
@@ -202,6 +206,7 @@ class ResidentialComplex(Base):
     reviews = relationship("Review", back_populates="residential_complex")
     infrastructures = relationship("Infrastructure", back_populates="residential_complex")
     promotions = relationship("Promotion", back_populates="residential_complex")
+    panoramas = relationship("Panorama", back_populates="residential_complex")
 
     @property
     def images(self):
@@ -222,8 +227,12 @@ class Building(Base):
     id = Column(Integer, primary_key=True)
     residential_complex_id = Column(Integer, ForeignKey("residential_complex.id"))
     block = Column(Integer)
-    description = Column(String)
-    short_description = Column(String(300))
+    kz_description = Column(String)
+    en_description = Column(String)
+    ru_description = Column(String)
+    ru_short_description = Column(String(300))
+    kz_short_description = Column(String(300))
+    en_short_description = Column(String(300))
     floor_count = Column(Integer)
     apartments_count = Column(Integer)
     commercials_count = Column(Integer)
@@ -258,8 +267,12 @@ class Apartment(Base):
     building_id = Column(Integer, ForeignKey("building.id"))
     number = Column(Integer)
     floor = Column(Integer)
-    description = Column(String)
-    short_description = Column(String(300))
+    kz_description = Column(String)
+    en_description = Column(String)
+    ru_description = Column(String)
+    ru_short_description = Column(String(300))
+    kz_short_description = Column(String(300))
+    en_short_description = Column(String(300))
     apartment_area = Column(DECIMAL)
     apartment_type = Column(SqlEnum(ApartmentType, name="apartment_type"))
     has_balcony = Column(Boolean)
@@ -275,6 +288,7 @@ class Apartment(Base):
 
     # Relations
     building = relationship("Building", back_populates="apartments")
+    panoramas = relationship("Panorama", back_populates="apartment")
 
     @property
     def images(self):
@@ -295,6 +309,12 @@ class CommercialUnit(Base):
     building_id = Column(Integer, ForeignKey("building.id"))
     number = Column(Integer)
     floor = Column(Integer)
+    kz_description = Column(String)
+    en_description = Column(String)
+    ru_description = Column(String)
+    ru_short_description = Column(String(300))
+    kz_short_description = Column(String(300))
+    en_short_description = Column(String(300))
     space_area = Column(DECIMAL)
     ceiling_height = Column(DECIMAL)
     finishing_type = Column(SqlEnum(FinishingType, name="finishing_type"))
@@ -481,3 +501,20 @@ class Promotion(Base):
     residential_complex = relationship("ResidentialComplex", back_populates="promotions")
 
 
+class PanoramaType(str, Enum):
+    IMAGE_360 = "360_image"
+    VIDEO_360 = "360_video"
+    AR_MODEL = "ar_model"
+
+class Panorama(Base):
+    __tablename__ = "panoramas"
+
+    id = Column(Integer, primary_key=True, index=True)
+    residential_complex_id = Column(Integer, ForeignKey("residential_complex.id"), nullable=True)
+    apartment_id = Column(Integer, ForeignKey("apartment.id"), nullable=True)
+    file_url = Column(String, nullable=False)
+    type = Column(SqlEnum(PanoramaType), nullable=False)
+    title = Column(String, nullable=True)
+
+    residential_complex = relationship("ResidentialComplex", back_populates="panoramas")
+    apartment = relationship("Apartment", back_populates="panoramas")

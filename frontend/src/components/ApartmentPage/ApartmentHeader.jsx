@@ -1,5 +1,7 @@
 import React from 'react';
 import styles from '../../styles/ApartmentPage.module.scss';
+import { ReactComponent as ApartmentIcon} from "../../assets/icons/apartment.svg";
+
 
 const ApartmentHeader = ({ apartment }) => {
     const getTypeLabel = (type) => {
@@ -25,7 +27,7 @@ const ApartmentHeader = ({ apartment }) => {
                     <span>{apartment.apartment_area} м²</span>
                 </div>
                 <div className={styles.detailItem}>
-                    <span className={styles.icon}>🏠</span>
+                    <span className={styles.icon}><ApartmentIcon /></span>
                     <span>{getTypeLabel(apartment.apartment_type)}</span>
                 </div>
                 <div className={styles.detailItem}>

@@ -42,7 +42,9 @@ def _apply_residential_complex_filters(
         query = query.filter(
             or_(
                 ResidentialComplex.name.ilike(f"%{search}%"),
-                ResidentialComplex.description.ilike(f"%{search}%"),
+                ResidentialComplex.ru_description.ilike(f"%{search}%"),
+                ResidentialComplex.kz_description.ilike(f"%{search}%"),
+                ResidentialComplex.en_description.ilike(f"%{search}%"),
             )
         )
 
@@ -115,7 +117,12 @@ def create_residential_complex(
 ):
     db_complex = ResidentialComplex(
         name=residential_complex.name,
-        description=residential_complex.description,
+        ru_description=residential_complex.ru_description,
+        kz_description=residential_complex.kz_description,
+        en_description=residential_complex.en_description,
+        ru_short_description=residential_complex.ru_short_description,
+        kz_short_description=residential_complex.kz_short_description,
+        en_short_description=residential_complex.en_short_description,
         block_counts=residential_complex.block_counts,
         playground_area=residential_complex.playground_area,
         apartment_area=residential_complex.apartment_area,

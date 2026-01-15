@@ -287,11 +287,7 @@ const PromotionManagement = () => {
                       <td>
                         <div>
                           <strong>{promotion.title}</strong>
-                          {promotion.short_description && (
-                            <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                              {promotion.short_description}
-                            </div>
-                          )}
+
                         </div>
                       </td>
                       <td>

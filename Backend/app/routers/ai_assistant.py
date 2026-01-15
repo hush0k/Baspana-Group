@@ -48,6 +48,7 @@ def get_available_properties(db: Session) -> dict:
     for apt in apartments:
         properties_info["apartments"].append({
             "id": apt.id,
+            "number": apt.number,
             "total_price": float(apt.total_price),
             "apartment_type": apt.apartment_type
         })

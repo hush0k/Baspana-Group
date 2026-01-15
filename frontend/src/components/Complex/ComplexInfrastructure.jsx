@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Map2GIS from './Map2GIS';
 import infrastructure2GISService from '../../services/Infrastructure2GISService';
 import styles from '../../styles/ComplexDetail.module.scss';
 
 const ComplexInfrastructure = ({ latitude, longitude, complexName }) => {
+    const { t } = useTranslation();
     const [infrastructure, setInfrastructure] = useState([]);
     const [markers, setMarkers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -14,7 +16,7 @@ const ComplexInfrastructure = ({ latitude, longitude, complexName }) => {
             console.log('Загрузка инфраструктуры для координат:', latitude, longitude);
 
             if (!latitude || !longitude) {
-                setError('Координаты не указаны');
+                setError(t('complex.noCoordinates'));
                 setLoading(false);
                 return;
             }
@@ -50,21 +52,21 @@ const ComplexInfrastructure = ({ latitude, longitude, complexName }) => {
                 setLoading(false);
             } catch (err) {
                 console.error('Error loading infrastructure:', err);
-                setError('Не удалось загрузить инфраструктуру');
+                setError(t('complex.infrastructureLoadError'));
                 setLoading(false);
             }
         };
 
         loadInfrastructure();
-    }, [latitude, longitude]);
+    }, [latitude, longitude, t]);
 
     if (loading) {
         return (
             <section className={styles.infrastructureSection}>
-                <h2 className={styles.sectionTitle}>Инфраструктура</h2>
+                <h2 className={styles.sectionTitle}>{t('complex.infrastructure')}</h2>
                 <div className={styles.loadingState}>
                     <div className={styles.spinner}></div>
-                    <p>Загрузка инфраструктуры...</p>
+                    <p>{t('complex.loadingInfrastructure')}</p>
                 </div>
             </section>
         );
@@ -73,7 +75,7 @@ const ComplexInfrastructure = ({ latitude, longitude, complexName }) => {
     if (error) {
         return (
             <section className={styles.infrastructureSection}>
-                <h2 className={styles.sectionTitle}>Инфраструктура</h2>
+                <h2 className={styles.sectionTitle}>{t('complex.infrastructure')}</h2>
                 <div className={styles.errorState}>
                     <p>{error}</p>
                 </div>
@@ -83,7 +85,7 @@ const ComplexInfrastructure = ({ latitude, longitude, complexName }) => {
 
     return (
         <section className={styles.infrastructureSection}>
-            <h2 className={styles.sectionTitle}>Инфраструктура</h2>
+            <h2 className={styles.sectionTitle}>{t('complex.infrastructure')}</h2>
 
             {/* Карта с маркерами */}
             <Map2GIS
@@ -115,7 +117,7 @@ const ComplexInfrastructure = ({ latitude, longitude, complexName }) => {
                 </div>
             ) : (
                 <div className={styles.emptyState}>
-                    <p>В радиусе 1 км не найдено объектов инфраструктуры</p>
+                    <p>{t('complex.noInfrastructure')}</p>
                 </div>
             )}
         </section>

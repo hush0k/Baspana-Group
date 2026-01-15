@@ -1,0 +1,203 @@
+@import './variables';
+
+.panoramaSection {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 50px;
+
+  h2 {
+    font-size: 42px;
+    font-weight: 700;
+    color: $main-color;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.5px;
+  }
+
+  p {
+    font-size: 18px;
+    color: $text-color;
+    margin: 0;
+    opacity: 0.8;
+  }
+}
+
+.panoramaWrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.instructions {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 30px;
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  flex-wrap: wrap;
+}
+
+.instructionItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  svg {
+    color: $main-color;
+    flex-shrink: 0;
+  }
+
+  span {
+    font-size: 14px;
+    color: $text-color;
+    font-weight: 500;
+  }
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 20px;
+  gap: 20px;
+
+  .spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #f0f0f0;
+    border-top: 5px solid $main-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    margin: 0;
+    color: $text-color;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.errorMessage {
+  background: #fff5f5;
+  border: 2px solid #fc8181;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+
+  p {
+    margin: 0;
+    color: #c53030;
+    font-size: 16px;
+  }
+}
+
+.noContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 20px;
+  text-align: center;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 600px;
+  margin: 0 auto;
+
+  svg {
+    color: #cbd5e0;
+    margin-bottom: 24px;
+  }
+
+  h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: $text-color;
+    margin: 0 0 12px 0;
+  }
+
+  p {
+    font-size: 16px;
+    color: #718096;
+    margin: 0;
+    line-height: 1.6;
+  }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+  .panoramaSection {
+    padding: 60px 0;
+  }
+
+  .header {
+    margin-bottom: 40px;
+
+    h2 {
+      font-size: 36px;
+    }
+
+    p {
+      font-size: 16px;
+    }
+  }
+
+  .instructions {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .panoramaSection {
+    padding: 40px 0;
+  }
+
+  .header {
+    margin-bottom: 30px;
+
+    h2 {
+      font-size: 28px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+  }
+
+  .instructions {
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .instructionItem {
+    span {
+      font-size: 13px;
+    }
+  }
+
+  .noContent {
+    padding: 60px 20px;
+
+    h3 {
+      font-size: 20px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+  }
+}

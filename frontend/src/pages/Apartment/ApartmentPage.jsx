@@ -6,15 +6,18 @@ import ApartmentGallery from '../../components/ApartmentPage/ApartmentGallery';
 import ApartmentHeader from '../../components/ApartmentPage/ApartmentHeader';
 import ApartmentDescription from '../../components/ApartmentPage/ApartmentDescription';
 import ApartmentCharacteristics from '../../components/ApartmentPage/ApartmentCharacteristics';
+import ApartmentPanorama from '../../components/ApartmentPage/ApartmentPanorama';
 import apartmentService from '../../services/ApartmentService';
 import imageService from '../../services/ImageService';
 import styles from '../../styles/ApartmentPage.module.scss';
+import {useTranslation} from "react-i18next";
 
 const ApartmentPage = () => {
     const { apartmentId } = useParams();
     const [apartment, setApartment] = useState(null);
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchApartment = async () => {
@@ -44,8 +47,8 @@ const ApartmentPage = () => {
         }
     }, [apartmentId]);
 
-    if (loading) return <div>Загрузка...</div>;
-    if (!apartment) return <div>Квартира не найдена</div>;
+    if (loading) return <div>{t('common.loading')}</div>;
+    if (!apartment) return <div>{t('common.notFound')}</div>;
 
     return (
         <div className={styles.apartmentPage}>
@@ -59,6 +62,7 @@ const ApartmentPage = () => {
 
                 <ApartmentDescription description={apartment.description} apartment={apartment} />
                 <ApartmentCharacteristics apartment={apartment} />
+                <ApartmentPanorama apartmentId={apartmentId} />
             </main>
 
             <Footer />

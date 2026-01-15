@@ -1,10 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { MasterPlanTemplates } from './MasterPlanTemplates';
 import styles from '../../styles/ComplexDetail.module.scss';
 
 const MasterPlan = ({ blockCount = 1, complexId, buildings = [] }) => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     // Ограничиваем количество блоков от 1 до 10
     const validBlockCount = Math.max(1, Math.min(10, blockCount));
@@ -37,14 +39,13 @@ const MasterPlan = ({ blockCount = 1, complexId, buildings = [] }) => {
 
     return (
         <section className={styles.masterPlanSection}>
-            <h2 className={styles.sectionTitle}>Генеральный план</h2>
+            <h2 className={styles.sectionTitle}>{t('complex.masterplan')}</h2>
 
             <div className={styles.masterPlanContainer}>
                 <div className={styles.planWrapper}>
                     <div
                         className={styles.planSvgContainer}
                         onClick={(e) => {
-                            // Проверяем, был ли клик на блоке
                             const building = e.target.closest('.building');
                             if (building) {
                                 const blockNum = parseInt(building.getAttribute('data-block'));
@@ -58,15 +59,15 @@ const MasterPlan = ({ blockCount = 1, complexId, buildings = [] }) => {
                     <div className={styles.planLegend}>
                         <div className={styles.legendItem}>
                             <div className={styles.legendColor} style={{ background: '#d4c5b9' }}></div>
-                            <span>Жилые блоки ({validBlockCount})</span>
+                            <span>{t('complex.residentialBlocks')} ({validBlockCount})</span>
                         </div>
                         <div className={styles.legendItem}>
                             <div className={styles.legendColor} style={{ background: '#7cb342' }}></div>
-                            <span>Зеленые зоны</span>
+                            <span>{t('complex.greenZones')}</span>
                         </div>
                         <div className={styles.legendItem}>
                             <div className={styles.legendColor} style={{ background: '#9e9e9e' }}></div>
-                            <span>Дороги</span>
+                            <span>{t('complex.roads')}</span>
                         </div>
                     </div>
                 </div>
@@ -76,7 +77,7 @@ const MasterPlan = ({ blockCount = 1, complexId, buildings = [] }) => {
                         <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="2" fill="none"/>
                         <path d="M8 4V8M8 10V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                     </svg>
-                    Нажмите на блок для просмотра квартир
+                    {t('complex.clickBlockHint')}
                 </div>
             </div>
         </section>

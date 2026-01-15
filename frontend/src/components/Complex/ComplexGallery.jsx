@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from '../../styles/ComplexDetail.module.scss';
 
 const ComplexGallery = ({ images }) => {
+    const { t } = useTranslation();
     const [selectedImage, setSelectedImage] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (!images || images.length === 0) {
         return (
             <section className={styles.gallerySection}>
-                <h2 className={styles.sectionTitle}>Галерея</h2>
+                <h2 className={styles.sectionTitle}>{t('complex.gallery')}</h2>
                 <p style={{ textAlign: 'center', color: '#6b7280', padding: '40px 0' }}>
-                    Изображения отсутствуют
+                    {t('complex.noImages')}
                 </p>
             </section>
         );
@@ -26,13 +28,12 @@ const ComplexGallery = ({ images }) => {
 
     return (
         <section className={styles.gallerySection}>
-            <h2 className={styles.sectionTitle}>Галерея</h2>
+            <h2 className={styles.sectionTitle}>{t('complex.gallery')}</h2>
 
-            {/* Основное изображение */}
             <div className={styles.mainImageContainer} onClick={() => setIsModalOpen(true)}>
                 <img
                     src={images[selectedImage]?.img_url}
-                    alt={`Фото ${selectedImage + 1}`}
+                    alt={`${t('complex.photo')} ${selectedImage + 1}`}
                     className={styles.mainGalleryImage}
                 />
                 <div className={styles.imageCounter}>
@@ -72,7 +73,7 @@ const ComplexGallery = ({ images }) => {
                         className={`${styles.thumbnail} ${selectedImage === index ? styles.thumbnailActive : ''}`}
                         onClick={() => setSelectedImage(index)}
                     >
-                        <img src={image.img_url} alt={`Миниатюра ${index + 1}`} />
+                        <img src={image.img_url} alt={`${t('complex.thumbnail')} ${index + 1}`} />
                     </div>
                 ))}
             </div>
@@ -90,7 +91,7 @@ const ComplexGallery = ({ images }) => {
 
                         <img
                             src={images[selectedImage]?.img_url}
-                            alt={`Фото ${selectedImage + 1}`}
+                            alt={`${t('complex.photo')} ${selectedImage + 1}`}
                             className={styles.modalImage}
                         />
 

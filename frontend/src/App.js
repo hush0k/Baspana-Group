@@ -48,6 +48,7 @@ const App = () => {
                 <Route path="/headerBlack" element={<HeaderBlack />} />
                 <Route path="/headerWhite" element={<HeaderWhite />} />
                 <Route path="/buildings/:blockId" element={<BlockPage />} />
+                <Route path="/user-management" element={<UserManagement />} />
                 <Route path="/promotions" element={<PromotionsPage />} />
                 <Route path="/payment" element={<PaymentPage />} />
                 <Route path="/payment-methods" element={<PaymentPage />} />

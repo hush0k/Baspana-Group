@@ -6,11 +6,11 @@
   width: 70px;
   height: 70px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #3d2417;
   border: none;
   color: white;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 20px rgb(96, 57, 42);
   transition: all 0.3s ease;
   z-index: 999;
   display: flex;
@@ -19,7 +19,7 @@
 
   &:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 4px 20px rgb(96, 57, 42);
   }
 
   &:active {
@@ -78,7 +78,7 @@
 
 // Заголовок чата
 .chatHeader {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #3d2417;
   color: white;
   padding: 20px;
   display: flex;
@@ -169,7 +169,7 @@
     justify-content: flex-end;
 
     .messageContent {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-color: #3d2417;
       color: white;
       border-radius: 18px 18px 4px 18px;
     }
@@ -278,9 +278,9 @@
   border: 2px solid transparent;
 
   &:hover {
-    border-color: #667eea;
+    background-color: #593524;
     transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 4px 20px rgb(96, 57, 42);
   }
 
   &:last-child {
@@ -295,7 +295,7 @@
 
     .recNumber {
       font-weight: 600;
-      color: #667eea;
+      color: #593524;
       font-size: 15px;
     }
 
@@ -333,7 +333,7 @@
     transition: border-color 0.2s;
 
     &:focus {
-      border-color: #667eea;
+      background-color: white;
     }
 
     &::placeholder {
@@ -351,7 +351,7 @@
     height: 44px;
     border-radius: 50%;
     border: none;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: #3d2417;
     color: white;
     cursor: pointer;
     display: flex;
@@ -362,7 +362,7 @@
 
     &:hover:not(:disabled) {
       transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 4px 20px rgb(96, 57, 42);
     }
 
     &:active:not(:disabled) {

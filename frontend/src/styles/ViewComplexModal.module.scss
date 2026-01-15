@@ -62,6 +62,10 @@
   }
 }
 
+.infoSection{
+  padding: 0 25px 30px;
+}
+
 .closeButton {
   width: 36px;
   height: 36px;
@@ -272,4 +276,60 @@
   text-align: center;
   padding: 20px;
   font-style: italic;
+}
+
+// Панорамы
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+}
+
+.uploadBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: $main-color;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: darken($main-color, 10%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($main-color, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  svg {
+    stroke: white;
+  }
+}
+
+.preview {
+  margin-top: 12px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #f0f0f0;
+
+  img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
 }

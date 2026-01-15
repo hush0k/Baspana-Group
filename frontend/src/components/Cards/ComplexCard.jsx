@@ -1,11 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { getLocalizedShortDescription } from '../../utils/i18nHelpers';
 import styles from '../../styles/ComplexCard.module.scss';
+import { ReactComponent as CheckIcon} from "../../assets/icons/check.svg";
+import { ReactComponent as BuildingIcon} from "../../assets/icons/construction.svg";
+import { ReactComponent as PlanningIcon} from "../../assets/icons/planning.svg";
+import { ReactComponent as LocationIcon} from "../../assets/icons/location.svg";
+import { ReactComponent as ApartmentIcon} from "../../assets/icons/apartment.svg";
+import { ReactComponent as MoneyIcon} from "../../assets/icons/money.svg";
+import { ReactComponent as CalendarIcon} from "../../assets/icons/calendar.svg";
 
 const ComplexCard = ({ complex }) => {
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     const handleCardClick = () => {
         navigate(`/complex/${complex.id}`);
@@ -44,9 +52,9 @@ const ComplexCard = ({ complex }) => {
     };
 
     const getStatusIcon = (status) => {
-        if (status === 'Completed') return '✓';
-        if (status === 'Under Construction') return '🏗️';
-        return '📋';
+        if (status === 'Completed') return <CheckIcon />;
+        if (status === 'Under Construction') return <BuildingIcon />;
+        return <PlanningIcon />;
     };
 
     const getStatusClass = (status) => {
@@ -82,18 +90,19 @@ const ComplexCard = ({ complex }) => {
                         <div className={styles.titleBlock}>
                             <h3 className={styles.title}>ЖК '{complex.name}'</h3>
                             <p className={styles.location}>
-                                📍 {complex.city}, {complex.address}
+                                <LocationIcon /> {complex.city}, {complex.address}
                             </p>
                         </div>
                     </div>
 
                     <p className={styles.description}>
-                        {complex.short_description}
+                        {getLocalizedShortDescription(complex)}
                     </p>
+
 
                     <div className={styles.features}>
                         <div className={styles.feature}>
-                            <span className={styles.featureIcon}>🏢</span>
+                            <span className={styles.featureIcon}><ApartmentIcon /></span>
                             <span className={styles.featureText}>
                                 {complex.min_area
                                     ? `${t('card.from')} ${complex.min_area} ${t('common.sqm')}`
@@ -103,7 +112,7 @@ const ComplexCard = ({ complex }) => {
                             </span>
                         </div>
                         <div className={styles.feature}>
-                            <span className={styles.featureIcon}>💰</span>
+                            <span className={styles.featureIcon}><MoneyIcon /></span>
                             <span className={styles.featureText}>
                                 {complex.min_price
                                     ? `${t('card.from')} ${formatPrice(complex.min_price)} ${t('common.tenge')}`
@@ -111,7 +120,7 @@ const ComplexCard = ({ complex }) => {
                             </span>
                         </div>
                         <div className={styles.feature}>
-                            <span className={styles.featureIcon}>📅</span>
+                            <span className={styles.featureIcon}><CalendarIcon /></span>
                             <span className={styles.featureText}>
                                 {complex.building_status === 'Completed'
                                     ? getStatusText('Completed')

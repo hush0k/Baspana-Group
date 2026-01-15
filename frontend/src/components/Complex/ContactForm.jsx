@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from '../../styles/ComplexDetail.module.scss';
 
 const ContactForm = () => {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
         phone: '',
         name: ''
@@ -9,9 +11,8 @@ const ContactForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // TODO: Интеграция с backend API
         console.log('Form submitted:', formData);
-        alert('Спасибо! Наш менеджер свяжется с вами в ближайшее время.');
+        alert(t('complex.thankYouMessage'));
         setFormData({ phone: '', name: '' });
     };
 
@@ -25,23 +26,23 @@ const ContactForm = () => {
     return (
         <section className={styles.contactSection}>
             <div className={styles.contactCard}>
-                <h2 className={styles.contactTitle}>Заинтересовались?</h2>
+                <h2 className={styles.contactTitle}>{t('complex.interested')}</h2>
                 <p className={styles.contactSubtitle}>
-                    Оставьте свои контакты, и наш менеджер свяжется с вами для консультации.
+                    {t('complex.contactSubtitle')}
                 </p>
 
                 <form onSubmit={handleSubmit} className={styles.contactForm}>
                     <input
                         type="tel"
                         name="phone"
-                        placeholder="Номер телефона"
+                        placeholder={t('complex.phoneNumber')}
                         value={formData.phone}
                         onChange={handleChange}
                         className={styles.formInput}
                         required
                     />
                     <button type="submit" className={styles.submitButton}>
-                        Получить консультацию
+                        {t('complex.getConsultation')}
                     </button>
                 </form>
             </div>

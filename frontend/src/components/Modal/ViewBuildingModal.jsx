@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getLocalizedDescription, getLocalizedShortDescription } from '../../utils/i18nHelpers';
 import api from '../../services/api';
 import imageService from '../../services/ImageService';
 import apartmentService from '../../services/ApartmentService';
@@ -129,16 +130,16 @@ const ViewBuildingModal = ({ isOpen, onClose, buildingId }) => {
                     {getStatusLabel(building.status)}
                   </span>
                 </div>
-                {building.description && (
+                {getLocalizedDescription(building) && (
                   <div className={styles.infoRow}>
                     <span className={styles.label}>{t('apartment.description')}:</span>
-                    <span className={styles.value}>{building.description}</span>
+                    <span className={styles.value}>{getLocalizedDescription(building)}</span>
                   </div>
                 )}
-                {building.short_description && (
+                {getLocalizedShortDescription(building) && (
                   <div className={styles.infoRow}>
                     <span className={styles.label}>{t('modal.shortDescription')}:</span>
-                    <span className={styles.value}>{building.short_description}</span>
+                    <span className={styles.value}>{getLocalizedShortDescription(building)}</span>
                   </div>
                 )}
               </div>

@@ -6,6 +6,7 @@ import ComplexHero from '../../components/Complex/ComplexHero';
 import ComplexInfo from '../../components/Complex/ComplexInfo';
 import ComplexFeatures from '../../components/Complex/ComplexFeatures';
 import ComplexGallery from '../../components/Complex/ComplexGallery';
+import ComplexPanorama from '../../components/Complex/ComplexPanorama';
 import MasterPlan from '../../components/Complex/MasterPlan';
 import ComplexInfrastructure from '../../components/Complex/ComplexInfrastructure';
 import ContactForm from '../../components/Complex/ContactForm';
@@ -14,6 +15,7 @@ import complexService from '../../services/ComplexService';
 import imageService from '../../services/ImageService';
 import buildingService from '../../services/BuildingService';
 import styles from '../../styles/ComplexDetail.module.scss';
+import {useTranslation} from "react-i18next";
 
 const ComplexDetailPage = () => {
     const { id } = useParams();
@@ -23,6 +25,7 @@ const ComplexDetailPage = () => {
     const [buildings, setBuildings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         loadComplexData();
@@ -50,7 +53,7 @@ const ComplexDetailPage = () => {
             setLoading(false);
         } catch (err) {
             console.error('Error loading complex:', err);
-            setError('Не удалось загрузить данные комплекса');
+            setError(t('complex.loadError'));
             setLoading(false);
         }
     };
@@ -66,7 +69,7 @@ const ComplexDetailPage = () => {
         return (
             <div className={styles.loadingContainer}>
                 <div className={styles.spinner}></div>
-                <p>Загрузка...</p>
+                <p>{t('common.loading')}</p>
             </div>
         );
     }
@@ -74,9 +77,9 @@ const ComplexDetailPage = () => {
     if (error || !complex) {
         return (
             <div className={styles.errorContainer}>
-                <h2>Ошибка загрузки</h2>
+                <h2>{t('common.notFound')}</h2>
                 <p>{error}</p>
-                <button onClick={() => navigate('/projects')}>Вернуться к проектам</button>
+                <button onClick={() => navigate('/projects')}>{t('complex.backToProjects')}</button>
             </div>
         );
     }
@@ -92,13 +95,13 @@ const ComplexDetailPage = () => {
                 <ComplexHero complex={complex} mainImage={mainImage} />
 
                 <div className={styles.container}>
-                    {/* Навигация по секциям */}
                     <nav className={styles.sectionNav}>
-                        <button onClick={() => scrollToSection('about')}>О комплексе</button>
-                        <button onClick={() => scrollToSection('gallery')}>Галерея</button>
-                        <button onClick={() => scrollToSection('masterplan')}>Генплан</button>
-                        <button onClick={() => scrollToSection('infrastructure')}>Инфраструктура</button>
-                        <button onClick={() => scrollToSection('reviews')}>Отзывы</button>
+                        <button onClick={() => scrollToSection('about')}>{t('complex.aboutComplex')}</button>
+                        <button onClick={() => scrollToSection('gallery')}>{t('complex.gallery')}</button>
+                        <button onClick={() => scrollToSection('panorama')}>{t('complex.tour360')}</button>
+                        <button onClick={() => scrollToSection('masterplan')}>{t('complex.masterplan')}</button>
+                        <button onClick={() => scrollToSection('infrastructure')}>{t('complex.infrastructure')}</button>
+                        <button onClick={() => scrollToSection('reviews')}>{t('complex.reviews')}</button>
                     </nav>
 
                     <div id="about">
@@ -108,6 +111,10 @@ const ComplexDetailPage = () => {
 
                     <div id="gallery">
                         <ComplexGallery images={images} />
+                    </div>
+
+                    <div id="panorama">
+                        <ComplexPanorama complexId={complex.id} />
                     </div>
 
                     <div id="masterplan">

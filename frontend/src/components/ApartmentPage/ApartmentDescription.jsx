@@ -1,13 +1,17 @@
 import React from 'react';
+import { getLocalizedDescription } from '../../utils/i18nHelpers';
 import styles from '../../styles/ApartmentPage.module.scss';
 
 const ApartmentDescription = ({ description, apartment }) => {
+    // Получаем локализованное описание
+    const localizedDescription = getLocalizedDescription(apartment);
+
     // Если есть описание, показываем его
-    if (description) {
+    if (localizedDescription || description) {
         return (
             <div className={styles.description}>
                 <h2>Описание</h2>
-                <p>{description}</p>
+                <p>{localizedDescription || description}</p>
             </div>
         );
     }

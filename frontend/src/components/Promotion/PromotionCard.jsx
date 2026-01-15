@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ViewPromotionModal from '../Modal/ViewPromotionModal';
 import styles from '../../styles/PromotionPage.module.scss';
+import {ReactComponent as CalendarIcon} from "../../assets/icons/calendar.svg";
+import {ReactComponent as ApartmentIcon} from "../../assets/icons/apartment.svg";
 
 const PromotionCard = ({ promotion }) => {
     const { t } = useTranslation();
@@ -38,7 +40,7 @@ const PromotionCard = ({ promotion }) => {
                         />
                     ) : (
                         <div className={styles.placeholder}>
-                            <span>🏢</span>
+                            <span><ApartmentIcon /></span>
                             <p>{promotion.discount_percentage}% {t('promotion.discountLabel')}</p>
                         </div>
                     )}
@@ -47,7 +49,7 @@ const PromotionCard = ({ promotion }) => {
                     <h3>{promotion.title}</h3>
                     <p>{promotion.short_description || promotion.description}</p>
                     <div className={styles.validity}>
-                        <span className={styles.icon}>📅</span>
+                        <span className={styles.icon}><CalendarIcon /></span>
                         <span>{validity}</span>
                     </div>
                     <button

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import apartmentService from '../../services/ApartmentService';
 import buildingService from '../../services/BuildingService';
+import panoramaService from '../../services/PanoramaService';
+import PanoramaViewer from '../Panorama/PanoramaViewer';
+import UploadPanoramaModal from './UploadPanoramaModal';
 import styles from '../../styles/ViewComplexModal.module.scss';
 
 const ViewApartmentModal = ({ isOpen, onClose, apartmentId }) => {
@@ -10,10 +13,13 @@ const ViewApartmentModal = ({ isOpen, onClose, apartmentId }) => {
   const [building, setBuilding] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [panoramas, setPanoramas] = useState([]);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen && apartmentId) {
       fetchApartmentData();
+      fetchPanoramas();
     }
   }, [isOpen, apartmentId]);
 
@@ -32,6 +38,25 @@ const ViewApartmentModal = ({ isOpen, onClose, apartmentId }) => {
       setError(t('modal.loadError'));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPanoramas = async () => {
+    try {
+      const data = await panoramaService.getByApartment(apartmentId);
+      setPanoramas(data);
+    } catch (err) {
+      console.error('Ошибка загрузки панорам:', err);
+    }
+  };
+
+  const handleDeletePanorama = async (panoramaId) => {
+    try {
+      await panoramaService.delete(panoramaId);
+      fetchPanoramas();
+    } catch (err) {
+      console.error('Ошибка удаления панорамы:', err);
+      alert('Ошибка при удалении панорамы');
     }
   };
 
@@ -189,9 +214,36 @@ const ViewApartmentModal = ({ isOpen, onClose, apartmentId }) => {
                   </span>
                 </div>
               </div>
+
+              {/* Секция 360° Панорам */}
+              <div className={styles.section}>
+                <div className={styles.sectionHeader}>
+                  <h3>360° Панорамы</h3>
+                  <button
+                    className={styles.uploadBtn}
+                    onClick={() => setIsUploadModalOpen(true)}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    Загрузить панораму
+                  </button>
+                </div>
+                <PanoramaViewer
+                  panoramas={panoramas}
+                  onDelete={handleDeletePanorama}
+                />
+              </div>
             </div>
           </div>
         ) : null}
+
+        <UploadPanoramaModal
+          isOpen={isUploadModalOpen}
+          onClose={() => setIsUploadModalOpen(false)}
+          onSuccess={fetchPanoramas}
+          apartmentId={apartmentId}
+        />
       </div>
     </div>
   );

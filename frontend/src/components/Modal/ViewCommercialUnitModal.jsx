@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getLocalizedDescription, getLocalizedShortDescription } from '../../utils/i18nHelpers';
 import commercialUnitService from '../../services/CommercialUnitService';
 import buildingService from '../../services/BuildingService';
 import complexService from '../../services/ComplexService';
@@ -157,16 +158,16 @@ const ViewCommercialUnitModal = ({ isOpen, onClose, commercialUnitId }) => {
                     {getStatusLabel(commercialUnit.status)}
                   </span>
                 </div>
-                {commercialUnit.short_description && (
+                {getLocalizedShortDescription(commercialUnit) && (
                   <div className={styles.infoRow}>
                     <span className={styles.label}>{t('modal.shortDescription')}:</span>
-                    <span className={styles.value}>{commercialUnit.short_description}</span>
+                    <span className={styles.value}>{getLocalizedShortDescription(commercialUnit)}</span>
                   </div>
                 )}
-                {commercialUnit.description && (
+                {getLocalizedDescription(commercialUnit) && (
                   <div className={styles.infoRow}>
                     <span className={styles.label}>{t('apartment.description')}:</span>
-                    <span className={styles.value}>{commercialUnit.description}</span>
+                    <span className={styles.value}>{getLocalizedDescription(commercialUnit)}</span>
                   </div>
                 )}
               </div>

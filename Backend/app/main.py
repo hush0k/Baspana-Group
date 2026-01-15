@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from . import config
 from .routers import (
@@ -14,6 +15,7 @@ from .routers import (
     image,
     infrastructure,
     order,
+    panorama,
     promotion,
     residential_complex,
     review,
@@ -33,12 +35,25 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content={"detail": exc.errors()},
     )
 
+class EmptyStringToNoneMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        if request.query_params:
+            query_params = dict(request.query_params)
+            filtered_params = {k: v if v != '' else None for k, v in query_params.items()}
+            from starlette.datastructures import QueryParams
+            request._query_params = QueryParams([(k, v) for k, v in filtered_params.items() if v is not None])
+        return await call_next(request)
+
+app.add_middleware(EmptyStringToNoneMiddleware)
+
 app.add_middleware (
 	CORSMiddleware,
 	allow_origins = [
 		"http://localhost:3000",
 		"http://frontend:3000",
-		"http://127.0.0.1:3000"
+		"http://127.0.0.1:3000",
+		"http://localhost:3001",
+		"http://127.0.0.1:3001"
 	],
 	allow_credentials = True,
 	allow_methods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -60,6 +75,7 @@ app.include_router (favorites.router, prefix = "/api/favorites", tags = ["Favori
 app.include_router (review.router, prefix = "/api/reviews", tags = ["Reviews"])
 app.include_router (wallet.router, prefix = "/api/wallet", tags = ["Wallet"])
 app.include_router (promotion.router, prefix = "/api/promotions", tags = ["Promotions"])
+app.include_router (panorama.router, prefix = "/api/panoramas", tags = ["Panoramas"])
 app.include_router (ai_assistant.router, prefix = "/api", tags = ["AI Assistant"])
 
 

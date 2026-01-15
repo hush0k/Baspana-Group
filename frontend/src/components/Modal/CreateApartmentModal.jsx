@@ -99,7 +99,7 @@ const CreateApartmentModal = ({ isOpen, onClose, onSuccess }) => {
       const total = area * pricePerSqr;
       setFormData(prev => ({
         ...prev,
-        total_price: formatNumber(total.toFixed(2))
+        total_price: formatNumber(total.toFixed(0)) // Убираем дробную часть для больших сумм
       }));
     }
     // Если последнее изменение - общая цена, пересчитываем цену за м²
@@ -107,7 +107,7 @@ const CreateApartmentModal = ({ isOpen, onClose, onSuccess }) => {
       const perSqr = totalPrice / area;
       setFormData(prev => ({
         ...prev,
-        price_per_sqr: formatNumber(perSqr.toFixed(2))
+        price_per_sqr: formatNumber(perSqr.toFixed(0)) // Убираем дробную часть для больших сумм
       }));
     }
     // Если площадь изменилась и есть цена за м², пересчитываем общую цену
@@ -115,10 +115,10 @@ const CreateApartmentModal = ({ isOpen, onClose, onSuccess }) => {
       const total = area * pricePerSqr;
       setFormData(prev => ({
         ...prev,
-        total_price: formatNumber(total.toFixed(2))
+        total_price: formatNumber(total.toFixed(0)) // Убираем дробную часть для больших сумм
       }));
     }
-  }, [formData.apartment_area, lastEditedPrice]);
+  }, [formData.apartment_area, formData.price_per_sqr, formData.total_price, lastEditedPrice]);
 
   const fetchComplexes = async () => {
     try {

@@ -202,6 +202,7 @@ const ViewPromotionModal = ({ isOpen, onClose, promotionId }) => {
             onClick={onClose}
             style={{
               padding: '12px 24px',
+                margin: '25px',
               backgroundColor: '#4a3428',
               color: 'white',
               border: 'none',

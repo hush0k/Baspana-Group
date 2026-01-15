@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_KEY = 'b4bef9b9-dad2-40a6-af72-5ad0f37227f4';
+const API_KEY = 'b6540c55-676d-4d57-9f5a-ef03916901a5';
 const BASE_URL = 'https://catalog.api.2gis.com/3.0/items';
 
 // Mapping категорий инфраструктуры к поисковым запросам 2ГИС

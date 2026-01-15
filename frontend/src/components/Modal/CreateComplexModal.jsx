@@ -4,26 +4,30 @@ import styles from '../../styles/CreateComplexModal.module.scss';
 
 const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    short_description: '',
-    block_counts: '',
-    playground_area: '',
-    apartment_area: '',
-    commercial_area: '',
-    parking_area: '',
-    landing_area: '',
-    material: '',
-    city: '',
-    address: '',
-    longitude: '',
-    latitude: '',
-    has_security: false,
-    building_class: '',
-    building_status: '',
-    min_area: '',
-    min_price: '',
-    construction_end: '',
+      name: '',
+      kz_description: '',
+      kz_short_description: '',
+      ru_description: '',
+      ru_short_description: '',
+      en_description: '',
+      en_short_description: '',
+      block_counts: '',
+      playground_area: '',
+      apartment_area: '',
+      commercial_area: '',
+      parking_area: '',
+      landing_area: '',
+      material: '',
+      city: '',
+      address: '',
+      longitude: '',
+      latitude: '',
+      has_security: false,
+      building_class: '',
+      building_status: '',
+      min_area: '',
+      min_price: '',
+      construction_end: '',
   });
 
   const [mainImageFile, setMainImageFile] = useState(null);
@@ -185,18 +189,22 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
       const formDataToSend = new FormData();
 
       // Добавляем все поля формы
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('description', formData.description);
-      formDataToSend.append('short_description', formData.short_description || '');
-      formDataToSend.append('block_counts', parseInt(unformatNumber(formData.block_counts)));
-      formDataToSend.append('playground_area', parseFloat(unformatNumber(formData.playground_area)));
-      formDataToSend.append('apartment_area', parseFloat(unformatNumber(formData.apartment_area)));
-      formDataToSend.append('commercial_area', parseFloat(unformatNumber(formData.commercial_area)));
-      formDataToSend.append('parking_area', parseFloat(unformatNumber(formData.parking_area)));
-      formDataToSend.append('landing_area', parseFloat(unformatNumber(formData.landing_area)));
-      formDataToSend.append('material', formData.material);
-      formDataToSend.append('city', formData.city);
-      formDataToSend.append('address', formData.address);
+        formDataToSend.append('name', formData.name);
+        formDataToSend.append('description', formData.kz_description);
+        formDataToSend.append('short_description', formData.kz_short_description || '');
+        formDataToSend.append('description', formData.ru_description);
+        formDataToSend.append('short_description', formData.ru_short_description || '');
+        formDataToSend.append('description', formData.en_description);
+        formDataToSend.append('short_description', formData.en_short_description || '');
+        formDataToSend.append('block_counts', parseInt(unformatNumber(formData.block_counts)));
+        formDataToSend.append('playground_area', parseFloat(unformatNumber(formData.playground_area)));
+        formDataToSend.append('apartment_area', parseFloat(unformatNumber(formData.apartment_area)));
+        formDataToSend.append('commercial_area', parseFloat(unformatNumber(formData.commercial_area)));
+        formDataToSend.append('parking_area', parseFloat(unformatNumber(formData.parking_area)));
+        formDataToSend.append('landing_area', parseFloat(unformatNumber(formData.landing_area)));
+        formDataToSend.append('material', formData.material);
+        formDataToSend.append('city', formData.city);
+        formDataToSend.append('address', formData.address);
 
       // Проверяем и добавляем координаты
       const longitude = parseFloat(formData.longitude);
@@ -245,27 +253,32 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
 
       // Сброс формы
       setFormData({
-        name: '',
-        description: '',
-        short_description: '',
-        block_counts: '',
-        playground_area: '',
-        apartment_area: '',
-        commercial_area: '',
-        parking_area: '',
-        landing_area: '',
-        material: '',
-        city: '',
-        address: '',
-        longitude: '',
-        latitude: '',
-        has_security: false,
-        building_class: '',
-        building_status: '',
-        min_area: '',
-        min_price: '',
-        construction_end: '',
+          name: '',
+          kz_description: '',
+          kz_short_description: '',
+          ru_description: '',
+          ru_short_description: '',
+          en_description: '',
+          en_short_description: '',
+          block_counts: '',
+          playground_area: '',
+          apartment_area: '',
+          commercial_area: '',
+          parking_area: '',
+          landing_area: '',
+          material: '',
+          city: '',
+          address: '',
+          longitude: '',
+          latitude: '',
+          has_security: false,
+          building_class: '',
+          building_status: '',
+          min_area: '',
+          min_price: '',
+          construction_end: '',
       });
+
       setMainImageFile(null);
       setMainImagePreview(null);
       setGalleryFiles([]);
@@ -332,10 +345,10 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
               </div>
 
               <div className={styles.formGroup}>
-                <label>Краткое описание (для карточки) <span className={styles.required}>*</span></label>
+                <label>Краткое описание (для карточки) KZ<span className={styles.required}>*</span></label>
                 <textarea
-                  name="short_description"
-                  value={formData.short_description}
+                  name="kz_short_description"
+                  value={formData.kz_short_description}
                   onChange={handleChange}
                   required
                   maxLength={300}
@@ -343,15 +356,47 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
                   placeholder="Краткое описание комплекса (макс. 300 символов)"
                 />
                 <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
-                  {formData.short_description?.length || 0}/300 символов
+                  {formData.kz_short_description?.length || 0}/300 символов
                 </small>
               </div>
 
+                <div className={styles.formGroup}>
+                    <label>Краткое описание (для карточки) RU<span className={styles.required}>*</span></label>
+                    <textarea
+                        name="ru_short_description"
+                        value={formData.ru_short_description}
+                        onChange={handleChange}
+                        required
+                        maxLength={300}
+                        rows="2"
+                        placeholder="Краткое описание комплекса (макс. 300 символов)"
+                    />
+                    <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
+                        {formData.ru_short_description?.length || 0}/300 символов
+                    </small>
+                </div>
+
+                <div className={styles.formGroup}>
+                    <label>Краткое описание (для карточки) EN<span className={styles.required}>*</span></label>
+                    <textarea
+                        name="en-short_description"
+                        value={formData.en_short_description}
+                        onChange={handleChange}
+                        required
+                        maxLength={300}
+                        rows="2"
+                        placeholder="Краткое описание комплекса (макс. 300 символов)"
+                    />
+                    <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
+                        {formData.en_short_description?.length || 0}/300 символов
+                    </small>
+                </div>
+
               <div className={styles.formGroup}>
-                <label>Полное описание <span className={styles.required}>*</span></label>
+                <label>Полное описание KZ<span className={styles.required}>*</span></label>
                 <textarea
-                  name="description"
-                  value={formData.description}
+                  name="kz_description"
+                  value={formData.kz_description}
                   onChange={handleChange}
                   required
                   rows="4"
@@ -359,7 +404,33 @@ const CreateComplexModal = ({ isOpen, onClose, onSuccess }) => {
                 />
               </div>
 
-              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                    <label>Полное описание RU<span className={styles.required}>*</span></label>
+                    <textarea
+                        name="ru_description"
+                        value={formData.ru_description}
+                        onChange={handleChange}
+                        required
+                        rows="4"
+                        placeholder="Подробное описание комплекса"
+                    />
+                </div>
+
+
+                <div className={styles.formGroup}>
+                    <label>Полное описание EN<span className={styles.required}>*</span></label>
+                    <textarea
+                        name="en_description"
+                        value={formData.en_description}
+                        onChange={handleChange}
+                        required
+                        rows="4"
+                        placeholder="Подробное описание комплекса"
+                    />
+                </div>
+
+
+                <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label>Город <span className={styles.required}>*</span></label>
                   <select name="city" value={formData.city} onChange={handleChange} required>

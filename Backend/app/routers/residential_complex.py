@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from cloudinary import uploader
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 from sqlalchemy.orm import Session
 
 from app.auth import require_role
@@ -28,18 +28,18 @@ router = APIRouter()
 # GET Routers
 @router.get("/", response_model=PaginatedResidentialComplexResponse)
 def get_residential_complexes_endpoint(
-    city: Optional[City] = None,
-    building_class: Optional[BuildingClass] = None,
-    building_status: Optional[BuildingStatus] = None,
-    material: Optional[MaterialType] = None,
-    has_security: Optional[bool] = None,
-    min_apartment_area: Optional[float] = None,
-    max_apartment_area: Optional[float] = None,
-    search: Optional[str] = None,
-    sort_by: str = "name",
-    order: str = "asc",
-    limit: int = 100,
-    offset: int = 0,
+    city: Optional[City] = Query(None),
+    building_class: Optional[BuildingClass] = Query(None),
+    building_status: Optional[BuildingStatus] = Query(None),
+    material: Optional[MaterialType] = Query(None),
+    has_security: Optional[bool] = Query(None),
+    min_apartment_area: Optional[float] = Query(None),
+    max_apartment_area: Optional[float] = Query(None),
+    search: Optional[str] = Query(None),
+    sort_by: str = Query("name"),
+    order: str = Query("asc"),
+    limit: int = Query(100),
+    offset: int = Query(0),
     db: Session = Depends(get_db),
 ):
     return get_residential_complexes_filtered(
@@ -81,8 +81,12 @@ def get_residential_complex_by_name_endpoint(name: str, db: Session = Depends(ge
 @router.post("/", response_model=ResidentialComplexResponse)
 async def create_residential_complex_endpoint(
     name: str = Form(...),
-    description: str = Form(...),
-    short_description: Optional[str] = Form(None),
+    kz_description: str = Form(...),
+    kz_short_description: Optional[str] = Form(None),
+        ru_description: str = Form(...),
+        ru_short_description: Optional[str] = Form(None),
+        en_description: str = Form(...),
+        en_short_description: Optional[str] = Form(None),
     block_counts: int = Form(...),
     playground_area: float = Form(...),
     apartment_area: float = Form(...),
@@ -134,8 +138,12 @@ async def create_residential_complex_endpoint(
 
     complex_data = ResidentialComplexCreate(
         name=name,
-        description=description,
-        short_description=short_description,
+        kz_description=kz_description,
+        kz_short_description=kz_short_description,
+        ru_description=ru_description,
+        ru_short_description=ru_short_description,
+        en_description=en_description,
+        en_short_description=en_short_description,
         block_counts=block_counts,
         playground_area=playground_area,
         apartment_area=apartment_area,
@@ -164,8 +172,12 @@ async def create_residential_complex_endpoint(
 async def update_residential_complex_endpoint(
     id: int,
     name: Optional[str] = Form(None),
-    description: Optional[str] = Form(None),
-    short_description: Optional[str] = Form(None),
+    kz_description: Optional[str] = Form(None),
+    kz_short_description: Optional[str] = Form(None),
+        ru_description: Optional[str] = Form(None),
+        ru_short_description: Optional[str] = Form(None),
+        en_description: Optional[str] = Form(None),
+        en_short_description: Optional[str] = Form(None),
     block_counts: Optional[int] = Form(None),
     playground_area: Optional[float] = Form(None),
     apartment_area: Optional[float] = Form(None),
@@ -215,10 +227,18 @@ async def update_residential_complex_endpoint(
     update_data = {}
     if name is not None:
         update_data['name'] = name
-    if description is not None:
-        update_data['description'] = description
-    if short_description is not None:
-        update_data['short_description'] = short_description
+    if kz_description is not None:
+        update_data['kz_description'] = kz_description
+    if kz_short_description is not None:
+        update_data['kz_short_description'] = kz_short_description
+    if ru_description is not None:
+            update_data['ru_description'] = ru_description
+    if ru_short_description is not None:
+        update_data['ru_short_description'] = ru_short_description
+    if en_description is not None:
+            update_data['en_description'] = en_description
+    if en_short_description is not None:
+        update_data['en_short_description'] = en_short_description
     if block_counts is not None:
         update_data['block_counts'] = block_counts
     if playground_area is not None:

@@ -13,29 +13,41 @@ const CreateCommercialUnitModal = ({ isOpen, onClose, onSuccess }) => {
     residential_complex_id: '',
     unit_number: '',
     floor: '',
-    description: '',
-    short_description: '',
     unit_area: '',
-    commercial_type: 'Office',
+    ceiling_height: '',
+    finishing_type: 'Black Box',
+    orientation: 'North',
+    isCorner: false,
     price_per_sqr: '',
     total_price: '',
     status: 'Free'
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const commercialTypeOptions = [
-    { value: 'Office', label: 'Офис' },
-    { value: 'Shop', label: 'Магазин' },
-    { value: 'Restaurant', label: 'Ресторан' },
-    { value: 'Warehouse', label: 'Склад' },
-    { value: 'Other', label: 'Другое' }
-  ];
+  const [lastEditedPrice, setLastEditedPrice] = useState(null);
 
   const statusOptions = [
     { value: 'Free', label: 'Свободно' },
     { value: 'Booked', label: 'Забронировано' },
     { value: 'Sold', label: 'Продано' }
+  ];
+
+  const finishingTypeOptions = [
+    { value: 'Black Box', label: 'Black Box' },
+    { value: 'White Box', label: 'White Box' },
+    { value: 'Finished', label: 'Finished' },
+    { value: 'Turnkey', label: 'Turnkey' }
+  ];
+
+  const orientationOptions = [
+    { value: 'North', label: 'Север' },
+    { value: 'South', label: 'Юг' },
+    { value: 'East', label: 'Восток' },
+    { value: 'West', label: 'Запад' },
+    { value: 'Northeast', label: 'Северо-восток' },
+    { value: 'Northwest', label: 'Северо-запад' },
+    { value: 'Southeast', label: 'Юго-восток' },
+    { value: 'Southwest', label: 'Юго-запад' }
   ];
 
   useEffect(() => {
@@ -55,6 +67,40 @@ const CreateCommercialUnitModal = ({ isOpen, onClose, onSuccess }) => {
       setFilteredBuildings(buildings);
     }
   }, [formData.residential_complex_id, buildings]);
+
+  // Автоматический расчет цен
+  useEffect(() => {
+    const area = parseFloat(unformatNumber(formData.unit_area));
+    const pricePerSqr = parseFloat(unformatNumber(formData.price_per_sqr));
+    const totalPrice = parseFloat(unformatNumber(formData.total_price));
+
+    if (isNaN(area) || area <= 0) return;
+
+    // Если последнее изменение - цена за м², пересчитываем общую цену
+    if (lastEditedPrice === 'per_sqr' && !isNaN(pricePerSqr)) {
+      const total = area * pricePerSqr;
+      setFormData(prev => ({
+        ...prev,
+        total_price: formatNumber(total.toFixed(0))
+      }));
+    }
+    // Если последнее изменение - общая цена, пересчитываем цену за м²
+    else if (lastEditedPrice === 'total' && !isNaN(totalPrice)) {
+      const perSqr = totalPrice / area;
+      setFormData(prev => ({
+        ...prev,
+        price_per_sqr: formatNumber(perSqr.toFixed(0))
+      }));
+    }
+    // Если площадь изменилась и есть цена за м², пересчитываем общую цену
+    else if (formData.unit_area && !isNaN(pricePerSqr) && pricePerSqr > 0) {
+      const total = area * pricePerSqr;
+      setFormData(prev => ({
+        ...prev,
+        total_price: formatNumber(total.toFixed(0))
+      }));
+    }
+  }, [formData.unit_area, formData.price_per_sqr, formData.total_price, lastEditedPrice]);
 
   const fetchComplexes = async () => {
     try {
@@ -95,10 +141,10 @@ const CreateCommercialUnitModal = ({ isOpen, onClose, onSuccess }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
 
     if (name === 'residential_complex_id') {
@@ -114,6 +160,13 @@ const CreateCommercialUnitModal = ({ isOpen, onClose, onSuccess }) => {
       ...prev,
       [name]: formatted
     }));
+
+    // Отслеживаем, какое поле цены было изменено
+    if (name === 'price_per_sqr') {
+      setLastEditedPrice('per_sqr');
+    } else if (name === 'total_price') {
+      setLastEditedPrice('total');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -123,12 +176,13 @@ const CreateCommercialUnitModal = ({ isOpen, onClose, onSuccess }) => {
 
     const payload = {
       building_id: parseInt(formData.building_id),
-      unit_number: parseInt(unformatNumber(formData.unit_number)),
+      number: parseInt(unformatNumber(formData.unit_number)),
       floor: parseInt(unformatNumber(formData.floor)),
-      description: formData.description || null,
-      short_description: formData.short_description || null,
-      unit_area: parseFloat(unformatNumber(formData.unit_area)),
-      commercial_type: formData.commercial_type,
+      space_area: parseFloat(unformatNumber(formData.unit_area)),
+      ceiling_height: parseFloat(unformatNumber(formData.ceiling_height)),
+      finishing_type: formData.finishing_type,
+      orientation: formData.orientation,
+      isCorner: formData.isCorner,
       price_per_sqr: parseFloat(unformatNumber(formData.price_per_sqr)),
       total_price: parseFloat(unformatNumber(formData.total_price)),
       status: formData.status
@@ -144,10 +198,11 @@ const CreateCommercialUnitModal = ({ isOpen, onClose, onSuccess }) => {
         residential_complex_id: '',
         unit_number: '',
         floor: '',
-        description: '',
-        short_description: '',
         unit_area: '',
-        commercial_type: 'Office',
+        ceiling_height: '',
+        finishing_type: 'Black Box',
+        orientation: 'North',
+        isCorner: false,
         price_per_sqr: '',
         total_price: '',
         status: 'Free'
@@ -255,24 +310,13 @@ const CreateCommercialUnitModal = ({ isOpen, onClose, onSuccess }) => {
                 </div>
               </div>
 
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label>Тип помещения <span className={styles.required}>*</span></label>
-                  <select name="commercial_type" value={formData.commercial_type} onChange={handleChange} required>
-                    {commercialTypeOptions.map(option => (
-                      <option key={option.value} value={option.value}>{option.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label>Статус <span className={styles.required}>*</span></label>
-                  <select name="status" value={formData.status} onChange={handleChange} required>
-                    {statusOptions.map(option => (
-                      <option key={option.value} value={option.value}>{option.label}</option>
-                    ))}
-                  </select>
-                </div>
+              <div className={styles.formGroup}>
+                <label>Статус <span className={styles.required}>*</span></label>
+                <select name="status" value={formData.status} onChange={handleChange} required>
+                  {statusOptions.map(option => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
               </div>
 
               <div className={styles.formGroup}>
@@ -316,6 +360,61 @@ const CreateCommercialUnitModal = ({ isOpen, onClose, onSuccess }) => {
                   required
                   placeholder="0"
                 />
+              </div>
+
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Высота потолков (м) <span className={styles.required}>*</span></label>
+                  <input
+                    type="text"
+                    name="ceiling_height"
+                    value={formData.ceiling_height}
+                    onChange={handleNumberChange}
+                    required
+                    placeholder="3.0"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Отделка <span className={styles.required}>*</span></label>
+                  <select
+                    name="finishing_type"
+                    value={formData.finishing_type}
+                    onChange={handleChange}
+                    required
+                  >
+                    {finishingTypeOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Ориентация <span className={styles.required}>*</span></label>
+                  <select
+                    name="orientation"
+                    value={formData.orientation}
+                    onChange={handleChange}
+                    required
+                  >
+                    {orientationOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className={styles.formGroup} style={{ alignItems: 'center', flexDirection: 'row' }}>
+                  <input
+                    type="checkbox"
+                    name="isCorner"
+                    checked={formData.isCorner}
+                    onChange={handleChange}
+                    style={{ width: 'auto', marginRight: '8px' }}
+                  />
+                  <label style={{ margin: 0 }}>Угловое помещение</label>
+                </div>
               </div>
 
               <div className={styles.formRow}>

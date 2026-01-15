@@ -5,26 +5,30 @@ import styles from '../../styles/CreateComplexModal.module.scss';
 
 const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    short_description: '',
-    block_counts: '',
-    playground_area: '',
-    apartment_area: '',
-    commercial_area: '',
-    parking_area: '',
-    landing_area: '',
-    material: '',
-    city: '',
-    address: '',
-    longitude: '',
-    latitude: '',
-    has_security: false,
-    building_class: '',
-    building_status: '',
-    min_area: '',
-    min_price: '',
-    construction_end: '',
+      name: '',
+      kz_description: '',
+      kz_short_description: '',
+      ru_description: '',
+      ru_short_description: '',
+      en_description: '',
+      en_short_description: '',
+      block_counts: '',
+      playground_area: '',
+      apartment_area: '',
+      commercial_area: '',
+      parking_area: '',
+      landing_area: '',
+      material: '',
+      city: '',
+      address: '',
+      longitude: '',
+      latitude: '',
+      has_security: false,
+      building_class: '',
+      building_status: '',
+      min_area: '',
+      min_price: '',
+      construction_end: '',
   });
 
   const [mainImageFile, setMainImageFile] = useState(null);
@@ -91,8 +95,12 @@ const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
 
       setFormData({
         name: complex.name || '',
-        description: complex.description || '',
-        short_description: complex.short_description || '',
+        kz_description: complex.kz_description || '',
+        ru_description: complex.ru_description || '',
+        en_description: complex.ru_description || '',
+        kz_short_description: complex.kz_short_description || '',
+        ru_short_description: complex.ru_short_description || '',
+        en_short_description: complex.en_short_description || '',
         block_counts: formatNumber(complex.block_counts || ''),
         playground_area: formatNumber(complex.playground_area || ''),
         apartment_area: formatNumber(complex.apartment_area || ''),
@@ -264,8 +272,12 @@ const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
 
       // Обязательные поля (всегда отправляем)
       formDataToSend.append('name', formData.name);
-      formDataToSend.append('description', formData.description);
-      formDataToSend.append('short_description', formData.short_description || '');
+      formDataToSend.append('kz_description', formData.kz_description);
+      formDataToSend.append('kz_short_description', formData.short_description || '');
+        formDataToSend.append('ru_description', formData.ru_description);
+        formDataToSend.append('ru_short_description', formData.ru_short_description || '');
+        formDataToSend.append('en_description', formData.en_description);
+        formDataToSend.append('en_short_description', formData.en_short_description || '');
       formDataToSend.append('material', formData.material);
       formDataToSend.append('city', formData.city);
       formDataToSend.append('address', formData.address);
@@ -450,10 +462,10 @@ const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Краткое описание (для карточки) <span className={styles.required}>*</span></label>
+                  <label>Краткое описание (для карточки) KZ<span className={styles.required}>*</span></label>
                   <textarea
-                    name="short_description"
-                    value={formData.short_description}
+                    name="kz_short_description"
+                    value={formData.kz_short_description}
                     onChange={handleChange}
                     required
                     maxLength={300}
@@ -461,21 +473,77 @@ const EditComplexModal = ({ isOpen, onClose, onSuccess, complexId }) => {
                     placeholder="Краткое описание комплекса (макс. 300 символов)"
                   />
                   <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
-                    {formData.short_description?.length || 0}/300 символов
+                    {formData.kz_short_description?.length || 0}/300 символов
                   </small>
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Полное описание <span className={styles.required}>*</span></label>
+                  <label>Полное описание KZ<span className={styles.required}>*</span></label>
                   <textarea
-                    name="description"
-                    value={formData.description}
+                    name="kz_description"
+                    value={formData.kz_description}
                     onChange={handleChange}
                     required
                     rows="4"
                     placeholder="Подробное описание комплекса"
                   />
                 </div>
+
+                  <div className={styles.formGroup}>
+                      <label>Краткое описание (для карточки) RU<span className={styles.required}>*</span></label>
+                      <textarea
+                          name="ru_short_description"
+                          value={formData.ru_short_description}
+                          onChange={handleChange}
+                          required
+                          maxLength={300}
+                          rows="2"
+                          placeholder="Краткое описание комплекса (макс. 300 символов)"
+                      />
+                      <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
+                          {formData.ru_short_description?.length || 0}/300 символов
+                      </small>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                      <label>Полное описание RU<span className={styles.required}>*</span></label>
+                      <textarea
+                          name="ru_description"
+                          value={formData.ru_description}
+                          onChange={handleChange}
+                          required
+                          rows="4"
+                          placeholder="Подробное описание комплекса"
+                      />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                      <label>Краткое описание (для карточки) EN<span className={styles.required}>*</span></label>
+                      <textarea
+                          name="en_short_description"
+                          value={formData.en_short_description}
+                          onChange={handleChange}
+                          required
+                          maxLength={300}
+                          rows="2"
+                          placeholder="Краткое описание комплекса (макс. 300 символов)"
+                      />
+                      <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
+                          {formData.en_short_description?.length || 0}/300 символов
+                      </small>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                      <label>Полное описание EN<span className={styles.required}>*</span></label>
+                      <textarea
+                          name="en_description"
+                          value={formData.en_description}
+                          onChange={handleChange}
+                          required
+                          rows="4"
+                          placeholder="Подробное описание комплекса"
+                      />
+                  </div>
 
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
